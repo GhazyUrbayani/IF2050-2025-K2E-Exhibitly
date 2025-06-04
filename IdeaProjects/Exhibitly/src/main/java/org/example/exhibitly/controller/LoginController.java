@@ -1,4 +1,4 @@
-package org.example.exhibitly;
+package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

@@ -27,7 +27,7 @@ tasks.withType<JavaCompile> {
 
 application {
     mainModule.set("org.example.exhibitly")
-    mainClass.set("org.example.exhibitly.HelloApplication")
+    mainClass.set("org.example.exhibitly.models.HelloApplication")
 }
 
 javafx {
