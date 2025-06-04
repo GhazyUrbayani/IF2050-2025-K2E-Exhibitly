@@ -2,27 +2,21 @@ package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
+import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import javafx.event.ActionEvent; // Penting untuk onAction
-
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
-
+import javafx.stage.Stage;
 
 
 public class LoginController implements Initializable{
@@ -42,83 +36,74 @@ public class LoginController implements Initializable{
         String email = emailField.getText();
         String password = passwordField.getText();
 
-        System.out.println("Email: " + email);
-        System.out.println("Password: " + password);
-
-        // TODO: Implementasi logika login (misalnya, validasi, otentikasi ke database)
-        // Contoh sederhana:
-        if (email.equals("user@example.com") && password.equals("password123")) {
-            System.out.println("Login Berhasil!");
-            // Tambahkan navigasi ke halaman lain
-        } else {
-            System.out.println("Login Gagal: Email atau Password salah.");
-            // Tampilkan pesan error di UI
-        }
     }
+    @FXML
+    private Button onLoginButtonClick;
 
     // Metode untuk tombol "Login" di header (jika berbeda fungsinya dengan di form)
     @FXML
     protected void onLoginButtonClick(ActionEvent event) {
-        System.out.println("Tombol 'Login' di header diklik!");
-        // Anda bisa tambahkan logika di sini, misalnya jika tombol ini membuka popup login
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/login.fxml"));
+            Parent loginPage = loader.load();
+
+            Stage stage = (Stage) onLoginButtonClick.getScene().getWindow();
+
+            stage.setScene(new Scene(loginPage));
+            stage.setTitle("Museum Nusantara - Login");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle error, misalnya tampilkan dialog error
+            System.err.println("Gagal memuat halaman login: " + e.getMessage());
+        }
+
     }
 
-    // Contoh metode dari template sebelumnya, jika diperlukan
     @FXML
-    protected void onHelloButtonClick() {
-        // Ini berasal dari template awal Anda, mungkin tidak relevan lagi untuk halaman login
-        if (welcomeText != null) {
-            welcomeText.setText("Welcome to JavaFX Application!");
-        }
-    }
-    @FXML
-    private ImageView myImageView;
+    private Button logoButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Cara load gambar dari folder resources/images/logo.png
-        Image image = new Image(getClass().getResource("/images/logo.png").toExternalForm());
-        myImageView.setImage(image);
-    }
-
-    @FXML
-    public void handleExhibit(ActionEvent actionEvent) {
         try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
-        } catch (IOException e) {
-            System.err.println("[Erorr] Can't navigate to artefact page: " + e.getMessage() );
-        }    }
-
-    @FXML
-    public void handleArtefact(ActionEvent actionEvent) {
-        try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
-        } catch (IOException e) {
-            System.err.println("[Erorr] Can't navigate to artefact page: " + e.getMessage() );
-        }
-    }
-
-    @FXML
-    public void handleTickets(ActionEvent actionEvent) {
-        try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
-        } catch (IOException e) {
-            System.err.println("[Error] " + e.getMessage());
-        }  
-    }
-
-    private void navigateToPage(ActionEvent actionEvent, String path) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource(path));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 1366, 768);
-
-        try {
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            ImageView logoImageView = (ImageView) logoButton.getGraphic();
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
         } catch (Exception e) {
-            System.out.println("[Error] Couldn't load stylesheet");
+            System.err.println("Error loading logo for button: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void onExhibitButtonClick(ActionEvent actionEvent) {
+    }
+
+    public void onArtefactButtonClick(ActionEvent actionEvent) {
+    }
+
+    public void onTicketsButtonClick(ActionEvent actionEvent) {
+    }
+    @FXML
+    private Button onLogoButtonClick;
+
+
+    @FXML
+    public void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
+            Parent landingPage = loader.load();
+
+            // Mendapatkan Stage dari tombol yang diklik
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow(); // <--- Ini yang benar
+
+            stage.setScene(new Scene(landingPage));
+            stage.setTitle("Museum Nusantara - Landing Page");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat halaman landing page: " + e.getMessage());
+            // Tambahkan dialog peringatan kepada pengguna jika perlu
         }
 
-        stage.setScene(scene);
-        stage.show();
     }
 }

@@ -11,45 +11,61 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.Cursor?>
 
 <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.LoginController">
     <children>
         <Pane prefHeight="100.0" prefWidth="1366.0" style="-fx-background-color: #000000;">
             <children>
-                <Pane layoutX="20.0" layoutY="30.0" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
 
-                <HBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="100.0" prefWidth="1366.0">
-                    <children>
-                        <ImageView fx:id="myImageView" fitHeight="100" fitWidth="200" preserveRatio="true" />
-                    </children>
-                </HBox>
+                <HBox alignment="CENTER" layoutY="36.0" prefHeight="100.0" prefWidth="1366.0" />
 
-                <Button layoutX="1250.0" layoutY="30.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" text="Login">
+                <Button fx:id="onLoginButtonClick" layoutX="1250.0" layoutY="20.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: black; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-border-width: 0.3;" text="Login" textFill="WHITE">
                     <font>
-                        <Font name="Plus Jakarta Regular Bold" size="14.0" />
+                        <Font size="14.0" />
                     </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
                 </Button>
 
                 <HBox alignment="CENTER" layoutX="0.0" layoutY="70.0" prefHeight="30.0" prefWidth="1366.0" spacing="100.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#handleExhibit" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
+                            <font>
+                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onArtefactButtonClick" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
                             <font>
                                 <Font name="Plus Jakarta Sans Bold" size="14.0" />
                             </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#handleArtefact" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onTicketsButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
                             <font>
                                 <Font name="Plus Jakarta Sans Bold" size="14.0" />
                             </font>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#handleTickets" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
-                            <font>
-                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                            </font>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
                         </Button>
                     </children>
                 </HBox>
+                <Line endX="582.122802734375" endY="-7.62939453125E-6" layoutX="782.0" layoutY="66.0" startX="-814.3771362304688" startY="-7.62939453125E-6" stroke="WHITE" strokeWidth="0.3" />
+                <Button fx:id="logoButton" layoutX="582.0" layoutY="-10.0" onAction="#onLogoButtonClick" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: transparent;">
+                    <graphic>
+                        <ImageView fitHeight="100.0" fitWidth="200.0" layoutX="582.0" layoutY="-10.0" preserveRatio="true">
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
             </children>
         </Pane>
 
@@ -61,17 +77,17 @@
                             <children>
                                 <Label text="Selamat" textFill="WHITE">
                                     <font>
-                                        <Font name="Plus Jakarta Sans Bold" size="36.0" />
+                                        <Font name="Plus Jakarta Sans Bold" size="59.0" />
                                     </font>
                                 </Label>
                                 <Label text="datang" textFill="WHITE">
                                     <font>
-                                        <Font name="Plus Jakarta Sans Bold" size="36.0" />
+                                        <Font name="Plus Jakarta Sans Bold" size="59.0" />
                                     </font>
                                 </Label>
                                 <Label text="kembali!" textFill="WHITE">
                                     <font>
-                                        <Font name="Plus Jakarta Sans Bold" size="36.0" />
+                                        <Font name="Plus Jakarta Sans Bold" size="59.0" />
                                     </font>
                                 </Label>
                             </children>
@@ -95,7 +111,7 @@
 
                                 <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="380.0">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #000000; -fx-background-radius: 5;" text="Masuk" textFill="WHITE">
+                                        <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #000000; -fx-background-radius: 20;" text="Masuk" textFill="WHITE">
                                             <font>
                                                 <Font name="Plus Jakarta Sans Bold" size="16.0" />
                                             </font>

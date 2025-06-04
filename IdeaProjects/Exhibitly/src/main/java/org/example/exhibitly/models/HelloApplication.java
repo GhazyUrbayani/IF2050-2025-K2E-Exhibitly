@@ -16,29 +16,21 @@ public class HelloApplication extends Application {
         // 1. Load Fonts terlebih dahulu (ini sudah benar)
         // Pastikan jalur ke file font sudah benar, dimulai dari root classpath (dengan '/')
         // Misalnya, jika font ada di src/main/resources/fonts/
-        try {
-            Font.loadFont(getClass().getResourceAsStream("/fonts/PlusJakartaSans-Bold.ttf"), 14);
-            Font.loadFont(getClass().getResourceAsStream("/fonts/PlusJakartaSans-Regular.ttf"), 14);
-            Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplaySC-Bold.ttf"), 14);
-            Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplaySC-Regular.ttf"), 14);
-        } catch (Exception e) {
-            System.out.println("[Error] Couldn't load fonts");
-        }
+        Font.loadFont(getClass().getResourceAsStream("/fonts/PlusJakartaSans-Bold.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/PlusJakartaSans-Regular.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplaySC-Bold.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplaySC-Regular.ttf"), 14);
 
         // 2. Load FXML *sebelum* membuat Scene
         // Anda mendeklarasikan 'root' setelah menggunakannya, ini akan menyebabkan error kompilasi
-        Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
 
         // 3. Buat Scene dengan 'root' yang sudah di-load
         Scene scene = new Scene(root, 1366, 768);
 
         // 4. Tambahkan Stylesheet ke Scene
         // Pastikan jalur ke file CSS sudah benar. Jika 'css/styles.css' ada di package yang sama dengan HelloApplication.java
-        try {
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        } catch (Exception e) {
-            System.out.println("[Error] Couldn't load stylesheet");
-        }
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         // Jika css ada di root resources folder, atau di package lain, gunakan path absolut:
         // scene.getStylesheets().add(getClass().getResource("/path/to/your/css/styles.css").toExternalForm());
 
@@ -47,7 +39,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
 
         // 6. Set Judul Stage
-        stage.setTitle("Museum Nusantara Login");
+        stage.setTitle("Museum Nusantara Landing Page");
 
         // 7. Tampilkan Stage
         stage.show();
