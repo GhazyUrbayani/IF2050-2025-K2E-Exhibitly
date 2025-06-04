@@ -54,7 +54,11 @@ public class ExhibitController {
 
     @FXML
     public void handleTickets(ActionEvent actionEvent) {
-        System.out.println("Tickets button clicked!");
+        try {
+            navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
+        } catch (IOException e) {
+            System.err.println("[Error] " + e.getMessage());
+        }  
     }
 
     @FXML

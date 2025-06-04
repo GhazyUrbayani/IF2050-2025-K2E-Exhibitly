@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.TicketController">
+    <children>
+        <!-- Header Section - Fixed at top -->
+        <Pane prefHeight="100.0" prefWidth="1366.0" style="-fx-background-color: #000000;" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+                <Pane layoutX="20.0" layoutY="30.0" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
+
+                <HBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="100.0" prefWidth="1366.0">
+                    <children>
+                        <ImageView fx:id="ticketImageView" fitHeight="100" fitWidth="200" preserveRatio="true" />
+                    </children>
+                </HBox>
+
+                <Button layoutX="1250.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" text="Login">
+                    <font>
+                        <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                    </font>
+                </Button>
+
+                <HBox alignment="CENTER" layoutX="0.0" layoutY="70.0" prefHeight="30.0" prefWidth="1366.0" spacing="100.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleExhibit" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
+                            <font>
+                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                            </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleArtefact" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
+                            <font>
+                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                            </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleTickets" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
+                            <font>
+                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </Pane>
+
+        <!-- Main Content Section - Below header with proper margin -->
+        <ScrollPane layoutY="100.0" prefHeight="668.0" prefWidth="1366.0" style="-fx-background-color: transparent; -fx-background: transparent;" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+            <content>
+                <VBox alignment="TOP_CENTER" spacing="30" style="-fx-padding: 20 40 40 40;">
+                    <children>
+                        <!-- Page Title -->
+                        <Label text="Museum Tickets" style="-fx-text-fill: #000000;">
+                            <font>
+                                <Font name="Plus Jakarta Sans Bold" size="42.0" />
+                            </font>
+                        </Label>
+                        
+                        <Label text="Choose your visit experience" style="-fx-text-fill: #666666;">
+                            <font>
+                                <Font name="Plus Jakarta Sans Regular" size="18.0" />
+                            </font>
+                        </Label>
+
+                        <!-- Ticket Options -->
+                        <HBox alignment="CENTER" spacing="40">
+                            <children>
+                                <!-- Regular Ticket -->
+                                <VBox alignment="CENTER" spacing="20" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-border-color: #CCCCCC; -fx-border-radius: 15; -fx-border-width: 1; -fx-padding: 30;" maxWidth="350">
+                                    <children>
+                                        <Label text="Regular Ticket" style="-fx-text-fill: #000000;">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                        
+                                        <Label text="Rp 25.000" style="-fx-text-fill: #000000;">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="32.0" />
+                                            </font>
+                                        </Label>
+                                        
+                                        <VBox spacing="10" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label text="✓ Access to all exhibitions" style="-fx-text-fill: #666666;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label text="✓ Museum map included" style="-fx-text-fill: #666666;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label text="✓ Valid for 1 day" style="-fx-text-fill: #666666;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                        
+                                        <TextField fx:id="regularQuantity" promptText="Quantity" prefWidth="100" style="-fx-border-color: #CCCCCC; -fx-border-radius: 5;" text="1" />
+                                        
+                                        <Button onAction="#addRegularTicket" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #000000; -fx-background-radius: 10;" text="Add to Cart" textFill="WHITE">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                </VBox>
+
+                                <!-- Premium Ticket -->
+                                <VBox alignment="CENTER" spacing="20" style="-fx-background-color: #000000; -fx-background-radius: 15; -fx-border-color: #000000; -fx-border-radius: 15; -fx-border-width: 1; -fx-padding: 30;" maxWidth="350">
+                                    <children>
+                                        <Label text="Premium Ticket" style="-fx-text-fill: #FFFFFF;">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                        
+                                        <Label text="Rp 50.000" style="-fx-text-fill: #FFFFFF;">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="32.0" />
+                                            </font>
+                                        </Label>
+                                        
+                                        <VBox spacing="10" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label text="✓ Access to all exhibitions" style="-fx-text-fill: #CCCCCC;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label text="✓ Guided tour included" style="-fx-text-fill: #CCCCCC;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label text="✓ Audio guide included" style="-fx-text-fill: #CCCCCC;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label text="✓ Priority entrance" style="-fx-text-fill: #CCCCCC;">
+                                                    <font>
+                                                        <Font name="Plus Jakarta Sans Regular" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                        
+                                        <TextField fx:id="premiumQuantity" promptText="Quantity" prefWidth="100" style="-fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-color: #FFFFFF;" text="1" />
+                                        
+                                        <Button onAction="#addPremiumTicket" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10;" text="Add to Cart" textFill="#000000">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <!-- Cart Summary -->
+                        <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #F0F0F0; -fx-background-radius: 10; -fx-padding: 20;" maxWidth="600">
+                            <children>
+                                <Label text="Cart Summary" style="-fx-text-fill: #000000;">
+                                    <font>
+                                        <Font name="Plus Jakarta Sans Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                
+                                <Label fx:id="cartSummary" text="No items in cart" style="-fx-text-fill: #666666;">
+                                    <font>
+                                        <Font name="Plus Jakarta Sans Regular" size="16.0" />
+                                    </font>
+                                </Label>
+                                
+                                <Label fx:id="totalPrice" text="Total: Rp 0" style="-fx-text-fill: #000000;">
+                                    <font>
+                                        <Font name="Plus Jakarta Sans Bold" size="18.0" />
+                                    </font>
+                                </Label>
+                                
+                                <HBox spacing="15" alignment="CENTER">
+                                    <children>
+                                        <Button onAction="#clearCart" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #CCCCCC; -fx-background-radius: 10;" text="Clear Cart" textFill="#000000">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                                            </font>
+                                        </Button>
+                                        
+                                        <Button onAction="#proceedToCheckout" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #000000; -fx-background-radius: 10;" text="Proceed to Pay" textFill="WHITE">
+                                            <font>
+                                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</AnchorPane>
