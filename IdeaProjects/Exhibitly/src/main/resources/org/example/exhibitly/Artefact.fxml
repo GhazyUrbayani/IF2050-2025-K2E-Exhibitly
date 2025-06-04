@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.exhibitly.controller.ArtefactController">
+
+    <!-- TOP: Logo dan Navigasi -->
+    <top>
+        <VBox spacing="10" alignment="CENTER">
+            <ImageView fx:id="artefactImageView" fitHeight="100" fitWidth="200" preserveRatio="true" />
+            <HBox spacing="20" alignment="CENTER" styleClass="navbar">
+                <Button text="LOGIN" onAction="#handleLogin" styleClass="nav-button"/>
+                <Button text="EXHIBIT" onAction="#handleExhibit" styleClass="nav-button"/>
+                <Button text="ARTEFACT" onAction="#handleArtefact" styleClass="nav-button"/>
+                <Button text="TICKETS" onAction="#handleTickets" styleClass="nav-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER: Artefact Content -->
+    <center>
+        <VBox alignment="CENTER" spacing="20" styleClass="artefact-container">
+            <Label text="Museum Artefacts" styleClass="page-title"/>
+            <Label text="Discover our collection of historical artefacts" styleClass="page-subtitle"/>
+            
+            <!-- Placeholder for artefact grid/list -->
+            <GridPane alignment="CENTER" hgap="20" vgap="20">
+                <Label text="Artefact 1" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="artefact-item"/>
+                <Label text="Artefact 2" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="artefact-item"/>
+                <Label text="Artefact 3" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="artefact-item"/>
+                <Label text="Artefact 4" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="artefact-item"/>
+            </GridPane>
+        </VBox>
+    </center>
+</BorderPane>

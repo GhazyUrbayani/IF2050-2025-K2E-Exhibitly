@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.exhibitly.controller.ExhibitController">
+
+    <!-- TOP: Logo dan Navigasi -->
+    <top>
+        <VBox spacing="10" alignment="CENTER">
+            <ImageView fx:id="exhibitImageView" fitHeight="100" fitWidth="200" preserveRatio="true" />
+            <HBox spacing="20" alignment="CENTER" styleClass="navbar">
+                <Button text="LOGIN" onAction="#handleLogin" styleClass="nav-button"/>
+                <Button text="EXHIBIT" onAction="#handleExhibit" styleClass="nav-button"/>
+                <Button text="ARTEFACT" onAction="#handleArtefact" styleClass="nav-button"/>
+                <Button text="TICKETS" onAction="#handleTickets" styleClass="nav-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CENTER: Exhibit Content -->
+    <center>
+        <VBox alignment="CENTER" spacing="20" styleClass="exhibit-container">
+            <Label text="Museum Exhibitions" styleClass="page-title"/>
+            <Label text="Explore our current and upcoming exhibitions" styleClass="page-subtitle"/>
+            
+            <!-- Current Exhibitions Section -->
+            <VBox spacing="15" alignment="CENTER">
+                <Label text="Current Exhibitions" styleClass="section-title"/>
+                <GridPane alignment="CENTER" hgap="30" vgap="20">
+                    <!-- Exhibition 1 -->
+                    <VBox spacing="10" alignment="CENTER" styleClass="exhibit-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <ImageView fitHeight="150" fitWidth="200" preserveRatio="true" styleClass="exhibit-image"/>
+                        <Label text="Ancient Civilizations" styleClass="exhibit-title"/>
+                        <Label text="Discover artifacts from ancient cultures" styleClass="exhibit-description"/>
+                        <Button text="Learn More" onAction="#handleExhibit1" styleClass="exhibit-button"/>
+                    </VBox>
+                    
+                    <!-- Exhibition 2 -->
+                    <VBox spacing="10" alignment="CENTER" styleClass="exhibit-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <ImageView fitHeight="150" fitWidth="200" preserveRatio="true" styleClass="exhibit-image"/>
+                        <Label text="Maritime Heritage" styleClass="exhibit-title"/>
+                        <Label text="Indonesia's rich maritime history" styleClass="exhibit-description"/>
+                        <Button text="Learn More" onAction="#handleExhibit2" styleClass="exhibit-button"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+            
+            <!-- Upcoming Exhibitions Section -->
+            <VBox spacing="15" alignment="CENTER">
+                <Label text="Upcoming Exhibitions" styleClass="section-title"/>
+                <GridPane alignment="CENTER" hgap="30" vgap="20">
+                    <!-- Upcoming Exhibition 1 -->
+                    <VBox spacing="10" alignment="CENTER" styleClass="exhibit-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <ImageView fitHeight="150" fitWidth="200" preserveRatio="true" styleClass="exhibit-image"/>
+                        <Label text="Traditional Arts" styleClass="exhibit-title"/>
+                        <Label text="Coming Soon - Traditional Indonesian Arts" styleClass="exhibit-description"/>
+                        <Label text="Opening: July 2025" styleClass="exhibit-date"/>
+                    </VBox>
+                    
+                    <!-- Upcoming Exhibition 2 -->
+                    <VBox spacing="10" alignment="CENTER" styleClass="exhibit-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <ImageView fitHeight="150" fitWidth="200" preserveRatio="true" styleClass="exhibit-image"/>
+                        <Label text="Modern Indonesia" styleClass="exhibit-title"/>
+                        <Label text="Coming Soon - Indonesia in the 21st Century" styleClass="exhibit-description"/>
+                        <Label text="Opening: August 2025" styleClass="exhibit-date"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

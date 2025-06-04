@@ -1,12 +1,24 @@
 package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.event.ActionEvent; // Penting untuk onAction
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import javafx.event.ActionEvent; // Penting untuk onAction
+
+import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
@@ -69,12 +81,40 @@ public class LoginController implements Initializable{
         myImageView.setImage(image);
     }
 
+    @FXML
     public void handleExhibit(ActionEvent actionEvent) {
-    }
+        try {
+            navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
+        } catch (IOException e) {
+            System.err.println("[Erorr] Can't navigate to artefact page: " + e.getMessage() );
+        }    }
 
+    @FXML
     public void handleArtefact(ActionEvent actionEvent) {
+        try {
+            navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+        } catch (IOException e) {
+            System.err.println("[Erorr] Can't navigate to artefact page: " + e.getMessage() );
+        }
     }
 
+    @FXML
     public void handleTickets(ActionEvent actionEvent) {
+        System.out.println("Tickets button clicked!");
+    }
+
+    private void navigateToPage(ActionEvent actionEvent, String path) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource(path));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root, 1366, 768);
+
+        try {
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        } catch (Exception e) {
+            System.out.println("[Error] Couldn't load stylesheet");
+        }
+
+        stage.setScene(scene);
+        stage.show();
     }
 }
