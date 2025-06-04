@@ -1,46 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.exhibitly.controller.LoginController">
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.LoginController">
+    <children>
+        <Pane prefHeight="100.0" prefWidth="1366.0" style="-fx-background-color: #000000;">
+            <children>
+                <Pane layoutX="20.0" layoutY="30.0" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
 
-    <!-- TOP: Logo dan Navigasi -->
-    <top>
-        <VBox spacing="10" alignment="CENTER">
-            <ImageView fx:id="myImageView" fitHeight="100" fitWidth="200" preserveRatio="true" />
-            <HBox spacing="20" alignment="CENTER" styleClass="navbar">
-                <Button text="EXHIBIT" onAction="#handleExhibit" styleClass="nav-button"/>
-                <Button text="ARTEFACT" onAction="#handleArtefact" styleClass="nav-button"/>
-                <Button text="TICKETS" onAction="#handleTickets" styleClass="nav-button"/>
-            </HBox>
-        </VBox>
-    </top>
+                <HBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="100.0" prefWidth="1366.0">
+                    <children>
+                        <ImageView fx:id="myImageView" fitHeight="100" fitWidth="200" preserveRatio="true" />
+                    </children>
+                </HBox>
 
-    <!-- CENTER: Login Form -->
-    <center>
-        <HBox alignment="CENTER" spacing="0" styleClass="login-container">
+                <Button layoutX="1250.0" layoutY="30.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" text="Login">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
 
-            <!-- Kiri: Greeting -->
-            <VBox alignment="CENTER" prefWidth="300" prefHeight="300" styleClass="welcome-box">
-                <Label text="Selamat datang kembali!" styleClass="welcome-text"/>
-            </VBox>
+                <HBox alignment="CENTER" layoutX="0.0" layoutY="70.0" prefHeight="30.0" prefWidth="1366.0" spacing="100.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleExhibit" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleArtefact" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleTickets" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </Pane>
 
-            <!-- Kanan: Form -->
-            <VBox spacing="10" alignment="CENTER_LEFT" prefWidth="300" styleClass="form-box">
-                <Label text="Email*" />
-                <TextField fx:id="emailField" promptText="Masukkan email Anda.." />
+        <StackPane layoutX="0.0" layoutY="100.0" prefHeight="668.0" prefWidth="1366.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <Pane prefHeight="450.0" prefWidth="900.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-border-color: #CCCCCC; -fx-border-radius: 10;">
+                    <children>
+                        <VBox alignment="CENTER" layoutX="251.0" layoutY="107.0" prefHeight="450.0" prefWidth="450.0" style="-fx-background-color: #000000; -fx-background-radius: 10 0 0 10;">
+                            <children>
+                                <Label text="Selamat" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label text="datang" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="36.0" />
+                                    </font>
+                                </Label>
+                                <Label text="kembali!" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="36.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
 
-                <Label text="Password*" />
-                <PasswordField fx:id="passwordField" promptText="Masukkan password Anda.." />
+                        <VBox alignment="CENTER_LEFT" layoutX="691.0" layoutY="107.0" prefHeight="450.0" prefWidth="430.0" spacing="20.0" style="-fx-border-color: black; -fx-border-radius: 10; -fx-border-width: 0.3;">
+                            <children>
+                                <Label text="Email*">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="emailField" prefHeight="40.0" prefWidth="380.0" promptText="Masukkan email Anda." style="-fx-border-color: #CCCCCC; -fx-border-radius: 5; -fx-background-color: #FFFFFF;" />
 
-                <Button text="Masuk" onAction="#handleLogin" styleClass="login-button"/>
-            </VBox>
+                                <Label text="Password*">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <PasswordField fx:id="passwordField" prefHeight="40.0" prefWidth="380.0" promptText="Masukkan password Anda." style="-fx-border-color: #CCCCCC; -fx-border-radius: 5; -fx-background-color: #FFFFFF;" />
 
-        </HBox>
-    </center>
-</BorderPane>
+                                <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="380.0">
+                                    <children>
+                                        <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #000000; -fx-background-radius: 5;" text="Masuk" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="16.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets left="20.0" right="20.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </Pane>
+            </children>
+        </StackPane>
+    </children>
+</AnchorPane>
