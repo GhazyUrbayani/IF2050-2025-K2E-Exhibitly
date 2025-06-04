@@ -44,7 +44,8 @@ public class ArtefactController {
             navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
         } catch (IOException e) {
             System.err.println("[Error] " + e.getMessage());
-        }    }
+        }    
+    }
 
     @FXML
     public void handleArtefact(ActionEvent actionEvent) {
