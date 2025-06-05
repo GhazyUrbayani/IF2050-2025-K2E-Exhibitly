@@ -5,6 +5,8 @@ module org.example.exhibitly {
 
     requires org.controlsfx.controls;
     requires net.synedra.validatorfx;
+    requires java.sql;
+    requires mysql.connector.j;
 
     // opens org.example.exhibitly to javafx.fxml;
     opens org.example.exhibitly.controller to javafx.fxml;

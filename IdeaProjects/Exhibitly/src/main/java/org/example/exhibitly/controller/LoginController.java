@@ -14,15 +14,19 @@ import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 
 
+
 public class LoginController implements Initializable{
 
     @FXML
-    private TextField emailField;
+    private TextField usernameField;
 
     @FXML
     private PasswordField passwordField;
@@ -33,9 +37,21 @@ public class LoginController implements Initializable{
     // Metode untuk tombol "Masuk" pada form login
     @FXML
     protected void handleLogin(ActionEvent event) {
-        String email = emailField.getText();
+        String username = usernameField.getText();
         String password = passwordField.getText();
 
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+
+        // Contoh sederhana:
+        if (!username.isBlank() && !password.isBlank()) {
+            System.out.println("Mencoba login!");
+            validateLogin();
+            // Tambahkan navigasi ke halaman lain
+        } else {
+            System.out.println("Username dan password harus terisi");
+            // Tampilkan pesan error di UI
+        }
     }
     @FXML
     private Button onLoginButtonClick;
@@ -127,5 +143,29 @@ public class LoginController implements Initializable{
 
 
 
+    }
+
+    public void validateLogin(){
+        DatabaseConnection connectNow = new DatabaseConnection();
+        Connection connectDB = connectNow.getConnection();
+
+        String verifyLogin ="SELECT count(1) FROM actor WHERE username = '" + usernameField.getText() + "' AND password = '" + passwordField.getText() + "'";
+
+        try{
+            Statement statement = connectDB.createStatement();
+            ResultSet queryResult = statement.executeQuery(verifyLogin);
+
+            while(queryResult.next()){
+                if (queryResult.getInt(1) == 1){
+                    System.out.println("Login Berhasil");
+                }
+                else {
+                    System.out.println("Login Gagal");
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

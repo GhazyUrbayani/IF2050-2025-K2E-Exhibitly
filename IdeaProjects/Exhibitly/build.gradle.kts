@@ -37,6 +37,7 @@ javafx {
 
 dependencies {
     implementation("org.controlsfx:controlsfx:11.2.1")
+    implementation("com.mysql:mysql-connector-j:9.3.0")
     implementation("net.synedra:validatorfx:0.5.0") {
         exclude(group = "org.openjfx")
     }
