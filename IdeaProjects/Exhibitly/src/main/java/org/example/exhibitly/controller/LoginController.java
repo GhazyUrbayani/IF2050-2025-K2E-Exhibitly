@@ -73,12 +73,32 @@ public class LoginController implements Initializable{
             System.err.println("Error loading logo for button: " + e.getMessage());
             e.printStackTrace();
         }
+
     }
 
     public void onExhibitButtonClick(ActionEvent actionEvent) {
     }
 
-    public void onArtefactButtonClick(ActionEvent actionEvent) {
+    @FXML
+    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+        try {
+            // Path ke file FXML halaman Artefak
+            // Pastikan path ini benar dan diawali dengan '/'
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
+            Parent artefactPage = loader.load();
+
+            // Mendapatkan Stage dari tombol yang diklik
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Mengatur Scene baru ke halaman Artefak
+            stage.setScene(new Scene(artefactPage));
+            stage.setTitle("Museum Nusantara - Artefacts"); // Ubah judul jendela
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat halaman Artefak: " + e.getMessage());
+            // Tambahkan Alert atau notifikasi ke pengguna jika terjadi error loading
+        }
     }
 
     public void onTicketsButtonClick(ActionEvent actionEvent) {
@@ -104,6 +124,8 @@ public class LoginController implements Initializable{
             System.err.println("Gagal memuat halaman landing page: " + e.getMessage());
             // Tambahkan dialog peringatan kepada pengguna jika perlu
         }
+
+
 
     }
 }

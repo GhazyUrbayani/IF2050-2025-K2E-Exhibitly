@@ -14,60 +14,61 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.Region?>
 
 <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.LoginController">
     <children>
-        <Pane prefHeight="100.0" prefWidth="1366.0" style="-fx-background-color: #000000;">
+        <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
+        <Button fx:id="onLoginButtonClick" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: black; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-border-width: 0.3;" text="Login" textFill="WHITE" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="20.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+
+        <HBox alignment="CENTER" prefHeight="30.0" spacing="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
             <children>
-
-                <HBox alignment="CENTER" layoutY="36.0" prefHeight="100.0" prefWidth="1366.0" />
-
-                <Button fx:id="onLoginButtonClick" layoutX="1250.0" layoutY="20.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: black; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-border-width: 0.3;" text="Login" textFill="WHITE">
+                <Button mnemonicParsing="false" onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
                     <font>
-                        <Font size="14.0" />
+                        <Font name="Plus Jakarta Sans Bold" size="14.0" />
                     </font>
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
-
-                <HBox alignment="CENTER" layoutX="0.0" layoutY="70.0" prefHeight="30.0" prefWidth="1366.0" spacing="100.0">
-                    <children>
-                        <Button mnemonicParsing="false" onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
-                            <font>
-                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                            </font>
-                            <cursor>
-                                <Cursor fx:constant="HAND" />
-                            </cursor>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onArtefactButtonClick" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
-                            <font>
-                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                            </font>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onTicketsButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
-                            <font>
-                                <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                            </font>
-                            <cursor>
-                                <Cursor fx:constant="HAND" />
-                            </cursor>
-                        </Button>
-                    </children>
-                </HBox>
-                <Line endX="582.122802734375" endY="-7.62939453125E-6" layoutX="782.0" layoutY="66.0" startX="-814.3771362304688" startY="-7.62939453125E-6" stroke="WHITE" strokeWidth="0.3" />
-                <Button fx:id="logoButton" layoutX="582.0" layoutY="-10.0" onAction="#onLogoButtonClick" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: transparent;">
-                    <graphic>
-                        <ImageView fitHeight="100.0" fitWidth="200.0" layoutX="582.0" layoutY="-10.0" preserveRatio="true">
-                        </ImageView>
-                    </graphic>
+                <Button mnemonicParsing="false" onAction="#onArtefactButtonClick" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
+                    <font>
+                        <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#onTicketsButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
+                    <font>
+                        <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                    </font>
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
             </children>
-        </Pane>
+        </HBox>
+
+        <Line stroke="WHITE" strokeWidth="0.3" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
+
+        <Button fx:id="logoButton" onAction="#onLogoButtonClick" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="583.0" AnchorPane.rightAnchor="583.0" AnchorPane.topAnchor="1.0">
+            <graphic>
+                <ImageView fitHeight="100.0" fitWidth="200.0" preserveRatio="true">
+                </ImageView>
+            </graphic>
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
 
         <StackPane layoutX="0.0" layoutY="100.0" prefHeight="668.0" prefWidth="1366.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
             <children>
