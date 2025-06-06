@@ -53,7 +53,6 @@
 
         <Line stroke="WHITE" strokeWidth="0.3" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
 
-        <!-- FIXED: Remove the nested Image element -->
         <Button fx:id="logoButton" onAction="#onLogoButtonClick" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="583.0" AnchorPane.rightAnchor="583.0" AnchorPane.topAnchor="1.0">
             <graphic>
                 <ImageView fx:id="ticketImageView" fitHeight="100.0" fitWidth="200.0" preserveRatio="true" />

@@ -150,13 +150,14 @@
                     </VBox>
                     <VBox spacing="5.0">
                         <Label text="REGION" style="-fx-font-size: 14px;" />
-                        <CheckBox text="DKI Jakarta" />
-                        <CheckBox text="Jawa Barat" />
-                        <CheckBox text="Jawa Tengah" />
-                        <CheckBox text="DI Yogyakarta" />
-                        <CheckBox text="Jawa Timur" />
+                        <CheckBox fx:id="DKIJakartaCheckBox" text="DKI Jakarta" />
+                        <CheckBox fx:id="JawaBaratCheckBox" text="Jawa Barat" />
+                        <CheckBox fx:id="JawaTengahCheckBox" text="Jawa Tengah" />
+                        <CheckBox fx:id="DIYogyakartaCheckBox" text="DI Yogyakarta" />
+                        <CheckBox fx:id="JawaTimurCheckBox" text="Jawa Timur" />
                         <Button mnemonicParsing="false" onAction="#onValidateRegionFilter" text="VALIDATE FILTERS" />
                     </VBox>
+                    <Button text="Clear All Filters" onAction="#onClearAllFilters" style="-fx-background-color: #ff6b6b; -fx-text-fill: white; -fx-background-radius: 5;" />
                     <Region VBox.vgrow="ALWAYS" /> </VBox>
 
                 <VBox HBox.hgrow="ALWAYS" prefHeight="200.0" prefWidth="200.0" spacing="20.0">

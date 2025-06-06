@@ -8,10 +8,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -23,8 +25,10 @@ import org.example.exhibitly.models.Artefact;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class ArtefactController implements Initializable {
 
@@ -47,6 +51,18 @@ public class ArtefactController implements Initializable {
     private TextField periodFromField;
     @FXML
     private TextField periodToField;
+
+    /* CheckBox Attributes */
+    @FXML
+    private CheckBox  DKIJakartaCheckBox;
+    @FXML
+    private CheckBox  JawaBaratCheckBox;
+    @FXML
+    private CheckBox  JawaTengahCheckBox;
+    @FXML
+    private CheckBox  DIYogyakartaCheckBox;
+    @FXML
+    private CheckBox  JawaTimurCheckBox;
     // Tambahkan @FXML untuk CheckBox region jika ingin mengontrolnya di Java
     // @FXML private CheckBox dkiJakartaCheckbox;
     // ...
@@ -67,15 +83,30 @@ public class ArtefactController implements Initializable {
 
         // Contoh data artefak
         allArtefacts = new ArrayList<>();
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A002", "ARCA CIREBON", "Jawa Barat", 1400, 1500, "/images/arca2.png"));
-        allArtefacts.add(new Artefact("A003", "ARCA JATINANGOR", "Jawa Barat", 1200, 1300, "/images/arca3.png"));
-        allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000, 1100, "/images/arca4.png"));
-        allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700, 800, "/images/arca5.png"));
-        allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900, 1000, "/images/arca6.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A002", "ARCA CIREBON", "Jawa Barat", 1400, "/images/arca2.png"));
+        allArtefacts.add(new Artefact("A003", "ARCA JATINANGOR", "Jawa Barat", 1200,  "/images/arca3.png"));
+        allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000,  "/images/arca4.png"));
+        allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700,  "/images/arca5.png"));
+        allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900,  "/images/arca6.png"));
         // Tambahkan lebih banyak data sesuai kebutuhan Anda
-        // allArtefacts.add(new Artefact("A007", "NAMA ARTEFAK BARU", "REGION BARU", 1600, 1700, "/path/to/new_artefact.png"));
 
+        /* Real Time Update for each Filter */
+        // searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
+
+        // periodFromField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
+
+        // periodToField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
+
+        // setupRegionFilterListeners();
+
+        setupEnterKeyHandlers();
 
         // Tampilkan semua artefak saat pertama kali halaman dimuat
         displayArtefacts(allArtefacts);
@@ -160,10 +191,10 @@ public class ArtefactController implements Initializable {
         name.setFont(Font.font("Plus Jakarta Sans Bold", FontWeight.BOLD, 18));
 
         Label region = new Label("Region: " + artefact.getRegion());
-        Label period = new Label("Period: " + artefact.getPeriodStart() + " - " + artefact.getPeriodEnd());
+        Label period = new Label("Period: " + artefact.getPeriod());
         Label description = new Label("ID: " + artefact.getId() + "\n" + // Contoh detail lebih lengkap
                 "This is a detailed description for " + artefact.getName() + ". " +
-                "It represents a significant cultural artifact from the " + artefact.getRegion() + " region.");
+                "It represents a significant cultural artefact from the " + artefact.getRegion() + " region.");
         description.setWrapText(true);
         description.setMaxWidth(400);
 
@@ -178,24 +209,239 @@ public class ArtefactController implements Initializable {
         detailStage.show();
     }
 
+    // --- Key Handlers ---
+
+    private void setupEnterKeyHandlers() {
+        searchTextField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                onSearch();
+            }
+        });
+    }
+
 
     // --- Event Handlers (dari header dan filter) ---
 
     @FXML
     private void onSearch() {
-
+        applyAllFilter();
     }
+
 
     @FXML
     private void onValidatePeriodFilter() {
-
+        applyAllFilter();
     }
 
     @FXML
     private void onValidateRegionFilter() {
-
+        applyAllFilter();
     }
 
+
+    private void applyAllFilter() {
+        List<Artefact> filterArtefact = new ArrayList<>(allArtefacts);
+
+        String userSearch = searchTextField.getText();
+
+        if (userSearch != null && !userSearch.trim().isEmpty()) {
+            filterArtefact = filterBySearchText(filterArtefact, userSearch);
+        }
+
+        Set<String> selectedRegion = getSelectedRegion();
+        if (!selectedRegion.isEmpty()) {
+            filterArtefact = filterByRegion(filterArtefact, selectedRegion);
+        }
+
+        filterArtefact = filterByPeriod(filterArtefact);
+
+        displayArtefacts(filterArtefact);
+    }
+
+    private Set<String> getSelectedRegion() {
+        Set<String> region = new HashSet<>();
+
+        if (DKIJakartaCheckBox != null && DKIJakartaCheckBox.isSelected()) {
+            region.add("DKI Jakarta");
+        }
+        if (JawaBaratCheckBox != null && JawaBaratCheckBox.isSelected()) {
+            region.add("Jawa Barat");
+        }
+        if (JawaTengahCheckBox != null && JawaTengahCheckBox.isSelected()) {
+            region.add("Jawa Tengah");
+        }
+        if (DIYogyakartaCheckBox != null && DIYogyakartaCheckBox.isSelected()) {
+            region.add("DI Yogyakarta");
+        }
+        if (JawaTimurCheckBox != null && JawaTimurCheckBox.isSelected()) {
+            region.add("Jawa Timur");
+        }
+        return region;
+    }
+
+    private void setupRegionFilterListeners() {
+        if (DKIJakartaCheckBox != null) {
+            DKIJakartaCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("DKI Jakarta checkbox changed: " + newValue);
+                applyAllFilter();
+            });
+        }
+
+        if (JawaBaratCheckBox != null) {
+            JawaBaratCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("Jawa Barat checkbox changed: " + newValue);
+                applyAllFilter();
+            });
+        }
+
+        if (JawaTengahCheckBox != null) {
+            JawaTengahCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("Jawa Tengah checkbox changed: " + newValue);
+                applyAllFilter();
+            });
+        }
+
+        if (DIYogyakartaCheckBox != null) {
+            DIYogyakartaCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("DI Yogyakarta checkbox changed: " + newValue);
+                applyAllFilter();
+            });
+        }
+
+        if (JawaTimurCheckBox != null) {
+            JawaTimurCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("Jawa Timur checkbox changed: " + newValue);
+                applyAllFilter();
+            });
+        }
+    }
+
+    private List<Artefact> filterBySearchText(List<Artefact> artefactList, String userSearch) {
+        if (userSearch == null || userSearch.trim().isEmpty()) {
+            return artefactList;
+        }
+
+        userSearch = userSearch.trim().toLowerCase();
+
+        List<Artefact> filterArtefact = new ArrayList<>();
+
+        for (Artefact entry : artefactList) {
+            boolean matchesName = entry.getName().toLowerCase().contains(userSearch);
+            boolean matchesId = entry.getId().toLowerCase().contains(userSearch);
+            boolean matchesRegion = entry.getRegion().toLowerCase().contains(userSearch);
+
+            if (matchesName || matchesId || matchesRegion) {
+                filterArtefact.add(entry);
+            }
+        }
+        return filterArtefact;
+    }
+
+    private List<Artefact> filterByRegion(List<Artefact> artefactList, Set<String> regionSet) {
+        List<Artefact> filterArtefacts = new ArrayList<>();
+
+        for (Artefact entry : artefactList) {
+            boolean matchesRegion = regionSet.contains(entry.getRegion());
+
+            if (matchesRegion) {
+                filterArtefacts.add(entry);
+            }
+        }
+        return filterArtefacts;
+    }
+
+    private List<Artefact> filterByPeriod(List<Artefact> artefactList) {
+        String fromPeriod;
+        String toPeriod;
+
+        if (periodFromField != null) {
+            fromPeriod = periodFromField.getText().trim();
+        } else {
+            fromPeriod = "";
+        }
+
+        if (periodToField != null) {
+            toPeriod = periodToField.getText().trim();
+        } else {
+            toPeriod = "";
+        }
+
+        if (fromPeriod.isEmpty() && toPeriod.isEmpty()) {
+            return artefactList;
+        }        
+
+        List<Artefact> filterArtefact = new ArrayList<>();
+
+        try {
+            int fromYear;
+            int toYear;
+
+            if (fromPeriod.isEmpty()) {
+                fromYear = 0;
+            } else {
+                fromYear = Integer.parseInt(fromPeriod);
+            }
+
+            if (toPeriod.isEmpty()) {
+                toYear = 0;
+            } else {
+                toYear = Integer.parseInt(toPeriod);
+            }
+
+            for (Artefact entry : artefactList) {
+                boolean periodChecker;
+
+                if (fromPeriod.isEmpty()) {
+                    periodChecker = entry.getPeriod() <= toYear;
+                } else if (toPeriod.isEmpty()) {
+                    periodChecker = entry.getPeriod() >= fromYear;
+                } else {
+                    periodChecker = entry.getPeriod() >= fromYear && entry.getPeriod() <= toYear;
+                }
+
+                if (periodChecker) {
+                    filterArtefact.add(entry);
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid period format!");
+            return artefactList;
+        }
+        
+        return filterArtefact;
+    }
+
+    @FXML
+    private void onClearAllFilters() {
+        if (searchTextField != null) {
+            searchTextField.clear();
+        }
+
+        if (periodFromField != null) {
+            periodFromField.clear();
+        }
+        if (periodToField != null) {
+            periodToField.clear();
+        }
+
+        if (DKIJakartaCheckBox != null) {
+            DKIJakartaCheckBox.setSelected(false);
+        }
+        if (JawaBaratCheckBox != null) {
+            JawaBaratCheckBox.setSelected(false);
+        }
+        if (JawaTengahCheckBox != null) {
+            JawaTengahCheckBox.setSelected(false);
+        }
+        if (DIYogyakartaCheckBox != null) {
+            DIYogyakartaCheckBox.setSelected(false);
+        }
+        if (JawaTimurCheckBox != null) {
+            JawaTimurCheckBox.setSelected(false);
+        }
+
+        applyAllFilter();
+    }
 
     // Event handler dari Header (pastikan sudah disesuaikan dengan ActionEvent/MouseEvent)
     
