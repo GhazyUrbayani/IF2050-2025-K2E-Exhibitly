@@ -164,4 +164,10 @@ public class LandingPageController implements Initializable {
 
     public void onTicketsButtonClick(ActionEvent actionEvent) {
     }
+
+    public void onLogoutButtonClick(ActionEvent actionEvent) {
+    }
+
+    public void onMaintenanceButtonClick(ActionEvent actionEvent) {
+    }
 }
