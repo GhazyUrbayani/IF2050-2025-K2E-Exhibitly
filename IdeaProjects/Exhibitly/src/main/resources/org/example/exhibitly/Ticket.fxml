@@ -227,5 +227,63 @@
                 </ScrollPane>
             </children>
         </StackPane>
+
+        <!--Footer-->
+        <AnchorPane prefHeight="150.0" style="-fx-background-color: #B6B09F;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+            <children>
+                <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0">
+                    <Label text="Museum Nusantara" textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label text="Jl. Ganesa No. 10" textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
+                        </font>
+                    </Label>
+                    <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
+                        </font>
+                    </Label>
+                    <Label text="Indonesia 40132." textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
+                        </font>
+                    </Label>
+                </VBox>
+
+                <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="50.0">
+                    <Label text="Jam Berkunjung" textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Bold" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
+                        </font>
+                    </Label>
+                    <Label text="Senin Museum tutup." textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
+                        </font>
+                    </Label>
+                    <Label text="Akses terakhir 17.30 WIB" textFill="BLACK">
+                        <font>
+                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
+                        </font>
+                    </Label>
+                </VBox>
+
+                <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="BLACK" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                <VBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                    <children>
+                        <ImageView fx:id="logoFooter" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
     </children>
 </AnchorPane>

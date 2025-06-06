@@ -88,7 +88,6 @@ public class LandingPageController implements Initializable {
             System.err.println("Error loading logo for button: " + e.getMessage());
             e.printStackTrace();
         }
-        // Inisialisasi Pesan Selamat Datang
         welcomeMessages = new ArrayList<>(Arrays.asList(
                 "SELAMAT DATANG",          // Bahasa Indonesia
                 "RAHAJENG RAWUH",          // Bahasa Jawa (halus/krama)
