@@ -48,16 +48,7 @@ public class TicketController {
         }
         updateCartDisplay();
     }
-
-    @FXML
-    public void handleLogin(ActionEvent actionEvent) {
-        try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Login.fxml");
-        } catch (IOException e) {
-            System.err.println("[Error] " + e.getMessage());
-        }
-    }
-
+    
     @FXML
     public void addRegularTicket(ActionEvent actionEvent) {
         try {
@@ -127,41 +118,45 @@ public class TicketController {
         return (regularTickets * REGULAR_PRICE) + (premiumTickets * PREMIUM_PRICE);
     }
 
-    @FXML 
-    public void handleExhibit(ActionEvent actionEvent) {
-        try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
-        } catch (IOException e) {
-            System.err.println("[Error] " + e.getMessage());
-        }    
+    @FXML
+    private void onLoginButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");    }
+
+    @FXML
+    private void onExhibitButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    public void handleArtefact(ActionEvent actionEvent) {
-        try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/artefact.fxml");
-        } catch (IOException e) {
-            System.err.println("Error navigating to artefact page: " + e.getMessage());
-        }    
+    private void onArtefactButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+
     }
 
     @FXML
-    public void handleTickets(ActionEvent actionEvent) {
-        System.out.println("Tickets button clicked!");
+    private void onTicketButtonClick(ActionEvent actionEvent) {
+        System.out.println("Sudah ada di Ticket Page!");
     }
 
-    private void navigateToPage(ActionEvent actionEvent, String path) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource(path));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root, 1366, 768);
+    @FXML
+    private void onLogoButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
+    }
 
+    private void navigateToPage(ActionEvent actionEvent, String path) {
+        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
         try {
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        } catch (Exception e) {
-            System.out.println("[Error] Couldn't load stylesheet");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            
+            stage.setTitle("Museum Nusantar - " + pageName);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
         }
-
-        stage.setScene(scene);
-        stage.show();
     }
 }

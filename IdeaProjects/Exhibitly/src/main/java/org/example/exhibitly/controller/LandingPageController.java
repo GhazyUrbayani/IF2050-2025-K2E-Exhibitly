@@ -39,78 +39,6 @@ public class LandingPageController implements Initializable {
     private Button logoButton;
 
     @FXML
-    private void onLoginButtonClick() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/login.fxml"));
-            Parent loginPage = loader.load();
-
-            Stage stage = (Stage) onLoginButtonClick.getScene().getWindow();
-
-            stage.setScene(new Scene(loginPage));
-            stage.setTitle("Museum Nusantara - Login");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle error, misalnya tampilkan dialog error
-            System.err.println("Gagal memuat halaman login: " + e.getMessage());
-        }
-    }
-
-    // Metode untuk tombol navigasi lainnya (EXHIBIT, ARTEFACT, TICKETS)
-    // Anda bisa menambahkan logika navigasi ke halaman yang sesuai di sini
-    @FXML
-    private void onExhibitButtonClick() {
-        System.out.println("Tombol EXHIBIT diklik!");
-    }
-
-
-    @FXML
-    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
-        try {
-            // Path ke file FXML halaman Artefak
-            // Pastikan path ini benar dan diawali dengan '/'
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
-            Parent artefactPage = loader.load();
-
-            // Mendapatkan Stage dari tombol yang diklik
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Mengatur Scene baru ke halaman Artefak
-            stage.setScene(new Scene(artefactPage));
-            stage.setTitle("Museum Nusantara - Artefacts"); // Ubah judul jendela
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman Artefak: " + e.getMessage());
-            // Tambahkan Alert atau notifikasi ke pengguna jika terjadi error loading
-        }
-    }
-
-    @FXML
-    private void onTicketsButtonClick() {
-        System.out.println("Tombol TICKETS diklik!");
-        // Logika untuk menampilkan halaman tickets
-    }
-
-    @FXML
-    public void onLogoButtonClick() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
-            Parent landingPage = loader.load();
-
-            Stage stage = (Stage) onLogoButtonClick.getScene().getWindow();
-
-            stage.setScene(new Scene(landingPage));
-            stage.setTitle("Museum Nusantara - Landing Page");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle error, misalnya tampilkan dialog error
-            System.err.println("Gagal memuat halaman login: " + e.getMessage());
-        }
-    }
-
-    @FXML
     private ImageView LandingImageView;
     @FXML
     private ImageView Landing2ImageView;
@@ -118,8 +46,10 @@ public class LandingPageController implements Initializable {
     private ImageView myImageView;
     @FXML
     private ImageView logoFooter;
+
     @FXML
     private Label welcomeTextLabel;
+
     private List<String> welcomeMessages;
     private int currentMessageIndex = 0;
     private Timeline timeline;
@@ -172,6 +102,7 @@ public class LandingPageController implements Initializable {
         startWelcomeTextAnimation();
 
     }
+    
     private void startWelcomeTextAnimation() {
         // Set teks awal
         welcomeTextLabel.setText(welcomeMessages.get(currentMessageIndex));
@@ -204,6 +135,48 @@ public class LandingPageController implements Initializable {
         timeline.play();
     }
 
+    @FXML
+    private void onLoginButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");    
+    }
 
+
+    @FXML
+    private void onExhibitButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
+    }
+
+    @FXML
+    private void onArtefactButtonClick(ActionEvent actionEvent) { // <-- Metode ini harus menerima ActionEvent
+        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+
+    }
+
+    @FXML
+    private void onTicketButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
+    }
+
+    @FXML
+    private void onLogoButtonClick(ActionEvent actionEvent) { // <--- Tambahkan ActionEvent event
+        System.out.println("Sudah ada di dalam Landing Page!");
+    }
+
+    private void navigateToPage(ActionEvent actionEvent, String path) {
+        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            
+            stage.setTitle("Museum Nusantar - " + pageName);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+        }
+    }
 
 }

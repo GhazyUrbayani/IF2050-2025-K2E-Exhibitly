@@ -46,7 +46,7 @@
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#onTicketsButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
+                <Button mnemonicParsing="false" onAction="#onTicketButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
                     <font>
                         <Font name="Plus Jakarta Sans Bold" size="14.0" />
                     </font>
