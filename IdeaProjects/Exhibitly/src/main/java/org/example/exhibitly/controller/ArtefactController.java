@@ -33,19 +33,19 @@ import java.util.Set;
 public class ArtefactController implements Initializable {
 
     @FXML
-    private ImageView logoHeaderImageView; // fx:id untuk logo di header
+    private ImageView logoHeaderImageView;
     @FXML
-    private ImageView logoFooter; // fx:id untuk logo di footer
+    private ImageView logoFooter;
 
     @FXML
-    private Button onLoginButtonClick; // Untuk mengambil Stage dari tombol ini
+    private Button onLoginButtonClick;
 
     @FXML
     private TextField searchTextField;
     @FXML
     private Label resultsCountLabel;
     @FXML
-    private GridPane artefactGrid; // GridPane tempat artefak akan ditambahkan
+    private GridPane artefactGrid;
 
     @FXML
     private TextField periodFromField;
