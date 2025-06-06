@@ -53,15 +53,23 @@ public class ArtefactController implements Initializable {
 
     // Data artefak (simulasi dari database)
     private List<Artefact> allArtefacts;
+    @FXML
+    private Button logoButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Inisialisasi gambar header dan footer
         try {
-            logoHeaderImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png"))); // Ganti dengan path logo header yang benar
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {
             System.err.println("Error loading logos: " + e.getMessage());
+            e.printStackTrace();
+        }
+        try {
+            ImageView logoImageView = (ImageView) logoButton.getGraphic();
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+        } catch (Exception e) {
+            System.err.println("Error loading logo for button: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -73,6 +81,13 @@ public class ArtefactController implements Initializable {
         allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000, 1100, "/images/arca4.png"));
         allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700, 800, "/images/arca5.png"));
         allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900, 1000, "/images/arca6.png"));
+        allArtefacts.add(new Artefact("A007", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
         // Tambahkan lebih banyak data sesuai kebutuhan Anda
         // allArtefacts.add(new Artefact("A007", "NAMA ARTEFAK BARU", "REGION BARU", 1600, 1700, "/path/to/new_artefact.png"));
 

@@ -2,170 +2,123 @@ package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.event.ActionEvent;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
-import javafx.stage.Stage;
 
+public class LoginController implements Initializable {
 
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Label loginMessageLabel;
+    @FXML private Button loginButton;
+    @FXML private Button logoButton;
 
-public class LoginController implements Initializable{
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            ImageView logoImageView = (ImageView) logoButton.getGraphic();
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+        } catch (Exception e) {
+            System.err.println("Error loading logo: " + e.getMessage());
+        }
+    }
 
-    @FXML
-    private TextField usernameField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Label welcomeText; // Jika Anda masih ingin menggunakan label ini di FXML lain
-
-    // Metode untuk tombol "Masuk" pada form login
     @FXML
     protected void handleLogin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
+        if (username.isBlank() || password.isBlank()) {
+            loginMessageLabel.setText("Username dan Password tidak boleh kosong.");
+            return;
+        }
 
-        // Contoh sederhana:
-        if (!username.isBlank() && !password.isBlank()) {
-            System.out.println("Mencoba login!");
-            validateLogin();
-            // Tambahkan navigasi ke halaman lain
+        if (validateLogin(username, password)) {
+            goToDashboard(event);
         } else {
-            System.out.println("Username dan password harus terisi");
-            // Tampilkan pesan error di UI
+            loginMessageLabel.setText("Username atau Password salah.");
         }
     }
-    @FXML
-    private Button onLoginButtonClick;
 
-    // Metode untuk tombol "Login" di header (jika berbeda fungsinya dengan di form)
-    @FXML
-    protected void onLoginButtonClick(ActionEvent event) {
+    private boolean validateLogin(String username, String password) {
+        String sql = "SELECT COUNT(1) FROM actor WHERE username = ? AND password = ?";
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/login.fxml"));
-            Parent loginPage = loader.load();
+            DatabaseConnection connectNow = new DatabaseConnection();
+            Connection connectDB = connectNow.getConnection();
+            PreparedStatement preparedStatement = connectDB.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
 
-            Stage stage = (Stage) onLoginButtonClick.getScene().getWindow();
-
-            stage.setScene(new Scene(loginPage));
-            stage.setTitle("Museum Nusantara - Login");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle error, misalnya tampilkan dialog error
-            System.err.println("Gagal memuat halaman login: " + e.getMessage());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) == 1;
+            }
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
         }
-
+        return false;
     }
 
-    @FXML
-    private Button logoButton;
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Cara load gambar dari folder resources/images/logo.png
+    private void goToDashboard(ActionEvent event) {
         try {
-            ImageView logoImageView = (ImageView) logoButton.getGraphic();
-            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
-        } catch (Exception e) {
-            System.err.println("Error loading logo for button: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-    }
-
-    public void onExhibitButtonClick(ActionEvent actionEvent) {
-    }
-
-    @FXML
-    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
-        try {
-            // Path ke file FXML halaman Artefak
-            // Pastikan path ini benar dan diawali dengan '/'
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
-            Parent artefactPage = loader.load();
-
-            // Mendapatkan Stage dari tombol yang diklik
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingDoneLoginPage.fxml"));
+            Parent dashboardPage = loader.load();
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Mengatur Scene baru ke halaman Artefak
-            stage.setScene(new Scene(artefactPage));
-            stage.setTitle("Museum Nusantara - Artefacts"); // Ubah judul jendela
+            stage.setScene(new Scene(dashboardPage));
+            stage.setTitle("Museum Nusantara - Dashboard");
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman Artefak: " + e.getMessage());
-            // Tambahkan Alert atau notifikasi ke pengguna jika terjadi error loading
+            System.err.println("Gagal memuat dashboard: " + e.getMessage());
         }
     }
 
-    public void onTicketsButtonClick(ActionEvent actionEvent) {
-    }
     @FXML
-    private Button onLogoButtonClick;
-
-
-    @FXML
-    public void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+    public void onLogoButtonClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
             Parent landingPage = loader.load();
-
-            // Mendapatkan Stage dari tombol yang diklik
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow(); // <--- Ini yang benar
-
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(landingPage));
             stage.setTitle("Museum Nusantara - Landing Page");
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman landing page: " + e.getMessage());
-            // Tambahkan dialog peringatan kepada pengguna jika perlu
+            System.err.println("Gagal memuat landing page: " + e.getMessage());
         }
-
-
-
     }
 
-    public void validateLogin(){
-        DatabaseConnection connectNow = new DatabaseConnection();
-        Connection connectDB = connectNow.getConnection();
-
-        String verifyLogin ="SELECT count(1) FROM actor WHERE username = '" + usernameField.getText() + "' AND password = '" + passwordField.getText() + "'";
-
-        try{
-            Statement statement = connectDB.createStatement();
-            ResultSet queryResult = statement.executeQuery(verifyLogin);
-
-            while(queryResult.next()){
-                if (queryResult.getInt(1) == 1){
-                    System.out.println("Login Berhasil");
-                }
-                else {
-                    System.out.println("Login Gagal");
-                }
-            }
+    @FXML
+    public void onArtefactButtonClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
+            Parent artefactPage = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(artefactPage));
+            stage.setTitle("Museum Nusantara - Artefacts");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Gagal memuat halaman Artefak: " + e.getMessage());
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+    }
+
+    @FXML
+    public void onTicketsButtonClick(ActionEvent event) {
+        // TODO: Implementasi halaman tiket
+    }
+
+    public void onLoginButtonClick(ActionEvent actionEvent) {
+    }
+
+    public void onExhibitButtonClick(ActionEvent actionEvent) {
     }
 }
