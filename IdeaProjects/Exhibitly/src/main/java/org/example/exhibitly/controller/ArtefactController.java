@@ -33,8 +33,6 @@ import java.util.Set;
 public class ArtefactController extends BaseController implements Initializable {
 
     @FXML
-    private ImageView logoHeaderImageView;
-    @FXML
     private ImageView logoFooter;
 
     @FXML
@@ -86,15 +84,14 @@ public class ArtefactController extends BaseController implements Initializable 
             e.printStackTrace();
         }
 
-        // Contoh data artefak
+        // Contoh data artefak sesuai entity model
         allArtefacts = new ArrayList<>();
-        allArtefacts = new ArrayList<>();
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A002", "ARCA CIREBON", "Jawa Barat", 1400, "/images/arca2.png"));
-        allArtefacts.add(new Artefact("A003", "ARCA JATINANGOR", "Jawa Barat", 1200,  "/images/arca3.png"));
-        allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000,  "/images/arca4.png"));
-        allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700,  "/images/arca5.png"));
-        allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900,  "/images/arca6.png"));
+        allArtefacts.add(new Artefact(1, "ARCA GANESHA", "Jawa Timur", 800, "Arca Ganesha dari Jawa Timur.", "/images/arca1.png"));
+        allArtefacts.add(new Artefact(2, "ARCA CIREBON", "Jawa Barat", 1400, "Arca Cirebon dari Jawa Barat.", "/images/arca2.png"));
+        allArtefacts.add(new Artefact(3, "ARCA JATINANGOR", "Jawa Barat", 1200, "Arca Jatinangor dari Jawa Barat.", "/images/arca3.png"));
+        allArtefacts.add(new Artefact(4, "ARCA DAGU", "DKI Jakarta", 1000, "Arca Dagu dari DKI Jakarta.", "/images/arca4.png"));
+        allArtefacts.add(new Artefact(5, "ARCA TUBIS", "DI Yogyakarta", 700, "Arca Tubis dari DI Yogyakarta.", "/images/arca5.png"));
+        allArtefacts.add(new Artefact(6, "ARCA CISITU", "Jawa Barat", 900, "Arca Cisitu dari Jawa Barat.", "/images/arca6.png"));
 
         /* Real Time Update for each Filter */
         // searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -137,17 +134,17 @@ public class ArtefactController extends BaseController implements Initializable 
 
             // Muat gambar artefak
             try {
-                imageView.setImage(new Image(getClass().getResourceAsStream(artefact.getImageUrl())));
+                imageView.setImage(new Image(getClass().getResourceAsStream(artefact.getMediaURL())));
             } catch (Exception e) {
-                System.err.println("Failed to load image for: " + artefact.getName() + " from " + artefact.getImageUrl());
+                System.err.println("Failed to load image for: " + artefact.getTitle() + " from " + artefact.getMediaURL());
                 imageView.setImage(new Image(getClass().getResourceAsStream("/org/example/exhibitly/images/placeholder.png"))); // Gambar placeholder
             }
 
-            Label nameLabel = new Label(artefact.getName());
+            Label nameLabel = new Label(artefact.getTitle());
             nameLabel.setFont(Font.font("Plus Jakarta Sans Bold", FontWeight.BOLD, 14));
-            nameLabel.setWrapText(true); // Teks nama artefak bisa wrap
+            nameLabel.setWrapText(true);
             nameLabel.setAlignment(Pos.CENTER);
-            nameLabel.setMaxWidth(200); // Sesuaikan dengan lebar gambar
+            nameLabel.setMaxWidth(200);
 
             Label regionLabel = new Label(artefact.getRegion());
             regionLabel.setFont(Font.font("Plus Jakarta Sans Regular", 12));
@@ -174,7 +171,7 @@ public class ArtefactController extends BaseController implements Initializable 
 
     private void showArtefactDetail(Artefact artefact) {
         // Implementasi untuk menampilkan detail artefak (bisa berupa pop-up atau halaman baru)
-        System.out.println("Detail for: " + artefact.getName() + " (" + artefact.getId() + ")");
+        System.out.println("Detail for: " + artefact.getTitle() + " (" + artefact.getArtefactID() + ")");
         // Contoh: Membuat pop-up sederhana
         Stage detailStage = new Stage();
         VBox detailLayout = new VBox(10);
@@ -187,19 +184,17 @@ public class ArtefactController extends BaseController implements Initializable 
         detailImageView.setFitHeight(300);
         detailImageView.setPreserveRatio(true);
         try {
-            detailImageView.setImage(new Image(getClass().getResourceAsStream(artefact.getImageUrl())));
+            detailImageView.setImage(new Image(getClass().getResourceAsStream(artefact.getMediaURL())));
         } catch (Exception e) {
             detailImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/exhibitly/images/placeholder.png")));
         }
 
-        Label name = new Label(artefact.getName());
+        Label name = new Label(artefact.getTitle());
         name.setFont(Font.font("Plus Jakarta Sans Bold", FontWeight.BOLD, 18));
 
         Label region = new Label("Region: " + artefact.getRegion());
         Label period = new Label("Period: " + artefact.getPeriod());
-        Label description = new Label("ID: " + artefact.getId() + "\n" + // Contoh detail lebih lengkap
-                "This is a detailed description for " + artefact.getName() + ". " +
-                "It represents a significant cultural artefact from the " + artefact.getRegion() + " region.");
+        Label description = new Label(artefact.getDescription());
         description.setWrapText(true);
         description.setMaxWidth(400);
 
@@ -210,7 +205,7 @@ public class ArtefactController extends BaseController implements Initializable 
 
         detailLayout.getChildren().addAll(detailImageView, name, region, period, description, closeButton);
         detailStage.setScene(new Scene(detailLayout));
-        detailStage.setTitle(artefact.getName() + " Details");
+        detailStage.setTitle(artefact.getTitle() + " Details");
         detailStage.show();
     }
 
@@ -321,6 +316,30 @@ public class ArtefactController extends BaseController implements Initializable 
         }
     }
 
+    // --- CRUD Methods sesuai Entity Model ---
+
+    public void addArtefact(Artefact artefact) {
+        allArtefacts.add(artefact);
+        displayArtefacts(allArtefacts);
+    }
+
+    public void editArtefact(int artefactID, Artefact updatedArtefact) {
+        for (int i = 0; i < allArtefacts.size(); i++) {
+            if (allArtefacts.get(i).getArtefactID() == artefactID) {
+                allArtefacts.set(i, updatedArtefact);
+                break;
+            }
+        }
+        displayArtefacts(allArtefacts);
+    }
+
+    public void deleteArtefact(int artefactID) {
+        allArtefacts.removeIf(a -> a.getArtefactID() == artefactID);
+        displayArtefacts(allArtefacts);
+    }
+
+    // --- Filter & Search Methods (update agar pakai getter entity model) ---
+
     private List<Artefact> filterBySearchText(List<Artefact> artefactList, String userSearch) {
         if (userSearch == null || userSearch.trim().isEmpty()) {
             return artefactList;
@@ -331,11 +350,11 @@ public class ArtefactController extends BaseController implements Initializable 
         List<Artefact> filterArtefact = new ArrayList<>();
 
         for (Artefact entry : artefactList) {
-            boolean matchesName = entry.getName().toLowerCase().contains(userSearch);
-            boolean matchesId = entry.getId().toLowerCase().contains(userSearch);
+            boolean matchesTitle = entry.getTitle().toLowerCase().contains(userSearch);
+            boolean matchesId = String.valueOf(entry.getArtefactID()).contains(userSearch);
             boolean matchesRegion = entry.getRegion().toLowerCase().contains(userSearch);
 
-            if (matchesName || matchesId || matchesRegion) {
+            if (matchesTitle || matchesId || matchesRegion) {
                 filterArtefact.add(entry);
             }
         }
@@ -346,9 +365,7 @@ public class ArtefactController extends BaseController implements Initializable 
         List<Artefact> filterArtefacts = new ArrayList<>();
 
         for (Artefact entry : artefactList) {
-            boolean matchesRegion = regionSet.contains(entry.getRegion());
-
-            if (matchesRegion) {
+            if (regionSet.contains(entry.getRegion())) {
                 filterArtefacts.add(entry);
             }
         }
@@ -356,55 +373,18 @@ public class ArtefactController extends BaseController implements Initializable 
     }
 
     private List<Artefact> filterByPeriod(List<Artefact> artefactList) {
-        String fromPeriod;
-        String toPeriod;
-
-        if (periodFromField != null) {
-            fromPeriod = periodFromField.getText().trim();
-        } else {
-            fromPeriod = "";
-        }
-
-        if (periodToField != null) {
-            toPeriod = periodToField.getText().trim();
-        } else {
-            toPeriod = "";
-        }
-
+        String fromPeriod = periodFromField != null ? periodFromField.getText().trim() : "";
+        String toPeriod = periodToField != null ? periodToField.getText().trim() : "";
         if (fromPeriod.isEmpty() && toPeriod.isEmpty()) {
             return artefactList;
-        }        
-
+        }
         List<Artefact> filterArtefact = new ArrayList<>();
-
         try {
-            int fromYear;
-            int toYear;
-
-            if (fromPeriod.isEmpty()) {
-                fromYear = 0;
-            } else {
-                fromYear = Integer.parseInt(fromPeriod);
-            }
-
-            if (toPeriod.isEmpty()) {
-                toYear = 0;
-            } else {
-                toYear = Integer.parseInt(toPeriod);
-            }
-
+            int fromYear = fromPeriod.isEmpty() ? Integer.MIN_VALUE : Integer.parseInt(fromPeriod);
+            int toYear = toPeriod.isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(toPeriod);
             for (Artefact entry : artefactList) {
-                boolean periodChecker;
-
-                if (fromPeriod.isEmpty()) {
-                    periodChecker = entry.getPeriod() <= toYear;
-                } else if (toPeriod.isEmpty()) {
-                    periodChecker = entry.getPeriod() >= fromYear;
-                } else {
-                    periodChecker = entry.getPeriod() >= fromYear && entry.getPeriod() <= toYear;
-                }
-
-                if (periodChecker) {
+                int period = entry.getPeriod();
+                if (period >= fromYear && period <= toYear) {
                     filterArtefact.add(entry);
                 }
             }
@@ -412,7 +392,6 @@ public class ArtefactController extends BaseController implements Initializable 
             System.err.println("Invalid period format!");
             return artefactList;
         }
-        
         return filterArtefact;
     }
 

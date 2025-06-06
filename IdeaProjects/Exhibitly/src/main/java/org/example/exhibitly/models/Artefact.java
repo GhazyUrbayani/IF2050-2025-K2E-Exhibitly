@@ -1,25 +1,70 @@
 package org.example.exhibitly.models;
 
 public class Artefact {
-    private String id;
-    private String name;
+    private int artefactID;
+    private String title;
     private String region;
     private int period;
-    private String imageUrl; // Path relatif ke gambar
+    private String description;
+    private String mediaURL;
 
-    public Artefact(String id, String name, String region, int period, String imageUrl) {
-        this.id = id;
-        this.name = name;
-        this.region = region;
-        this.period = period;
-        this.imageUrl = imageUrl;
+    public Artefact() {
     }
 
-    // Getters
-    public String getName() { return name; }
-    public String getRegion() { return region; }
-    public int getPeriod() { return period; }
-    public String getImageUrl() { return imageUrl; }
-    public String getId() { return id; }
-}
+    public Artefact(int artefactID, String title, String region, int period, String description, String mediaURL) {
+        this.artefactID = artefactID;
+        this.title = title;
+        this.region = region;
+        this.period = period;
+        this.description = description;
+        this.mediaURL = mediaURL;
+    }
 
+    public int getArtefactID() {
+        return artefactID;
+    }
+
+    public void setArtefactID(int artefactID) {
+        this.artefactID = artefactID;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public int getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getMediaURL() {
+        return mediaURL;
+    }
+
+    public void setMediaURL(String mediaURL) {
+        this.mediaURL = mediaURL;
+    }
+}
