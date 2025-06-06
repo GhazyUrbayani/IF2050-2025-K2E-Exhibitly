@@ -17,10 +17,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TicketController {
+public class TicketController implements Initializable {
+    
     
     @FXML
-    private ImageView ticketImageView;
+    private ImageView ticketHeaderImage;
+
+    @FXML
+    private ImageView logoFooter;
 
     @FXML
     private TextField regularQuantity;
@@ -41,8 +45,8 @@ public class TicketController {
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            Image image = new Image(getClass().getResource("/images/logo.png").toExternalForm());
-            ticketImageView.setImage(image);
+            ticketHeaderImage.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+            logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {
             System.out.println("[Erorr] Couldn't load logo");
         }
