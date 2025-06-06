@@ -124,8 +124,9 @@ public class TicketController implements Initializable {
 
     @FXML
     private void onLoginButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");    }
-
+        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");    
+    }
+    
     @FXML
     private void onExhibitButtonClick(ActionEvent actionEvent) {
         navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");

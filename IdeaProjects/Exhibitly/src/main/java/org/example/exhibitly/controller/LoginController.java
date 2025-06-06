@@ -28,11 +28,39 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label loginMessageLabel;
-    @FXML private Button loginButton;
-    @FXML private Button logoButton;
+    @FXML
+    private TextField usernameField;
+
+    @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private Label welcomeText; 
+    @FXML 
+    private Label loginMessageLabel;
+    
+    @FXML
+    private Button onLoginButtonClick;
+    @FXML
+    private Button logoButton;
+    @FXML
+    private Button onLogoButtonClick;
+    @FXML 
+    private Button loginButton;
+
+    @FXML
+    private AnchorPane rootPane;
+
+    private StackPane loadingOverlay;
+    private ProgressIndicator progressIndicator;
+    private Label loadingLabel;
+
+    
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                               Initialize Page                              */
+    /* -------------------------------------------------------------------------- */
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -40,12 +68,99 @@ public class LoginController implements Initializable {
             ImageView logoImageView = (ImageView) logoButton.getGraphic();
             logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
         } catch (Exception e) {
-            System.err.println("Error loading logo: " + e.getMessage());
+            System.err.println("Error loading logo for button: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        setupEnterKeyHandlers();
+        setupLoadingOverlay();
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                             Start Setup Logics                             */
+    /* -------------------------------------------------------------------------- */
+
+    private void setupLoadingOverlay() {
+        loadingOverlay = new StackPane();
+        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        loadingOverlay.setVisible(false);
+
+        progressIndicator = new ProgressIndicator();
+        progressIndicator.setMaxSize(50, 50);
+        progressIndicator.setStyle("-fx-accent: white");
+
+        loadingLabel = new Label("Authenticating...");
+        loadingLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+        javafx.scene.layout.VBox loadingContainer = new javafx.scene.layout.VBox(10);
+        loadingContainer.setAlignment(javafx.geometry.Pos.CENTER);
+        loadingContainer.getChildren().addAll(progressIndicator, loadingLabel);
+        
+        loadingOverlay.getChildren().add(loadingContainer);
+        
+        try {
+            Platform.runLater(() -> {
+                if (usernameField.getScene() != null && usernameField.getScene().getRoot() instanceof AnchorPane) {
+                    AnchorPane root = (AnchorPane) usernameField.getScene().getRoot();
+                    root.getChildren().add(loadingOverlay);
+                    
+                    AnchorPane.setTopAnchor(loadingOverlay, 0.0);
+                    AnchorPane.setBottomAnchor(loadingOverlay, 0.0);
+                    AnchorPane.setLeftAnchor(loadingOverlay, 0.0);
+                    AnchorPane.setRightAnchor(loadingOverlay, 0.0);
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("Error setting up loading overlay: " + e.getMessage());
         }
     }
 
+    /* -------------------------------------------------------------------------- */
+    /*                               Overlay Logics                               */
+    /* -------------------------------------------------------------------------- */
+
+    private void showLoadingOverlay() {
+        Platform.runLater(() -> {
+            if (loadingOverlay != null) {
+                loadingOverlay.setVisible(true);
+                loadingOverlay.toFront();
+            }
+        });
+    }
+
+    private void hideLoadingOverlay() {
+        Platform.runLater(() -> {
+            if (loadingOverlay != null) {
+                loadingOverlay.setVisible(false);
+            }
+        });
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                             Key Handler Logics                             */
+    /* -------------------------------------------------------------------------- */
+    
+    private void setupEnterKeyHandlers() {
+        usernameField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
+
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
+    }   
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                Login Logics                                */
+    /* -------------------------------------------------------------------------- */
+
     @FXML
-    protected void handleLogin(ActionEvent event) {
+    protected void handleLogin() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -53,14 +168,69 @@ public class LoginController implements Initializable {
             loginMessageLabel.setText("Username dan Password tidak boleh kosong.");
             return;
         }
+		
+        if (!username.isBlank() && !password.isBlank()) {
+            System.out.println("Mencoba login!");
 
-        if (validateLogin(username, password)) {
-            goToDashboard(event);
+            showLoadingOverlay();
+
+            usernameField.setDisable(true);
+            passwordField.setDisable(true);
+            onLoginButtonClick.setDisable(true);
+
+            Task<Boolean> loginTask = new Task<Boolean>() {
+                @Override
+                protected Boolean call() throws Exception {
+                    Thread.sleep(1000);
+                    return validateLogin(username, password);
+                }
+
+                @Override
+                protected void succeeded() {
+                    Platform.runLater(() -> {
+                        hideLoadingOverlay();
+                        
+                        usernameField.setDisable(false);
+                        passwordField.setDisable(false);
+                        onLoginButtonClick.setDisable(false);
+                        
+                        Boolean loginSuccess = getValue();
+                        if (loginSuccess) {
+                            System.out.println("Login successful! Redirecting...");
+                            navigateToPage("/org/example/exhibitly/LandingDoneLoginPage.fxml", "Museum Nusantara - Dashboard");
+                        } else {
+                            System.out.println("Login failed! Please check credentials.");
+                            // TODO: Show error message to user
+                            
+                            passwordField.clear();
+                            usernameField.requestFocus();
+                        }
+                    });
+                }
+
+                @Override
+                protected void failed() {
+                    Platform.runLater(() -> {
+                        hideLoadingOverlay();
+                        usernameField.setDisable(false);
+                        passwordField.setDisable(false);
+                        onLoginButtonClick.setDisable(false);
+                        
+                        System.err.println("Login task failed: " + getException().getMessage());
+                        getException().printStackTrace();
+                    });
+                }
+            };
+            
+            Thread loginThread = new Thread(loginTask);
+            loginThread.setDaemon(true);
+            loginThread.start();
         } else {
             loginMessageLabel.setText("Username atau Password salah.");
         }
     }
 
+    
     private boolean validateLogin(String username, String password) {
         String sql = "SELECT COUNT(1) FROM actor WHERE username = ? AND password = ?";
         try {
@@ -80,55 +250,66 @@ public class LoginController implements Initializable {
         return false;
     }
 
-    private void goToDashboard(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingDoneLoginPage.fxml"));
-            Parent dashboardPage = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(dashboardPage));
-            stage.setTitle("Museum Nusantara - Dashboard");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Gagal memuat dashboard: " + e.getMessage());
-        }
+
+    @FXML
+    private void onLoginButtonClick(ActionEvent event) {
+        System.out.println("Sudah ada di login page");
     }
 
     @FXML
-    public void onLogoButtonClick(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
-            Parent landingPage = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(landingPage));
-            stage.setTitle("Museum Nusantara - Landing Page");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Gagal memuat landing page: " + e.getMessage());
-        }
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    public void onArtefactButtonClick(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
-            Parent artefactPage = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(artefactPage));
-            stage.setTitle("Museum Nusantara - Artefacts");
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Gagal memuat halaman Artefak: " + e.getMessage());
-        }
+    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+        navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
+
     }
 
     @FXML
-    public void onTicketsButtonClick(ActionEvent event) {
-        // TODO: Implementasi halaman tiket
+    private void onTicketButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");
     }
 
-    public void onLoginButtonClick(ActionEvent actionEvent) {
+    @FXML
+    private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+        navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
+    }
+    
+
+    private void navigateToPage(ActionEvent event, String path) {
+        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            
+            stage.setTitle("Museum Nusantar - " + pageName);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+        }
     }
 
-    public void onExhibitButtonClick(ActionEvent actionEvent) {
+    private void navigateToPage(String fxmlPath, String pageTitle) {
+        try {
+            Stage currentStage = (Stage) usernameField.getScene().getWindow();
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            
+            Scene scene = new Scene(root);
+            currentStage.setScene(scene);
+
+            currentStage.setTitle(pageTitle);
+            currentStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to navigate to: " + pageTitle + " - " + e.getMessage());
+        }
     }
 }

@@ -26,7 +26,7 @@ public class LandingPageController implements Initializable {
     @FXML private Button LoginButton;
     @FXML private Button onExhibitButtonClick;
     @FXML private Button onArtefactButtonClick;
-    @FXML private Button onTicketsButtonClick;
+    @FXML private Button onTicketButtonClick;
     @FXML private Button onLogoButtonClick;
     @FXML private Button logoButton;
 
@@ -143,7 +143,15 @@ public class LandingPageController implements Initializable {
         navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
     }
 
+    @FXML
+    private void onLogoutButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/login.fxml");
+    }
 
+    @FXML
+    private void onMaintenanceButtonClick(ActionEvent event) {
+        System.out.println("KONTOL!");
+    }
 
     private void navigateToPage(ActionEvent actionEvent, String path) {
         String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
@@ -160,14 +168,5 @@ public class LandingPageController implements Initializable {
             e.printStackTrace();
             System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
         }
-    }
-
-    public void onTicketsButtonClick(ActionEvent actionEvent) {
-    }
-
-    public void onLogoutButtonClick(ActionEvent actionEvent) {
-    }
-
-    public void onMaintenanceButtonClick(ActionEvent actionEvent) {
     }
 }
