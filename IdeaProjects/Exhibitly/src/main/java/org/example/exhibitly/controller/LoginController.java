@@ -182,7 +182,7 @@ public class LoginController implements Initializable {
                 @Override
                 protected Boolean call() throws Exception {
                     Thread.sleep(1000);
-                    return validateLogin();
+                    return validateLogin(username, password);
                 }
 
                 @Override
@@ -230,34 +230,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    private boolean validateLogin(){
-        try{
-            DatabaseConnection connectNow = new DatabaseConnection();
-            Connection connectDB = connectNow.getConnection();
-
-            String verifyLogin ="SELECT count(1) FROM actor WHERE username = '" + usernameField.getText() + "' AND password = '" + passwordField.getText() + "'";
-
-            Statement statement = connectDB.createStatement();
-            ResultSet queryResult = statement.executeQuery(verifyLogin);
-
-            while(queryResult.next()){
-                boolean loginSuccess = queryResult.getInt(1) == 1;
-                if (loginSuccess){
-                    System.out.println("Login Berhasil");
-                }
-                else {
-                    System.out.println("Login Gagal");
-                }
-                return loginSuccess;
-            }
-            return false;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-
+    
     private boolean validateLogin(String username, String password) {
         String sql = "SELECT COUNT(1) FROM actor WHERE username = ? AND password = ?";
         try {
@@ -277,9 +250,6 @@ public class LoginController implements Initializable {
         return false;
     }
 
-    private void goToDashboard(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
-    }
 
     @FXML
     private void onLoginButtonClick(ActionEvent event) {
@@ -324,7 +294,7 @@ public class LoginController implements Initializable {
             System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
         }
     }
-    
+
     private void navigateToPage(String fxmlPath, String pageTitle) {
         try {
             Stage currentStage = (Stage) usernameField.getScene().getWindow();
