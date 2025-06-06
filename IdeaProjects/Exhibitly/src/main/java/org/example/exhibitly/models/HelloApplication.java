@@ -26,7 +26,7 @@ public class HelloApplication extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
 
         // 3. Buat Scene dengan 'root' yang sudah di-load
-        Scene scene = new Scene(root, 1366, 768);
+        Scene scene = new Scene(root, 1383, 768);
 
         // 4. Tambahkan Stylesheet ke Scene
         // Pastikan jalur ke file CSS sudah benar. Jika 'css/styles.css' ada di package yang sama dengan HelloApplication.java

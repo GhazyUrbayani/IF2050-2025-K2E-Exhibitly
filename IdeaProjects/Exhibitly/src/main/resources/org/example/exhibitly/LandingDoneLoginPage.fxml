@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.LandingPageController">
+    <children>
+        <!-- HEADER -->
+        <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
+        <!-- Navigation Bar -->
+        <HBox alignment="CENTER" spacing="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="68.0">
+            <children>
+                <Button onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
+                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                    <cursor><Cursor fx:constant="HAND" /></cursor>
+                </Button>
+                <Button onAction="#onArtefactButtonClick" style="-fx-background-color: transparent;" text="ARTEFACT" textFill="WHITE">
+                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                    <cursor><Cursor fx:constant="HAND" /></cursor>
+                </Button>
+                <Button onAction="#onTicketsButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
+                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                    <cursor><Cursor fx:constant="HAND" /></cursor>
+                </Button>
+            </children>
+        </HBox>
+
+        <!-- Logo Button -->
+        <Button fx:id="logoButton" onAction="#onLogoButtonClick" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="583.0" AnchorPane.rightAnchor="583.0" AnchorPane.topAnchor="0.0">
+            <graphic>
+                <ImageView fitHeight="70.0" fitWidth="200.0" preserveRatio="true" />
+            </graphic>
+            <cursor><Cursor fx:constant="HAND" /></cursor>
+        </Button>
+
+        <!-- Optional: Logout/Profile Button -->
+        <Button fx:id="LogoutButton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: black; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-border-width: 0.3;" text="Logout" textFill="WHITE" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="20.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+
+        <Button fx:id="MaintenanceButton" mnemonicParsing="false" onAction="#onMaintenanceButtonClick" prefHeight="40.0" prefWidth="104.0" style="-fx-background-color: #B6B09F; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-background-radius: 20; -fx-border-width: 0.3;" text="Maintenance" textFill="black" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="20.0">
+            <font>
+                <Font size="14.0" />
+            </font>
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+
+        <!-- Garis bawah navigasi -->
+        <Pane prefHeight="0.1" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
+
+        <!-- Konten Utama Scrollable -->
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1" AnchorPane.rightAnchor="-1" AnchorPane.topAnchor="98.0">
+            <content>
+                <VBox styleClass="vbox">
+                    <Pane prefHeight="776.0" style="-fx-background-color: #F8F8F8;">
+                        <children>
+                            <StackPane prefHeight="776.0">
+                                <children>
+                                    <ImageView fx:id="LandingImageView" fitHeight="776.0" preserveRatio="false" />
+                                    <VBox alignment="CENTER_LEFT" prefHeight="605.0" StackPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="welcomeTextLabel" style="-fx-text-fill: #F8F7F3;" text="LOREM IPSUM DOLOR">
+                                            <font><Font name="Playfair Display SC Bold" size="65.0" /></font>
+                                        </Label>
+                                        <Label style="-fx-text-fill: #F8F7F3;" text="Lorem ipsum dolor sit amet..." wrapText="true">
+                                            <font><Font name="Playfair Display SC Regular" size="14.0" /></font>
+                                        </Label>
+                                        <StackPane.margin><Insets left="100.0" /></StackPane.margin>
+                                    </VBox>
+                                </children>
+                            </StackPane>
+                        </children>
+                    </Pane>
+
+                    <AnchorPane style="-fx-background-color: #F8F8F8;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="800.0">
+                        <children>
+                            <HBox alignment="CENTER" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <padding>
+                                    <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                                </padding>
+                                <children>
+                                    <VBox alignment="CENTER_LEFT" prefWidth="328.0" HBox.hgrow="ALWAYS">
+                                        <Label style="-fx-font-family: 'Playfair Display SC Bold'; -fx-font-size: 57px; -fx-text-fill: black;" text="HALO">
+                                            <VBox.margin>
+                                                <Insets left="15.0" />
+                                            </VBox.margin></Label>
+                                        <Label style="-fx-font-family: 'Playfair Display SC Bold'; -fx-font-size: 57px; -fx-text-fill: black;" text="IPSUM">
+                                            <VBox.margin>
+                                                <Insets left="15.0" />
+                                            </VBox.margin></Label>
+                                        <Label style="-fx-font-family: 'Playfair Display SC Bold'; -fx-font-size: 57px; -fx-text-fill: black;" text="DOLOR">
+                                            <VBox.margin>
+                                                <Insets left="15.0" />
+                                            </VBox.margin></Label>
+                                        <Label prefHeight="281.0" prefWidth="426.0" style="-fx-font-family: 'Playfair Display SC Regular'; -fx-font-size: 20px; -fx-text-fill: gray;" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempor pellentesque justo. Id dictum mi porttitor eu. Donec elementum lectus vel neque mi eu tempus. Duis pretium, lacus nec viverra efficitur, velit tellus ornare ante, a ultricies nisl velit eu turpis. Ut eu bibendum, egestas enim in, fermentum nunc." wrapText="true">
+                                            <VBox.margin>
+                                                <Insets left="15.0" />
+                                            </VBox.margin></Label>
+                                    </VBox>
+                                    <ImageView fx:id="Landing2ImageView" fitHeight="657.0" fitWidth="627.0" preserveRatio="true" HBox.hgrow="ALWAYS" />
+                                </children>
+                            </HBox>
+                        </children>
+                    </AnchorPane>
+
+                    <!-- Footer Section -->
+                    <AnchorPane prefHeight="150.0" style="-fx-background-color: #B6B09F;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <children>
+                            <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0">
+                                <Label text="Museum Nusantara" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                                </Label>
+                                <Label text="Jl. Ganesa No. 10" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Indonesia 40132." textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                            </VBox>
+
+                            <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="50.0">
+                                <Label text="Jam Berkunjung" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                                </Label>
+                                <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Senin Museum tutup." textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                            </VBox>
+                            <!-- Copyright footer -->
+                            <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="WHITE"
+                                   AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+
+                            <!-- Logo footer -->
+                            <VBox alignment="CENTER" spacing="5.0"
+                                  AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                <children>
+                                    <ImageView fx:id="logoFooter" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" />
+                                </children>
+                            </VBox>
+                        </children>
+                    </AnchorPane>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</AnchorPane>

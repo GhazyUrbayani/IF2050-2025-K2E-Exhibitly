@@ -33,19 +33,19 @@ import java.util.Set;
 public class ArtefactController implements Initializable {
 
     @FXML
-    private ImageView logoHeaderImageView; // fx:id untuk logo di header
+    private ImageView logoHeaderImageView;
     @FXML
-    private ImageView logoFooter; // fx:id untuk logo di footer
+    private ImageView logoFooter;
 
     @FXML
-    private Button onLoginButtonClick; // Untuk mengambil Stage dari tombol ini
+    private Button onLoginButtonClick;
 
     @FXML
     private TextField searchTextField;
     @FXML
     private Label resultsCountLabel;
     @FXML
-    private GridPane artefactGrid; // GridPane tempat artefak akan ditambahkan
+    private GridPane artefactGrid;
 
     @FXML
     private TextField periodFromField;
@@ -69,19 +69,28 @@ public class ArtefactController implements Initializable {
 
     // Data artefak (simulasi dari database)
     private List<Artefact> allArtefacts;
+    @FXML
+    private Button logoButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Inisialisasi gambar header dan footer
         try {
-            logoHeaderImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png"))); // Ganti dengan path logo header yang benar
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {
             System.err.println("Error loading logos: " + e.getMessage());
             e.printStackTrace();
         }
+        try {
+            ImageView logoImageView = (ImageView) logoButton.getGraphic();
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+        } catch (Exception e) {
+            System.err.println("Error loading logo for button: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         // Contoh data artefak
+        allArtefacts = new ArrayList<>();
         allArtefacts = new ArrayList<>();
         allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, "/images/arca1.png"));
         allArtefacts.add(new Artefact("A002", "ARCA CIREBON", "Jawa Barat", 1400, "/images/arca2.png"));
@@ -89,7 +98,6 @@ public class ArtefactController implements Initializable {
         allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000,  "/images/arca4.png"));
         allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700,  "/images/arca5.png"));
         allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900,  "/images/arca6.png"));
-        // Tambahkan lebih banyak data sesuai kebutuhan Anda
 
         /* Real Time Update for each Filter */
         // searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {

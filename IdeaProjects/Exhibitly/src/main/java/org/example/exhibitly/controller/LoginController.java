@@ -2,6 +2,7 @@ package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,19 +19,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
-import javafx.stage.Stage;
 
-
-
-public class LoginController implements Initializable{
+public class LoginController implements Initializable {
 
     @FXML
     private TextField usernameField;
@@ -39,16 +35,18 @@ public class LoginController implements Initializable{
     private PasswordField passwordField;
 
     @FXML
-    private Label welcomeText; // Jika Anda masih ingin menggunakan label ini di FXML lain
-
+    private Label welcomeText; 
+    @FXML 
+    private Label loginMessageLabel;
+    
     @FXML
     private Button onLoginButtonClick;
-
     @FXML
     private Button logoButton;
-
     @FXML
     private Button onLogoButtonClick;
+    @FXML 
+    private Button loginButton;
 
     @FXML
     private AnchorPane rootPane;
@@ -57,7 +55,8 @@ public class LoginController implements Initializable{
     private ProgressIndicator progressIndicator;
     private Label loadingLabel;
 
-    // Metode untuk tombol "Masuk" pada form login
+    
+
 
     /* -------------------------------------------------------------------------- */
     /*                               Initialize Page                              */
@@ -65,7 +64,6 @@ public class LoginController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Cara load gambar dari folder resources/images/logo.png
         try {
             ImageView logoImageView = (ImageView) logoButton.getGraphic();
             logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
@@ -145,16 +143,16 @@ public class LoginController implements Initializable{
     private void setupEnterKeyHandlers() {
         usernameField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                handleLogin(new ActionEvent());
+                handleLogin();
             }
         });
 
         passwordField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                handleLogin(new ActionEvent());
+                handleLogin();
             }
         });
-    }
+    }   
 
 
     /* -------------------------------------------------------------------------- */
@@ -162,13 +160,15 @@ public class LoginController implements Initializable{
     /* -------------------------------------------------------------------------- */
 
     @FXML
-    protected void handleLogin(ActionEvent event) {
+    protected void handleLogin() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
-
+        if (username.isBlank() || password.isBlank()) {
+            loginMessageLabel.setText("Username dan Password tidak boleh kosong.");
+            return;
+        }
+		
         if (!username.isBlank() && !password.isBlank()) {
             System.out.println("Mencoba login!");
 
@@ -197,8 +197,7 @@ public class LoginController implements Initializable{
                         Boolean loginSuccess = getValue();
                         if (loginSuccess) {
                             System.out.println("Login successful! Redirecting...");
-                            navigateToPage("/org/example/exhibitly/Artefact.fxml", "Museum Nusantara - Artefact");//TODO: Dapat diganti dengan kesepakatan
-
+                            navigateToPage("/org/example/exhibitly/LandingDoneLoginPage.fxml", "Museum Nusantara - Dashboard");
                         } else {
                             System.out.println("Login failed! Please check credentials.");
                             // TODO: Show error message to user
@@ -226,11 +225,8 @@ public class LoginController implements Initializable{
             Thread loginThread = new Thread(loginTask);
             loginThread.setDaemon(true);
             loginThread.start();
-            
-            validateLogin();
         } else {
-            System.out.println("Username dan password harus terisi");
-            //TODO: Tampilkan pesan error di UI
+            loginMessageLabel.setText("Username atau Password salah.");
         }
     }
 
@@ -262,44 +258,63 @@ public class LoginController implements Initializable{
         }
     }
 
-    // Metode untuk tombol "Login" di header (jika berbeda fungsinya dengan di form)
+    private boolean validateLogin(String username, String password) {
+        String sql = "SELECT COUNT(1) FROM actor WHERE username = ? AND password = ?";
+        try {
+            DatabaseConnection connectNow = new DatabaseConnection();
+            Connection connectDB = connectNow.getConnection();
+            PreparedStatement preparedStatement = connectDB.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) == 1;
+            }
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private void goToDashboard(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
+    }
+
     @FXML
-    private void onLoginButtonClick(ActionEvent actionEvent) {
+    private void onLoginButtonClick(ActionEvent event) {
         System.out.println("Sudah ada di login page");
     }
 
     @FXML
-    private void onExhibitButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent actionEvent) { // <-- Metode ini harus menerima ActionEvent
-        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+        navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
 
     }
 
     @FXML
-    private void onTicketButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
+    private void onTicketButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");
     }
 
     @FXML
-    private void onLogoButtonClick(ActionEvent actionEvent) { // <--- Tambahkan ActionEvent event
-        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
+    private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+        navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
+    
 
-    /* -------------------------------------------------------------------------- */
-    /*                              Navigation Logics                             */
-    /* -------------------------------------------------------------------------- */
-
-    private void navigateToPage(ActionEvent actionEvent, String path) {
+    private void navigateToPage(ActionEvent event, String path) {
         String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
 
-            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             
             stage.setTitle("Museum Nusantar - " + pageName);
@@ -309,7 +324,7 @@ public class LoginController implements Initializable{
             System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
         }
     }
-
+    
     private void navigateToPage(String fxmlPath, String pageTitle) {
         try {
             Stage currentStage = (Stage) usernameField.getScene().getWindow();

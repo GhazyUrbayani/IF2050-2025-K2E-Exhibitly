@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.HBox?>
+
+<GridPane prefHeight="50.0" minHeight="50.0" hgap="10.0" style="-fx-background-color: white; -fx-padding: 5 0 5 0; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <columnConstraints>
+        <ColumnConstraints prefWidth="80.0" /> <ColumnConstraints prefWidth="150.0" /> <ColumnConstraints prefWidth="150.0" /> <ColumnConstraints prefWidth="250.0" hgrow="ALWAYS" /> <ColumnConstraints prefWidth="100.0" /> </columnConstraints>
+    <children>
+        <Label fx:id="timeLabel" text="07:24" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label fx:id="artefactNameLabel" text="Artefak Ganesha" style="-fx-font-weight: bold; -fx-underline: true;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label fx:id="requesterNameLabel" text="Sendi Putra Alicia" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+        <Label fx:id="descriptionLabel" text="Tolong dibersihin ya" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+        <Label fx:id="statusLabel" text="Not Done" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+    </children>
+</GridPane>
