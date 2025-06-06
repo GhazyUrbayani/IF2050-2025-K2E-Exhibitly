@@ -23,10 +23,10 @@ public class HelloApplication extends Application {
 
         // 2. Load FXML *sebelum* membuat Scene
         // Anda mendeklarasikan 'root' setelah menggunakannya, ini akan menyebabkan error kompilasi
-        Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/MaintenancePage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
 
         // 3. Buat Scene dengan 'root' yang sudah di-load
-        Scene scene = new Scene(root, 1383, 768);
+        Scene scene = new Scene(root, 1366, 768);
 
         // 4. Tambahkan Stylesheet ke Scene
         // Pastikan jalur ke file CSS sudah benar. Jika 'css/styles.css' ada di package yang sama dengan HelloApplication.java
@@ -39,7 +39,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
 
         // 6. Set Judul Stage
-        stage.setTitle("Museum Nusantara Landing Page");
+        stage.setTitle("Museum Nusantara - LandingPage");
 
         // 7. Tampilkan Stage
         stage.show();

@@ -2,6 +2,7 @@ package org.example.exhibitly.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -20,7 +21,8 @@ public abstract class BaseController {
     protected void navigateToPage(ActionEvent event, String path) {
         navigateToPage(event, path, true);
     }
-    
+
+
     protected void navigateToPage(ActionEvent event, String path, boolean requireLogin) {
         if (requireLogin && !session.isLoggedIn()) {
             showLoginRequired();
@@ -33,10 +35,13 @@ public abstract class BaseController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
 
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow(); // Casting ke Node diperlukan
+
+            // Buat Scene dengan ukuran tetap 1366x768
             Scene scene = new Scene(root, 1366, 768);
-            
             stage.setScene(scene);
+
+            // Set judul Stage secara konsisten
             stage.setTitle("Museum Nusantara - " + pageName);
             stage.show();
             

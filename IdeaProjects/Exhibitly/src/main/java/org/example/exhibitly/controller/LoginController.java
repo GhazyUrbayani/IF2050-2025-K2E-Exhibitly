@@ -3,6 +3,7 @@ package org.example.exhibitly.controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -334,10 +335,14 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
 
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            
-            stage.setTitle("Museum Nusantar - " + pageName);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow(); // Casting ke Node diperlukan
+
+            // Buat Scene dengan ukuran tetap 1366x768
+            Scene scene = new Scene(root, 1366, 768);
+            stage.setScene(scene);
+
+            // Set judul Stage secara konsisten
+            stage.setTitle("Museum Nusantara - " + pageName);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -352,7 +357,7 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
             
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 1366, 768);
             currentStage.setScene(scene);
 
             currentStage.setTitle(title);

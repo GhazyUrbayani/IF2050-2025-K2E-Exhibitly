@@ -30,7 +30,7 @@
             <cursor><Cursor fx:constant="HAND" /></cursor>
         </Button>
         <HBox alignment="CENTER" spacing="100.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="68.0">
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
             <children>
                 <Button mnemonicParsing="false" onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
                     <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>

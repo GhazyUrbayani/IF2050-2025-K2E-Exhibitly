@@ -20,7 +20,7 @@
         <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
         <!-- Navigation Bar -->
-        <HBox alignment="CENTER" spacing="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="68.0">
+        <HBox alignment="CENTER" spacing="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
             <children>
                 <Button onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
                     <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
@@ -68,7 +68,7 @@
         <Pane prefHeight="0.1" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
 
         <!-- Konten Utama Scrollable -->
-        <ScrollPane fitToWidth="true" styleClass="scroll-pane" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1" AnchorPane.rightAnchor="-1" AnchorPane.topAnchor="98.0">
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1" AnchorPane.rightAnchor="-1" AnchorPane.topAnchor="100.0">
             <content>
                 <VBox styleClass="vbox">
                     <Pane prefHeight="776.0" style="-fx-background-color: #F8F8F8;">
