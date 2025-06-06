@@ -10,8 +10,8 @@ public class Staff extends Actor {
         super();
     }
 
-    public Staff(int actorID, String username, String password, String name, String role, String jadwalPemeliharaan) {
-        super(actorID, username, password, name, role);
+    public Staff(int actorID, String username, String password, String name, String jadwalPemeliharaan) {
+        super(actorID, username, password, name, "Staff");
         this.jadwalPemeliharaan = jadwalPemeliharaan;
     }
 
