@@ -2,6 +2,7 @@ package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,291 +19,116 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
-import javafx.stage.Stage;
 
+public class LoginController implements Initializable {
 
-
-public class LoginController implements Initializable{
-
-    @FXML
-    private TextField usernameField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Label welcomeText; // Jika Anda masih ingin menggunakan label ini di FXML lain
-
-    @FXML
-    private Button onLoginButtonClick;
-
-    @FXML
-    private Button logoButton;
-
-    @FXML
-    private Button onLogoButtonClick;
-
-    @FXML
-    private AnchorPane rootPane;
-
-    private StackPane loadingOverlay;
-    private ProgressIndicator progressIndicator;
-    private Label loadingLabel;
-
-    // Metode untuk tombol "Masuk" pada form login
-
-    /* -------------------------------------------------------------------------- */
-    /*                               Initialize Page                              */
-    /* -------------------------------------------------------------------------- */
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Label loginMessageLabel;
+    @FXML private Button loginButton;
+    @FXML private Button logoButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Cara load gambar dari folder resources/images/logo.png
         try {
             ImageView logoImageView = (ImageView) logoButton.getGraphic();
             logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
         } catch (Exception e) {
-            System.err.println("Error loading logo for button: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        setupEnterKeyHandlers();
-        setupLoadingOverlay();
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /*                             Start Setup Logics                             */
-    /* -------------------------------------------------------------------------- */
-
-    private void setupLoadingOverlay() {
-        loadingOverlay = new StackPane();
-        loadingOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        loadingOverlay.setVisible(false);
-
-        progressIndicator = new ProgressIndicator();
-        progressIndicator.setMaxSize(50, 50);
-        progressIndicator.setStyle("-fx-accent: white");
-
-        loadingLabel = new Label("Authenticating...");
-        loadingLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;");
-
-        javafx.scene.layout.VBox loadingContainer = new javafx.scene.layout.VBox(10);
-        loadingContainer.setAlignment(javafx.geometry.Pos.CENTER);
-        loadingContainer.getChildren().addAll(progressIndicator, loadingLabel);
-        
-        loadingOverlay.getChildren().add(loadingContainer);
-        
-        try {
-            Platform.runLater(() -> {
-                if (usernameField.getScene() != null && usernameField.getScene().getRoot() instanceof AnchorPane) {
-                    AnchorPane root = (AnchorPane) usernameField.getScene().getRoot();
-                    root.getChildren().add(loadingOverlay);
-                    
-                    AnchorPane.setTopAnchor(loadingOverlay, 0.0);
-                    AnchorPane.setBottomAnchor(loadingOverlay, 0.0);
-                    AnchorPane.setLeftAnchor(loadingOverlay, 0.0);
-                    AnchorPane.setRightAnchor(loadingOverlay, 0.0);
-                }
-            });
-        } catch (Exception e) {
-            System.err.println("Error setting up loading overlay: " + e.getMessage());
+            System.err.println("Error loading logo: " + e.getMessage());
         }
     }
-
-    /* -------------------------------------------------------------------------- */
-    /*                               Overlay Logics                               */
-    /* -------------------------------------------------------------------------- */
-
-    private void showLoadingOverlay() {
-        Platform.runLater(() -> {
-            if (loadingOverlay != null) {
-                loadingOverlay.setVisible(true);
-                loadingOverlay.toFront();
-            }
-        });
-    }
-
-    private void hideLoadingOverlay() {
-        Platform.runLater(() -> {
-            if (loadingOverlay != null) {
-                loadingOverlay.setVisible(false);
-            }
-        });
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /*                             Key Handler Logics                             */
-    /* -------------------------------------------------------------------------- */
-    
-    private void setupEnterKeyHandlers() {
-        usernameField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                handleLogin(new ActionEvent());
-            }
-        });
-
-        passwordField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                handleLogin(new ActionEvent());
-            }
-        });
-    }
-
-
-    /* -------------------------------------------------------------------------- */
-    /*                                Login Logics                                */
-    /* -------------------------------------------------------------------------- */
 
     @FXML
     protected void handleLogin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
+        if (username.isBlank() || password.isBlank()) {
+            loginMessageLabel.setText("Username dan Password tidak boleh kosong.");
+            return;
+        }
 
-        if (!username.isBlank() && !password.isBlank()) {
-            System.out.println("Mencoba login!");
-
-            showLoadingOverlay();
-
-            usernameField.setDisable(true);
-            passwordField.setDisable(true);
-            onLoginButtonClick.setDisable(true);
-
-            Task<Boolean> loginTask = new Task<Boolean>() {
-                @Override
-                protected Boolean call() throws Exception {
-                    Thread.sleep(1000);
-                    return validateLogin();
-                }
-
-                @Override
-                protected void succeeded() {
-                    Platform.runLater(() -> {
-                        hideLoadingOverlay();
-                        
-                        usernameField.setDisable(false);
-                        passwordField.setDisable(false);
-                        onLoginButtonClick.setDisable(false);
-                        
-                        Boolean loginSuccess = getValue();
-                        if (loginSuccess) {
-                            System.out.println("Login successful! Redirecting...");
-                            onExhibitButtonClick(event); //TODO: Dapat diganti dengan kesepakatan
-
-                        } else {
-                            System.out.println("Login failed! Please check credentials.");
-                            // TODO: Show error message to user
-                            
-                            passwordField.clear();
-                            usernameField.requestFocus();
-                        }
-                    });
-                }
-
-                @Override
-                protected void failed() {
-                    Platform.runLater(() -> {
-                        hideLoadingOverlay();
-                        usernameField.setDisable(false);
-                        passwordField.setDisable(false);
-                        onLoginButtonClick.setDisable(false);
-                        
-                        System.err.println("Login task failed: " + getException().getMessage());
-                        getException().printStackTrace();
-                    });
-                }
-            };
-            
-            Thread loginThread = new Thread(loginTask);
-            loginThread.setDaemon(true);
-            loginThread.start();
-            
-            validateLogin();
+        if (validateLogin(username, password)) {
+            goToDashboard(event);
         } else {
-            System.out.println("Username dan password harus terisi");
-            //TODO: Tampilkan pesan error di UI
+            loginMessageLabel.setText("Username atau Password salah.");
         }
     }
 
-    private boolean validateLogin(){
-        try{
+    private boolean validateLogin(String username, String password) {
+        String sql = "SELECT COUNT(1) FROM actor WHERE username = ? AND password = ?";
+        try {
             DatabaseConnection connectNow = new DatabaseConnection();
             Connection connectDB = connectNow.getConnection();
+            PreparedStatement preparedStatement = connectDB.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
 
-            String verifyLogin ="SELECT count(1) FROM actor WHERE username = '" + usernameField.getText() + "' AND password = '" + passwordField.getText() + "'";
-
-            Statement statement = connectDB.createStatement();
-            ResultSet queryResult = statement.executeQuery(verifyLogin);
-
-            while(queryResult.next()){
-                boolean loginSuccess = queryResult.getInt(1) == 1;
-                if (loginSuccess){
-                    System.out.println("Login Berhasil");
-                }
-                else {
-                    System.out.println("Login Gagal");
-                }
-                return loginSuccess;
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) == 1;
             }
-            return false;
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
         }
-        catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+        return false;
     }
 
-    // Metode untuk tombol "Login" di header (jika berbeda fungsinya dengan di form)
-    @FXML
-    private void onLoginButtonClick(ActionEvent actionEvent) {
-        System.out.println("Sudah ada di login page");
-    }
-
-    @FXML
-    private void onExhibitButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
-    }
-
-    @FXML
-    private void onArtefactButtonClick(ActionEvent actionEvent) { // <-- Metode ini harus menerima ActionEvent
-        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
-
-    }
-
-    @FXML
-    private void onTicketButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
-    }
-
-    @FXML
-    private void onLogoButtonClick(ActionEvent actionEvent) { // <--- Tambahkan ActionEvent event
-        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
-    }
-
-    private void navigateToPage(ActionEvent actionEvent, String path) {
-        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
+    private void goToDashboard(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            
-            stage.setTitle("Museum Nusantar - " + pageName);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingDoneLoginPage.fxml"));
+            Parent dashboardPage = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(dashboardPage));
+            stage.setTitle("Museum Nusantara - Dashboard");
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+            System.err.println("Gagal memuat dashboard: " + e.getMessage());
         }
+    }
+
+    @FXML
+    public void onLogoButtonClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
+            Parent landingPage = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(landingPage));
+            stage.setTitle("Museum Nusantara - Landing Page");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Gagal memuat landing page: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onArtefactButtonClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
+            Parent artefactPage = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(artefactPage));
+            stage.setTitle("Museum Nusantara - Artefacts");
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Gagal memuat halaman Artefak: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onTicketsButtonClick(ActionEvent event) {
+        // TODO: Implementasi halaman tiket
+    }
+
+    public void onLoginButtonClick(ActionEvent actionEvent) {
+    }
+
+    public void onExhibitButtonClick(ActionEvent actionEvent) {
     }
 }
