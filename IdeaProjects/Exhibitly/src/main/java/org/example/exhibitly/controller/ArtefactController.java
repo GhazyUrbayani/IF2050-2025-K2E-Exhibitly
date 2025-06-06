@@ -110,7 +110,6 @@ public class ArtefactController extends BaseController implements Initializable 
 
         setupEnterKeyHandlers();
 
-        // Tampilkan semua artefak saat pertama kali halaman dimuat
         displayArtefacts(allArtefacts);
     }
 

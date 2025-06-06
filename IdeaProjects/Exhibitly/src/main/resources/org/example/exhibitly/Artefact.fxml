@@ -142,11 +142,11 @@
                                     <!-- Filter Region -->
                                     <VBox spacing="5.0">
                                         <Label style="-fx-font-size: 14px;" text="REGION" />
-                                        <CheckBox text="DKI Jakarta" />
-                                        <CheckBox text="Jawa Barat" />
-                                        <CheckBox text="Jawa Tengah" />
-                                        <CheckBox text="DI Yogyakarta" />
-                                        <CheckBox text="Jawa Timur" />
+                                        <CheckBox fx:id="DKIJakartaCheckBox" text="DKI Jakarta" />
+                                        <CheckBox fx:id="JawaBaratCheckBox" text="Jawa Barat" />
+                                        <CheckBox fx:id="JawaTengahCheckBox" text="Jawa Tengah" />
+                                        <CheckBox fx:id="DIYogyakartaCheckBox" text="DI Yogyakarta" />
+                                        <CheckBox fx:id="JawaTimurCheckBox" text="Jawa Timur" />
                                         <Button mnemonicParsing="false" onAction="#onValidateRegionFilter" text="VALIDATE FILTERS" />
                                     </VBox>
 
