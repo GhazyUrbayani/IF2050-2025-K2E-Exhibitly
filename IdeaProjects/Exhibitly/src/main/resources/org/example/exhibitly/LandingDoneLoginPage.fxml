@@ -30,7 +30,7 @@
                     <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
                     <cursor><Cursor fx:constant="HAND" /></cursor>
                 </Button>
-                <Button onAction="#onTicketsButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
+                <Button onAction="#onTicketButtonClick" style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
                     <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
                     <cursor><Cursor fx:constant="HAND" /></cursor>
                 </Button>
