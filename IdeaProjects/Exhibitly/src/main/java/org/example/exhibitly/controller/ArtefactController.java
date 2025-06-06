@@ -91,20 +91,13 @@ public class ArtefactController implements Initializable {
 
         // Contoh data artefak
         allArtefacts = new ArrayList<>();
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A002", "ARCA CIREBON", "Jawa Barat", 1400, 1500, "/images/arca2.png"));
-        allArtefacts.add(new Artefact("A003", "ARCA JATINANGOR", "Jawa Barat", 1200, 1300, "/images/arca3.png"));
-        allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000, 1100, "/images/arca4.png"));
-        allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700, 800, "/images/arca5.png"));
-        allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900, 1000, "/images/arca6.png"));
-        allArtefacts.add(new Artefact("A007", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, 900, "/images/arca1.png"));
-        // Tambahkan lebih banyak data sesuai kebutuhan Anda
+        allArtefacts = new ArrayList<>();
+        allArtefacts.add(new Artefact("A001", "ARCA GANESHA", "Jawa Timur", 800, "/images/arca1.png"));
+        allArtefacts.add(new Artefact("A002", "ARCA CIREBON", "Jawa Barat", 1400, "/images/arca2.png"));
+        allArtefacts.add(new Artefact("A003", "ARCA JATINANGOR", "Jawa Barat", 1200,  "/images/arca3.png"));
+        allArtefacts.add(new Artefact("A004", "ARCA DAGU", "DKI Jakarta", 1000,  "/images/arca4.png"));
+        allArtefacts.add(new Artefact("A005", "ARCA TUBIS", "DI Yogyakarta", 700,  "/images/arca5.png"));
+        allArtefacts.add(new Artefact("A006", "ARCA CISITU", "Jawa Barat", 900,  "/images/arca6.png"));
 
         /* Real Time Update for each Filter */
         // searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {

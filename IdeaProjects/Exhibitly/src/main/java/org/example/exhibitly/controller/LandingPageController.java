@@ -118,13 +118,13 @@ public class LandingPageController implements Initializable {
 
     // === Navigation Buttons ===
     @FXML
-    private void onLoginButtonClick() {
-        changeScene("/org/example/exhibitly/login.fxml", "Museum Nusantara - Login");
+    private void onLoginButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");
     }
 
     @FXML
-    private void onLogoButtonClick() {
-        changeScene("/org/example/exhibitly/LandingPage.fxml", "Museum Nusantara - Landing Page");
+    private void onLogoButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
     }
 
     @FXML
@@ -143,10 +143,7 @@ public class LandingPageController implements Initializable {
         navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
     }
 
-    @FXML
-    private void onLogoButtonClick(ActionEvent actionEvent) { // <--- Tambahkan ActionEvent event
-        System.out.println("Sudah ada di dalam Landing Page!");
-    }
+
 
     private void navigateToPage(ActionEvent actionEvent, String path) {
         String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
@@ -165,4 +162,6 @@ public class LandingPageController implements Initializable {
         }
     }
 
+    public void onTicketsButtonClick(ActionEvent actionEvent) {
+    }
 }

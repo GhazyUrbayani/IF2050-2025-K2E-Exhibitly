@@ -70,7 +70,7 @@
                 </Button>
 
                 <!-- Tombol Tickets -->
-                <Button mnemonicParsing="false" onAction="#onTicketsButtonClick"
+                <Button mnemonicParsing="false" onAction="#onTicketButtonClick"
                         style="-fx-background-color: transparent;" text="TICKETS" textFill="WHITE">
                     <font>
                         <Font name="Plus Jakarta Sans Bold" size="14.0" />
@@ -80,122 +80,7 @@
                     </cursor>
                 </Button>
             </children>
-        </Pane>
-    </top>
-    <bottom>
-        <!--Footer-->
-        <AnchorPane prefHeight="150.0" style="-fx-background-color: #B6B09F;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-            <children>
-                <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0">
-                    <Label text="Museum Nusantara" textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                        </font>
-                    </Label>
-                    <Label text="Jl. Ganesa No. 10" textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
-                        </font>
-                    </Label>
-                    <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
-                        </font>
-                    </Label>
-                    <Label text="Indonesia 40132." textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
-                        </font>
-                    </Label>
-                </VBox>
 
-                <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="50.0">
-                    <Label text="Jam Berkunjung" textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                        </font>
-                    </Label>
-                    <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
-                        </font>
-                    </Label>
-                    <Label text="Senin Museum tutup." textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
-                        </font>
-                    </Label>
-                    <Label text="Akses terakhir 17.30 WIB" textFill="BLACK">
-                        <font>
-                            <Font name="Plus Jakarta Sans Regular" size="12.0" />
-                        </font>
-                    </Label>
-                </VBox>
-
-                <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="BLACK" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                <VBox alignment="CENTER" spacing="5.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                    <children>
-                        <ImageView fx:id="logoFooter" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" />
-                    </children>
-                </VBox>
-            </children>
-        </AnchorPane>
-    </bottom>
-    <center>
-        <HBox alignment="TOP_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
-            <children>
-                <VBox prefWidth="250.0" spacing="15.0">
-                    <HBox.margin>
-                        <Insets left="50.0" top="30.0" />
-                    </HBox.margin>
-                    <Label text="FILTERS" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                    <VBox spacing="5.0">
-                        <Label text="PERIOD" style="-fx-font-size: 14px;" />
-                        <HBox spacing="10.0">
-                            <TextField fx:id="periodFromField" prefWidth="80.0" promptText="From" />
-                            <Label text="TO" />
-                            <TextField fx:id="periodToField" prefWidth="80.0" promptText="To" />
-                        </HBox>
-                        <Button mnemonicParsing="false" onAction="#onValidatePeriodFilter" text="VALIDATE FILTERS" />
-                    </VBox>
-                    <VBox spacing="5.0">
-                        <Label text="REGION" style="-fx-font-size: 14px;" />
-                        <CheckBox fx:id="DKIJakartaCheckBox" text="DKI Jakarta" />
-                        <CheckBox fx:id="JawaBaratCheckBox" text="Jawa Barat" />
-                        <CheckBox fx:id="JawaTengahCheckBox" text="Jawa Tengah" />
-                        <CheckBox fx:id="DIYogyakartaCheckBox" text="DI Yogyakarta" />
-                        <CheckBox fx:id="JawaTimurCheckBox" text="Jawa Timur" />
-                        <Button mnemonicParsing="false" onAction="#onValidateRegionFilter" text="VALIDATE FILTERS" />
-                    </VBox>
-                    <Button text="Clear All Filters" onAction="#onClearAllFilters" style="-fx-background-color: #ff6b6b; -fx-text-fill: white; -fx-background-radius: 5;" />
-                    <Region VBox.vgrow="ALWAYS" /> </VBox>
-
-                <VBox HBox.hgrow="ALWAYS" prefHeight="200.0" prefWidth="200.0" spacing="20.0">
-                    <HBox.margin>
-                        <Insets right="50.0" top="30.0" />
-                    </HBox.margin>
-                    <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <TextField fx:id="searchTextField" HBox.hgrow="ALWAYS" promptText="SEARCH MUSEUM NUSANTARA COLLECTION" style="-fx-pref-height: 40px; -fx-font-size: 14px;" />
-                        <Button onAction="#onSearch" style="-fx-background-color: #333333; -fx-text-fill: white; -fx-pref-width: 80px; -fx-pref-height: 40px;" text="SEARCH" />
-                    </HBox>
-                    <Label fx:id="resultsCountLabel" text="6 RESULTS" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
-
-                    <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-                        <content>
-                            <GridPane fx:id="artefactGrid" hgap="20.0" vgap="20.0">
-                                <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                </padding>
-                                <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                            </GridPane>
-                        </content>
-                    </ScrollPane>
-                </VBox>
-            </children>
         </HBox>
 
         <!-- Tombol logo di tengah atas -->
