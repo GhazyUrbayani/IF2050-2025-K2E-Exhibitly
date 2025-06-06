@@ -30,32 +30,32 @@ public class ExhibitController {
     }
 
     @FXML
-    public void handleLogin(ActionEvent actionEvent) {
+    public void handleLogin(ActionEvent event) {
         try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Login.fxml");
+            navigateToPage(event, "/org/example/exhibitly/Login.fxml");
         } catch (IOException e) {
             System.err.println("[Error] " + e.getMessage());
         }
     }
 
     @FXML 
-    public void handleExhibit(ActionEvent actionEvent) {
+    public void handleExhibit(ActionEvent event) {
         System.out.println("Already on Exhibit Page!");
     }
 
     @FXML
-    public void handleArtefact(ActionEvent actionEvent) {
+    public void handleArtefact(ActionEvent event) {
         try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+            navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
         } catch (IOException e) {
             System.err.println("[Error] " + e.getMessage());
         }
     }
 
     @FXML
-    public void handleTickets(ActionEvent actionEvent) {
+    public void handleTickets(ActionEvent event) {
         try {
-            navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
+            navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");
         } catch (IOException e) {
             System.err.println("[Error] " + e.getMessage());
         }  
@@ -73,9 +73,9 @@ public class ExhibitController {
         // TODO: Navigate to detailed exhibit page
     }
 
-    private void navigateToPage(ActionEvent actionEvent, String path) throws IOException {
+    private void navigateToPage(ActionEvent event, String path) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(path));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root, 1366, 768);
 
         try {

@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -33,7 +34,7 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class MaintenanceController implements Initializable {
+public class MaintenanceController extends BaseController implements Initializable {
 
     // ... (Elemen FXML yang sama seperti sebelumnya) ...
     @FXML private Label userNameLabel;
@@ -68,6 +69,11 @@ public class MaintenanceController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        if (!session.isLoggedIn() || !session.isStaff()) {
+            return;
+        }
+
         allMaintenanceRecords = new ArrayList<>();
         Date todayDateUtil = new Date(); // java.util.Date untuk dummy data
         Date yesterdayDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -93,7 +99,7 @@ public class MaintenanceController implements Initializable {
 
 
         // Simulate user login
-        currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Kurator", "Setiap Hari, 09.00 - 15.00");
+        currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
 
         updateUserInfo();
         loadRequests();
@@ -323,7 +329,11 @@ public class MaintenanceController implements Initializable {
     // ===============================================
     @FXML
     private void onLogoButtonClick(ActionEvent event) throws IOException {
-        loadScene(event, "/org/example/exhibitly/landing_page.fxml");
+        if (session.isLoggedIn()) {
+            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
+        }
     }
 
     @FXML

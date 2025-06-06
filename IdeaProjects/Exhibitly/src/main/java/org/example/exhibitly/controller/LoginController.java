@@ -26,6 +26,10 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
+import org.example.exhibitly.models.Actor;
+import org.example.exhibitly.models.Staff;
+import org.example.exhibitly.models.SessionMangement;
+
 public class LoginController implements Initializable {
 
     @FXML
@@ -178,9 +182,9 @@ public class LoginController implements Initializable {
             passwordField.setDisable(true);
             onLoginButtonClick.setDisable(true);
 
-            Task<Boolean> loginTask = new Task<Boolean>() {
+            Task<Actor> loginTask = new Task<Actor>() {
                 @Override
-                protected Boolean call() throws Exception {
+                protected Actor call() throws Exception {
                     Thread.sleep(1000);
                     return validateLogin(username, password);
                 }
@@ -194,10 +198,11 @@ public class LoginController implements Initializable {
                         passwordField.setDisable(false);
                         onLoginButtonClick.setDisable(false);
                         
-                        Boolean loginSuccess = getValue();
-                        if (loginSuccess) {
+                        Actor user = getValue();
+                        if (user != null) {
+                            SessionMangement.getSession().login(user);
                             System.out.println("Login successful! Redirecting...");
-                            navigateToPage("/org/example/exhibitly/LandingDoneLoginPage.fxml", "Museum Nusantara - Dashboard");
+                            navigateBasedOnRole(user);
                         } else {
                             System.out.println("Login failed! Please check credentials.");
                             // TODO: Show error message to user
@@ -231,8 +236,8 @@ public class LoginController implements Initializable {
     }
 
     
-    private boolean validateLogin(String username, String password) {
-        String sql = "SELECT COUNT(1) FROM actor WHERE username = ? AND password = ?";
+    private Actor validateLogin(String username, String password) {
+        String sql = "SELECT actorID, username, password, name, role FROM actor WHERE username = ? AND password = ?";
         try {
             DatabaseConnection connectNow = new DatabaseConnection();
             Connection connectDB = connectNow.getConnection();
@@ -242,12 +247,38 @@ public class LoginController implements Initializable {
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1) == 1;
+                int actorID = resultSet.getInt("actorID");
+                String dbUsername = resultSet.getString("username");
+                String dbPassword = resultSet.getString("password");
+                String name = resultSet.getString("name");
+                String role = resultSet.getString("role");
+                Actor user;
+
+                if (role.equalsIgnoreCase("Staff")) {
+                    String staffSql = "SELECT jadwalPemeliharaan FROM staff WHERE actorID = ?";
+                    PreparedStatement staffStmt = connectDB.prepareStatement(staffSql);
+                    staffStmt.setInt(1, actorID);
+                    ResultSet staffResult = staffStmt.executeQuery();
+                    
+                    //TODO: WTF APAAN INI BEJIR!
+                    String jadwal = staffResult.next() ? staffResult.getString("jadwalPemeliharaan") : "Not set";
+                    user = new Staff(actorID, dbUsername, dbPassword, name, jadwal);
+                    staffResult.close();
+                    staffStmt.close();
+                } else {
+                    user = new Actor(actorID, dbUsername, dbPassword, name, role);
+                }
+                resultSet.close();
+                preparedStatement.close();
+                connectDB.close();
+
+                return user;
             }
+            connectDB.close();
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
-        return false;
+        return null;
     }
 
 
@@ -276,6 +307,25 @@ public class LoginController implements Initializable {
     private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
         navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
+
+    private void navigateBasedOnRole(Actor user) {
+        String path;
+        String title;
+
+        switch (user.getRole().toLowerCase()) {
+            case "staff":
+                path = "/org/example/exhibitly/LandingDoneLoginPage.fxml";
+                title = "Museum Nusantara - Dashboard";
+                break;
+        
+            default:
+                path = "/org/example/exhibitly/LandingDoneLoginPage.fxml";
+                title = "Museum Nusantara - Dashboard";
+                break;
+        }
+
+        navigateToPage(path, title);
+    }
     
 
     private void navigateToPage(ActionEvent event, String path) {
@@ -295,21 +345,21 @@ public class LoginController implements Initializable {
         }
     }
 
-    private void navigateToPage(String fxmlPath, String pageTitle) {
+    private void navigateToPage(String path, String title) {
         try {
             Stage currentStage = (Stage) usernameField.getScene().getWindow();
             
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
             
             Scene scene = new Scene(root);
             currentStage.setScene(scene);
 
-            currentStage.setTitle(pageTitle);
+            currentStage.setTitle(title);
             currentStage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Failed to navigate to: " + pageTitle + " - " + e.getMessage());
+            System.err.println("Failed to navigate to: " + title + " - " + e.getMessage());
         }
     }
 }

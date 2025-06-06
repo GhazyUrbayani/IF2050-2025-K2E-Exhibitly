@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class ArtefactController implements Initializable {
+public class ArtefactController extends BaseController implements Initializable {
 
     @FXML
     private ImageView logoHeaderImageView;
@@ -63,9 +63,6 @@ public class ArtefactController implements Initializable {
     private CheckBox  DIYogyakartaCheckBox;
     @FXML
     private CheckBox  JawaTimurCheckBox;
-    // Tambahkan @FXML untuk CheckBox region jika ingin mengontrolnya di Java
-    // @FXML private CheckBox dkiJakartaCheckbox;
-    // ...
 
     // Data artefak (simulasi dari database)
     private List<Artefact> allArtefacts;
@@ -477,44 +474,31 @@ public class ArtefactController implements Initializable {
 
 
     @FXML
-    private void onLoginButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");
+    private void onLoginButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/login.fxml");
     }
 
     @FXML
-    private void onExhibitButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent actionEvent) { // <-- Metode ini harus menerima ActionEvent
+    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
         System.out.println("Sudah ada di Artefact Page");
     }
 
     @FXML
-    private void onTicketButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
+    private void onTicketButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");
     }
 
     @FXML
-    private void onLogoButtonClick(ActionEvent actionEvent) { // <--- Tambahkan ActionEvent event
-        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
-    }
-
-    private void navigateToPage(ActionEvent actionEvent, String path) {
-        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            
-            stage.setTitle("Museum Nusantar - " + pageName);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+    private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+        if (session.isLoggedIn()) {
+            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
         }
     }
 }

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class LandingPageController implements Initializable {
+public class LandingPageController extends BaseController implements Initializable {
 
     // === FXML Components ===
     @FXML private Button LoginButton;
@@ -42,6 +42,9 @@ public class LandingPageController implements Initializable {
     @FXML
     private Label welcomeTextLabel;
 
+    @FXML
+    private Label userInfoLabel;
+
     private List<String> welcomeMessages;
     private int currentMessageIndex = 0;
     private Timeline timeline;
@@ -52,6 +55,7 @@ public class LandingPageController implements Initializable {
         loadImages();
         setupWelcomeMessages();
         startWelcomeTextAnimation();
+        updateUserInterface();
     }
 
     private void loadImages() {
@@ -116,36 +120,54 @@ public class LandingPageController implements Initializable {
         timeline.play();
     }
 
+    private void updateUserInterface() {
+        if (userInfoLabel != null) {
+            if (session.isLoggedIn()) {
+                userInfoLabel.setText("Welcome, " + session.getCurrentActor().getName() + "!");
+                userInfoLabel.setVisible(true);
+            } else {
+                userInfoLabel.setVisible(false);
+            }
+        }
+    }
     // === Navigation Buttons ===
     @FXML
-    private void onLoginButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");
+    private void onLoginButtonClick(ActionEvent event) {
+        if (session.isLoggedIn()) {
+            System.out.println("User already logged in: " + getCurrentUserDisplay());
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/login.fxml", false);
+        }    
     }
 
     @FXML
-    private void onLogoButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
+    private void onLogoButtonClick(ActionEvent event) {
+        if (session.isLoggedIn()) {
+            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
+        }
     }
 
     @FXML
-    private void onExhibitButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent actionEvent) { // <-- Metode ini harus menerima ActionEvent
-        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+        navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
 
     }
 
     @FXML
-    private void onTicketButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
+    private void onTicketButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");
     }
 
     @FXML
     private void onLogoutButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/login.fxml");
+        handleLogout(event);
     }
 
     @FXML
@@ -153,20 +175,4 @@ public class LandingPageController implements Initializable {
         System.out.println("KONTOL!");
     }
 
-    private void navigateToPage(ActionEvent actionEvent, String path) {
-        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            
-            stage.setTitle("Museum Nusantar - " + pageName);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
-        }
-    }
 }

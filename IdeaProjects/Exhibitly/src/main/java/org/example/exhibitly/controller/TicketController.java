@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TicketController implements Initializable {
+public class TicketController extends BaseController implements Initializable {
     
     
     @FXML
@@ -54,7 +54,7 @@ public class TicketController implements Initializable {
     }
     
     @FXML
-    public void addRegularTicket(ActionEvent actionEvent) {
+    public void addRegularTicket(ActionEvent event) {
         try {
             int quantity = Integer.parseInt(regularQuantity.getText());
 
@@ -68,7 +68,7 @@ public class TicketController implements Initializable {
     }
 
     @FXML
-    public void addPremiumTicket(ActionEvent actionEvent) {
+    public void addPremiumTicket(ActionEvent event) {
         try {
             int quantity = Integer.parseInt(premiumQuantity.getText());
             if (quantity > 0) {
@@ -81,14 +81,14 @@ public class TicketController implements Initializable {
     }
 
     @FXML 
-    public void clearCart(ActionEvent actionEvent) {
+    public void clearCart(ActionEvent event) {
         regularTickets = 0;
         premiumTickets = 0;
         updateCartDisplay();
     }
 
     @FXML
-    public void proceedToCheckout(ActionEvent actionEvent) {
+    public void proceedToCheckout(ActionEvent event) {
         if (regularTickets > 0 || premiumTickets > 0) {
             System.out.println("Proceeding to checkout...");
             System.out.println("Regular tickets: " + regularTickets);
@@ -123,45 +123,32 @@ public class TicketController implements Initializable {
     }
 
     @FXML
-    private void onLoginButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");    
+    private void onLoginButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/login.fxml");    
     }
     
     @FXML
-    private void onExhibitButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+    private void onArtefactButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
 
     }
 
     @FXML
-    private void onTicketButtonClick(ActionEvent actionEvent) {
+    private void onTicketButtonClick(ActionEvent event) {
         System.out.println("Sudah ada di Ticket Page!");
     }
 
     @FXML
-    private void onLogoButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
-    }
-
-    private void navigateToPage(ActionEvent actionEvent, String path) {
-        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            
-            stage.setTitle("Museum Nusantar - " + pageName);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+    private void onLogoButtonClick(ActionEvent event) {
+        if (session.isLoggedIn()) {
+            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
         }
     }
 }
