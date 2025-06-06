@@ -23,7 +23,7 @@ public class HelloApplication extends Application {
 
         // 2. Load FXML *sebelum* membuat Scene
         // Anda mendeklarasikan 'root' setelah menggunakannya, ini akan menyebabkan error kompilasi
-        Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/MaintenancePage.fxml"));
 
         // 3. Buat Scene dengan 'root' yang sudah di-load
         Scene scene = new Scene(root, 1383, 768);
