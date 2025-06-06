@@ -197,7 +197,7 @@ public class LoginController implements Initializable{
                         Boolean loginSuccess = getValue();
                         if (loginSuccess) {
                             System.out.println("Login successful! Redirecting...");
-                            onExhibitButtonClick(event); //TODO: Dapat diganti dengan kesepakatan
+                            navigateToPage("/org/example/exhibitly/Artefact.fxml", "Museum Nusantara - Artefact");//TODO: Dapat diganti dengan kesepakatan
 
                         } else {
                             System.out.println("Login failed! Please check credentials.");
@@ -289,6 +289,10 @@ public class LoginController implements Initializable{
         navigateToPage(actionEvent, "/org/example/exhibitly/LandingPage.fxml");
     }
 
+    /* -------------------------------------------------------------------------- */
+    /*                              Navigation Logics                             */
+    /* -------------------------------------------------------------------------- */
+
     private void navigateToPage(ActionEvent actionEvent, String path) {
         String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
         try {
@@ -303,6 +307,24 @@ public class LoginController implements Initializable{
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+        }
+    }
+
+    private void navigateToPage(String fxmlPath, String pageTitle) {
+        try {
+            Stage currentStage = (Stage) usernameField.getScene().getWindow();
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            
+            Scene scene = new Scene(root);
+            currentStage.setScene(scene);
+
+            currentStage.setTitle(pageTitle);
+            currentStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to navigate to: " + pageTitle + " - " + e.getMessage());
         }
     }
 }
