@@ -315,12 +315,12 @@ public class LoginController implements Initializable {
 
         switch (user.getRole().toLowerCase()) {
             case "staff":
-                path = "/org/example/exhibitly/LandingDoneLoginPage.fxml";
+                path = "/org/example/exhibitly/LandingPage.fxml";
                 title = "Museum Nusantara - Dashboard";
                 break;
         
             default:
-                path = "/org/example/exhibitly/LandingDoneLoginPage.fxml";
+                path = "/org/example/exhibitly/LandingPage.fxml";
                 title = "Museum Nusantara - Dashboard";
                 break;
         }

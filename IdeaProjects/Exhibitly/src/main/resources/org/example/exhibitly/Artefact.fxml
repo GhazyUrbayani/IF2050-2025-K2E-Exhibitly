@@ -29,7 +29,7 @@
                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
         <!-- Tombol Login di kanan atas -->
-        <Button fx:id="onLoginButtonClick" mnemonicParsing="false" onAction="#onLoginButtonClick"
+        <Button fx:id="loginLogoutButton" mnemonicParsing="false" onAction="#onLoginLogoutButtonClick"
                 prefHeight="40.0" prefWidth="80.0"
                 style="-fx-background-color: black; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-border-width: 0.3;"
                 text="Login" textFill="WHITE"

@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -18,13 +19,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class TicketController extends BaseController implements Initializable {
-    
-    
     @FXML
     private ImageView ticketHeaderImage;
 
     @FXML
     private ImageView logoFooter;
+
+    @FXML
+    private Button loginLogoutButton;
 
     @FXML
     private TextField regularQuantity;
@@ -50,7 +52,18 @@ public class TicketController extends BaseController implements Initializable {
         } catch (Exception e) {
             System.out.println("[Erorr] Couldn't load logo");
         }
+        updateLoginLogoutButton();
+
+
         updateCartDisplay();
+    }
+
+    private void updateLoginLogoutButton() {
+        if (session != null && session.isLoggedIn()) {
+            loginLogoutButton.setText("Logout");
+        } else {
+            loginLogoutButton.setText("Login");
+        }
     }
     
     @FXML
@@ -123,8 +136,12 @@ public class TicketController extends BaseController implements Initializable {
     }
 
     @FXML
-    private void onLoginButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/login.fxml");    
+    private void onLoginLogoutButtonClick(ActionEvent event) {
+        if (session != null && session.isLoggedIn()) {
+            handleLogout(event);
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/login.fxml");
+        }
     }
     
     @FXML
@@ -145,10 +162,6 @@ public class TicketController extends BaseController implements Initializable {
 
     @FXML
     private void onLogoButtonClick(ActionEvent event) {
-        if (session.isLoggedIn()) {
-            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
-        } else {
-            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
-        }
+        navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 }
