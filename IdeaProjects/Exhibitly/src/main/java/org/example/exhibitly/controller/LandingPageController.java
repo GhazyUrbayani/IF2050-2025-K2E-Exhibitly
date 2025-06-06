@@ -30,13 +30,18 @@ public class LandingPageController implements Initializable {
     @FXML private Button onLogoButtonClick;
     @FXML private Button logoButton;
 
-    @FXML private ImageView LandingImageView;
-    @FXML private ImageView Landing2ImageView;
-    @FXML private ImageView myImageView;
-    @FXML private ImageView logoFooter;
-    @FXML private Label welcomeTextLabel;
+    @FXML
+    private ImageView LandingImageView;
+    @FXML
+    private ImageView Landing2ImageView;
+    @FXML
+    private ImageView myImageView;
+    @FXML
+    private ImageView logoFooter;
 
-    // === Text Animation State ===
+    @FXML
+    private Label welcomeTextLabel;
+
     private List<String> welcomeMessages;
     private int currentMessageIndex = 0;
     private Timeline timeline;
@@ -123,56 +128,41 @@ public class LandingPageController implements Initializable {
     }
 
     @FXML
-    private void onExhibitButtonClick() {
-        System.out.println("Tombol EXHIBIT diklik!");
-        // Tambahkan logika navigasi ke halaman Exhibit di sini
+    private void onExhibitButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onTicketsButtonClick() {
-        System.out.println("Tombol TICKETS diklik!");
-        // Tambahkan logika navigasi ke halaman Tickets di sini
+    private void onArtefactButtonClick(ActionEvent actionEvent) { // <-- Metode ini harus menerima ActionEvent
+        navigateToPage(actionEvent, "/org/example/exhibitly/Artefact.fxml");
+
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent event) {
-        changeSceneFromEvent(event, "/org/example/exhibitly/Artefact.fxml", "Museum Nusantara - Artefacts");
+    private void onTicketButtonClick(ActionEvent actionEvent) {
+        navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
     }
 
-    // === Utility ===
-    private void changeScene(String fxmlPath, String title) {
+    @FXML
+    private void onLogoButtonClick(ActionEvent actionEvent) { // <--- Tambahkan ActionEvent event
+        System.out.println("Sudah ada di dalam Landing Page!");
+    }
+
+    private void navigateToPage(ActionEvent actionEvent, String path) {
+        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
-            Stage stage = (Stage) LoginButton.getScene().getWindow();
+
+            Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle(title);
+            
+            stage.setTitle("Museum Nusantar - " + pageName);
             stage.show();
         } catch (IOException e) {
-            System.err.println("Gagal memuat halaman: " + title);
             e.printStackTrace();
+            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
         }
     }
 
-    private void changeSceneFromEvent(ActionEvent event, String fxmlPath, String title) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle(title);
-            stage.show();
-        } catch (IOException e) {
-            System.err.println("Gagal memuat halaman: " + title);
-            e.printStackTrace();
-        }
-    }
-
-    public void onLogoutButtonClick(ActionEvent actionEvent) {
-        changeScene("/org/example/exhibitly/LandingPage.fxml", "Museum Nusantara - Login");
-    }
-
-    public void onMaintenanceButtonClick(ActionEvent actionEvent) {
-        changeScene("/org/example/exhibitly/login.fxml", "Museum Nusantara - Login");
-    }
 }
