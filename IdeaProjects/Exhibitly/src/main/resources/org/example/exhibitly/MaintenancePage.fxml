@@ -16,7 +16,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ComboBox?> <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
+<?import javafx.scene.control.ComboBox?> 
+
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
     <children>
         <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
@@ -113,7 +115,7 @@
 
                         <VBox fx:id="addRequestForm" spacing="10.0" alignment="TOP_LEFT"
                               style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;"
-                              prefWidth="500.0" visible="false">
+                              prefWidth="500.0" visible="false" managed = "false">
                             <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="New Maintenance Request" />
                             <HBox spacing="10.0" alignment="CENTER_LEFT">
                                 <Label text="Artefact Name:" prefWidth="120.0" />
@@ -134,7 +136,7 @@
                         </VBox>
 
 
-                        <VBox fx:id="requestContentDisplay" spacing="10.0">
+                        <VBox fx:id="requestContentDisplay" spacing="10.0" managed="false">
                             <Label fx:id="todayDateLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Today - [Tanggal Sekarang]" />
                             <VBox fx:id="todayRequestsContainer" spacing="5.0">
                             </VBox>
@@ -143,7 +145,7 @@
                         </VBox>
                         </VBox>
 
-                        <VBox fx:id="historyContent" spacing="10.0" visible="false">
+                        <VBox fx:id="historyContent" spacing="10.0" visible="false" managed="false">
                             <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="History Data Goes Here" />
                             <VBox fx:id="historyDataContainer" spacing="5.0">
                             </VBox>

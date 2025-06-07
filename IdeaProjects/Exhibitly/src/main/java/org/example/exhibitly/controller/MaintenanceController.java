@@ -11,6 +11,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -58,6 +60,8 @@ public class MaintenanceController extends BaseController implements Initializab
     @FXML private TextArea descriptionArea;
     @FXML private Button addRequestButton;
 
+    @FXML private ImageView logoFooter;
+
     // ... (Elemen FXML header/footer lainnya) ...
 
     private List<Maintenance> allMaintenanceRecords;
@@ -70,15 +74,21 @@ public class MaintenanceController extends BaseController implements Initializab
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        if (!session.isLoggedIn() || !session.isStaff()) {
+        if (!session.isLoggedIn() && !session.isKurator()) {
             return;
+        }
+
+        try {
+            logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
+        } catch (Exception e) {
+            System.out.println("[Erorr] Couldn't load logo");
         }
 
         allMaintenanceRecords = new ArrayList<>();
         Date todayDateUtil = new Date(); // java.util.Date untuk dummy data
         Date yesterdayDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date twoDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant());
-
+        Date threeDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         // Initial dummy data
         // Untuk contoh ini, saya tambahkan beberapa tanggal berbeda di 'Past Requests'
@@ -90,18 +100,16 @@ public class MaintenanceController extends BaseController implements Initializab
         allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Cek stabilitas kemarin"));
         allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, yesterdayDateUtil, null, "Pembersihan", "Not Done", "Perlu penanganan khusus kemarin"));
 
-        Date threeDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant());
         allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Sensor tidak berfungsi"));
         allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, threeDaysAgoDateUtil, null, "Cek", "Not Done", "Lampu display mati"));
 
-
         allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Display kusam (Done)"));
 
-
+    
         // Simulate user login
-        currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
-
+        currentUser = session.getCurrentActor();
         updateUserInfo();
+
         loadRequests();
         loadHistory();
 
@@ -109,9 +117,15 @@ public class MaintenanceController extends BaseController implements Initializab
 
         requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
         historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
+       
         requestContentDisplay.setVisible(true);
+        requestContentDisplay.setManaged(true);
+
         historyContent.setVisible(false);
+        historyContent.setManaged(false);
+
         addRequestForm.setVisible(false);
+        addRequestForm.setManaged(false);
     }
 
     private void updateUserInfo() {
@@ -156,7 +170,7 @@ public class MaintenanceController extends BaseController implements Initializab
             // Jika tanggalnya hari ini, masukkan ke todayRequestsContainer
             if (currentRequestDate.isEqual(todayLocalDate)) {
                 try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
                     GridPane requestItem = fxmlLoader.load();
                     ((Label) requestItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(request.getRequestDate()));
                     ((Label) requestItem.lookup("#artefactNameLabel")).setText("Artefak " + request.getArtefactID());
@@ -222,7 +236,7 @@ public class MaintenanceController extends BaseController implements Initializab
                 lastPerformedDate = currentPerformedDate;
             }
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
                 GridPane historyItem = fxmlLoader.load();
 
                 // Fill data into the loaded item
@@ -275,7 +289,11 @@ public class MaintenanceController extends BaseController implements Initializab
 
         loadRequests(); // Refresh tampilan
         addRequestForm.setVisible(false);
+        addRequestForm.setVisible(false);
+
         requestContentDisplay.setVisible(true);
+        requestContentDisplay.setManaged(true);
+
         artefactNameField.clear();
         requesterNameField.clear();
         descriptionArea.clear();
@@ -285,9 +303,15 @@ public class MaintenanceController extends BaseController implements Initializab
     private void onRequestTabClick(ActionEvent event) {
         requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
         historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
+        
         requestContentDisplay.setVisible(true);
+        requestContentDisplay.setManaged(true);
+
         historyContent.setVisible(false);
-        addRequestForm.setVisible(false); // Sembunyikan form saat pindah tab
+        historyContent.setManaged(false);
+
+        addRequestForm.setVisible(false);
+        addRequestForm.setManaged(false);
     }
 
     @FXML
@@ -295,16 +319,27 @@ public class MaintenanceController extends BaseController implements Initializab
         historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
         requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
         requestContentDisplay.setVisible(false);
+        requestContentDisplay.setManaged(false);
+
         historyContent.setVisible(true);
-        addRequestForm.setVisible(false); // Sembunyikan form saat pindah tab
+        historyContent.setManaged(true);
+
+        addRequestForm.setVisible(false);
+        addRequestForm.setManaged(false);
     }
 
     @FXML
     private void onAddRequestButtonClick(ActionEvent event) {
         // Tampilkan form dan sembunyikan daftar request/history
-        addRequestForm.setVisible(true);
+
         requestContentDisplay.setVisible(false);
+        requestContentDisplay.setManaged(false);
+
         historyContent.setVisible(false);
+        historyContent.setManaged(false);
+
+        addRequestForm.setVisible(true);
+        addRequestForm.setManaged(true);
         // Reset form fields
         artefactNameField.clear();
         requesterNameField.clear();
@@ -315,7 +350,10 @@ public class MaintenanceController extends BaseController implements Initializab
     private void onCancelAddRequest(ActionEvent event) {
         // Sembunyikan form dan kembali ke tampilan request
         addRequestForm.setVisible(false);
+        addRequestForm.setManaged(false);
+
         requestContentDisplay.setVisible(true);
+        requestContentDisplay.setManaged(true);
         // Bersihkan form
         artefactNameField.clear();
         requesterNameField.clear();
@@ -329,48 +367,33 @@ public class MaintenanceController extends BaseController implements Initializab
     // ===============================================
     @FXML
     private void onLogoButtonClick(ActionEvent event) throws IOException {
-        if (session.isLoggedIn()) {
-            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
-        } else {
-            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
-        }
+        navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 
     @FXML
     private void onExhibitButtonClick(ActionEvent event) throws IOException {
-        System.out.println("Go to Exhibit Page");
-        // loadScene(event, "/org/example/exhibitly/exhibit_page.fxml");
+        navigateToPage(event, "/org/example/exibitly/Exhibit.fxml");        // loadScene(event, "/org/example/exhibitly/exhibit_page.fxml");
     }
 
     @FXML
     private void onArtefactButtonClick(ActionEvent event) throws IOException {
-        loadScene(event, "/org/example/exhibitly/artefact_page.fxml");
+        navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
     }
 
     @FXML
     private void onTicketsButtonClick(ActionEvent event) throws IOException {
-        System.out.println("Go to Tickets Page");
-        // loadScene(event, "/org/example/exhibitly/tickets_page.fxml");
+        navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");        // loadScene(event, "/org/example/exhibitly/tickets_page.fxml");
     }
 
     @FXML
     private void onLogoutButtonClick(ActionEvent event) throws IOException {
         System.out.println("User logged out.");
-        loadScene(event, "/org/example/exhibitly/login_page.fxml");
+        navigateToPage(event, "/org/example/exhibitly/login_page.fxml");
     }
 
     @FXML
     private void onMaintenanceButtonClick(ActionEvent event) throws IOException {
         // Sudah di halaman maintenance, tidak perlu ganti scene
         // System.out.println("Already on Maintenance Page");
-    }
-
-    // Helper method untuk memuat scene baru
-    private void loadScene(ActionEvent event, String fxmlPath) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
     }
 }
