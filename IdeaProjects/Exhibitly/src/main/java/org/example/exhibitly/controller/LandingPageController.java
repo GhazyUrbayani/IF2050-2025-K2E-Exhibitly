@@ -172,7 +172,7 @@ public class LandingPageController extends BaseController implements Initializab
 
     @FXML
     private void onMaintenanceButtonClick(ActionEvent event) {
-        System.out.println("KONTOL!");
+        navigateToPage(event, "/org/example/exhibitly/MaintenancePage.fxml");
     }
 
 }

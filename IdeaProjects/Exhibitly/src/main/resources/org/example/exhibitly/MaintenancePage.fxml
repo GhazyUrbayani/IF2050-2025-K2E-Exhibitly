@@ -16,7 +16,10 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ComboBox?> <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
+<?import javafx.scene.control.ComboBox?>
+
+<?import javafx.scene.layout.RowConstraints?>
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
     <children>
         <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
@@ -72,84 +75,37 @@
                         <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
                     </padding>
                     <children>
-                        <VBox spacing="5.0">
-                            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Halo " />
-                            <HBox alignment="BASELINE_LEFT" spacing="5.0">
-                                <Label fx:id="userNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="[Nama Pengguna]" />
+                        <GridPane alignment="TOP_CENTER" prefWidth="1266.0"> <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER" minWidth="0.0" prefWidth="250.0" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                            <ColumnConstraints hgrow="NEVER" minWidth="0.0" prefWidth="250.0" />
+                        </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints vgrow="NEVER" />
+                            </rowConstraints>
+
+                            <VBox fx:id="routineScheduleSection" spacing="5.0" visible="false" managed="false" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Jadwal pemeliharaan" />
+                                <Label fx:id="jadwalPembersihanLabel" text="[Jadwal Pembersihan Dinamis]" />
+                                <Label text="09.00 - 15.00" />
+                                <Label text="Ruang D dan Ruang A" />
+                            </VBox>
+
+                            <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: black;" text="MAINTENANCE" />
+                                <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Halo ">
+                                    <HBox alignment="BASELINE_LEFT" spacing="5.0">
+                                        <Label fx:id="userNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="[Nama Pengguna]" />
+                                    </HBox>
+                                </Label>
                                 <Label fx:id="userRoleLabel" style="-fx-font-size: 16px; -fx-font-weight: normal; -fx-text-fill: gray;" text="([Role Pengguna])" />
-                            </HBox>
-                        </VBox>
-
-                        <VBox fx:id="routineScheduleSection" spacing="10.0" visible="false">
-                            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Jadwal pemeliharaan rutin" />
-                            <Label fx:id="jadwalPembersihanLabel" text="[Jadwal Pembersihan Dinamis]" />
-                        </VBox>
-
-                        <HBox alignment="CENTER_LEFT" spacing="20.0">
-                            <Button fx:id="requestTabButton" mnemonicParsing="false" onAction="#onRequestTabClick" style="-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;" text="Request">
-                                <font>
-                                    <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                                </font>
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                            <Button fx:id="historyTabButton" mnemonicParsing="false" onAction="#onHistoryTabClick" style="-fx-background-color: transparent;" text="History">
-                                <font>
-                                    <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                                </font>
-                                <cursor>
-                                    <Cursor fx:constant="HAND" /></cursor>
-                            </Button>
-                            <Button fx:id="addRequestButton" mnemonicParsing="false" onAction="#onAddRequestButtonClick" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Add Request">
-                                <font>
-                                    <Font name="Plus Jakarta Sans Bold" size="12.0" />
-                                </font>
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                        </HBox>
-
-                        <VBox fx:id="addRequestForm" spacing="10.0" alignment="TOP_LEFT"
-                              style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;"
-                              prefWidth="500.0" visible="false">
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="New Maintenance Request" />
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Label text="Artefact Name:" prefWidth="120.0" />
-                                <TextField fx:id="artefactNameField" promptText="e.g., Patung Ganesha" HBox.hgrow="ALWAYS" />
-                            </HBox>
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Label text="Requester Name:" prefWidth="120.0" />
-                                <TextField fx:id="requesterNameField" promptText="e.g., Museum Staff A" HBox.hgrow="ALWAYS" />
-                            </HBox>
-                            <HBox spacing="10.0" alignment="TOP_LEFT">
-                                <Label text="Description:" prefWidth="120.0" />
-                                <TextArea fx:id="descriptionArea" promptText="Describe the issue..." wrapText="true" prefHeight="80.0" HBox.hgrow="ALWAYS" />
-                            </HBox>
-                            <HBox spacing="10.0" alignment="CENTER_RIGHT">
-                                <Button mnemonicParsing="false" onAction="#onCancelAddRequest" style="-fx-background-color: #f0ad4e; -fx-background-radius: 5; -fx-text-fill: white;" text="Cancel" />
-                                <Button mnemonicParsing="false" onAction="#onSubmitNewRequest" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Submit Request" />
-                            </HBox>
-                        </VBox>
-
-
-                        <VBox fx:id="requestContentDisplay" spacing="10.0">
-                            <Label fx:id="todayDateLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Today - [Tanggal Sekarang]" />
-                            <VBox fx:id="todayRequestsContainer" spacing="5.0">
                             </VBox>
 
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Past Requests" /> <VBox fx:id="pastRequestsContainer" spacing="5.0">
-                        </VBox>
-                        </VBox>
+                            <Region fx:id="rightSpacer" GridPane.columnIndex="2" GridPane.rowIndex="0" visible="false" managed="false" prefWidth="250.0" />
+                        </GridPane>
 
-                        <VBox fx:id="historyContent" spacing="10.0" visible="false">
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="History Data Goes Here" />
-                            <VBox fx:id="historyDataContainer" spacing="5.0">
-                            </VBox>
-                        </VBox>
+                        <Pane prefHeight="1.0" style="-fx-background-color: #D3D3D3;" />
 
-                        <Region VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
             </content>
