@@ -23,27 +23,21 @@ import java.util.*;
 public class LandingPageController extends BaseController implements Initializable {
 
     // === FXML Components ===
-    @FXML private Button LoginButton;
+    @FXML private Button loginLogoutButton;
+    @FXML private Button maintenanceButton;
     @FXML private Button onExhibitButtonClick;
     @FXML private Button onArtefactButtonClick;
     @FXML private Button onTicketButtonClick;
     @FXML private Button onLogoButtonClick;
     @FXML private Button logoButton;
+    
+    @FXML private ImageView LandingImageView;
+    @FXML private ImageView Landing2ImageView;
+    @FXML private ImageView myImageView;
+    @FXML private ImageView logoFooter;
 
-    @FXML
-    private ImageView LandingImageView;
-    @FXML
-    private ImageView Landing2ImageView;
-    @FXML
-    private ImageView myImageView;
-    @FXML
-    private ImageView logoFooter;
-
-    @FXML
-    private Label welcomeTextLabel;
-
-    @FXML
-    private Label userInfoLabel;
+    @FXML private Label welcomeTextLabel;
+    @FXML private Label userInfoLabel;
 
     private List<String> welcomeMessages;
     private int currentMessageIndex = 0;
@@ -121,23 +115,33 @@ public class LandingPageController extends BaseController implements Initializab
     }
 
     private void updateUserInterface() {
-        if (userInfoLabel != null) {
-            if (session.isLoggedIn()) {
-                userInfoLabel.setText("Welcome, " + session.getCurrentActor().getName() + "!");
-                userInfoLabel.setVisible(true);
-            } else {
+        if (session != null && session.isLoggedIn()) {
+            loginLogoutButton.setText("Logout");
+            maintenanceButton.setVisible(true);
+        
+            if (userInfoLabel != null) {
+                if (session.isLoggedIn()) {
+                    userInfoLabel.setText("Welcome, " + session.getCurrentActor().getName() + "!");
+                    userInfoLabel.setVisible(true);
+                }
+            }
+        } else {
+            loginLogoutButton.setText("Login");
+            maintenanceButton.setVisible(false);
+
+            if (userInfoLabel != null) {
                 userInfoLabel.setVisible(false);
             }
         }
     }
     // === Navigation Buttons ===
     @FXML
-    private void onLoginButtonClick(ActionEvent event) {
-        if (session.isLoggedIn()) {
-            System.out.println("User already logged in: " + getCurrentUserDisplay());
+    private void onLoginLogoutButtonClick(ActionEvent event) {
+        if (session != null && session.isLoggedIn()) {
+            handleLogout(event);
         } else {
-            navigateToPage(event, "/org/example/exhibitly/login.fxml", false);
-        }    
+            navigateToPage(event, "/org/example/exhibitly/login.fxml");
+        }
     }
 
     @FXML
@@ -175,4 +179,7 @@ public class LandingPageController extends BaseController implements Initializab
         navigateToPage(event, "/org/example/exhibitly/MaintenancePage.fxml");
     }
 
+    public void refreshUIState() {
+        updateUserInterface();
+    }
 }

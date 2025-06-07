@@ -36,7 +36,7 @@ public class ArtefactController extends BaseController implements Initializable 
     private ImageView logoFooter;
 
     @FXML
-    private Button onLoginButtonClick;
+    private Button loginLogoutButton;
 
     @FXML
     private TextField searchTextField;
@@ -84,6 +84,8 @@ public class ArtefactController extends BaseController implements Initializable 
             e.printStackTrace();
         }
 
+        updateLoginLogoutButton();
+
         // Contoh data artefak sesuai entity model
         allArtefacts = new ArrayList<>();
         allArtefacts.add(new Artefact(1, "ARCA GANESHA", "Jawa Timur", 800, "Arca Ganesha dari Jawa Timur.", "/images/arca1.png"));
@@ -110,8 +112,15 @@ public class ArtefactController extends BaseController implements Initializable 
 
         setupEnterKeyHandlers();
 
-        // Tampilkan semua artefak saat pertama kali halaman dimuat
         displayArtefacts(allArtefacts);
+    }
+
+    private void updateLoginLogoutButton() {
+        if (session != null && session.isLoggedIn()) {
+            loginLogoutButton.setText("Logout");
+        } else {
+            loginLogoutButton.setText("Login");
+        }
     }
 
     private void displayArtefacts(List<Artefact> artefactsToDisplay) {
@@ -453,8 +462,12 @@ public class ArtefactController extends BaseController implements Initializable 
 
 
     @FXML
-    private void onLoginButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/login.fxml");
+    private void onLoginLogoutButtonClick(ActionEvent event) {
+        if (session != null && session.isLoggedIn()) {
+            handleLogout(event);
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/login.fxml");
+        }
     }
 
     @FXML
@@ -474,10 +487,6 @@ public class ArtefactController extends BaseController implements Initializable 
 
     @FXML
     private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
-        if (session.isLoggedIn()) {
-            navigateToPage(event, "/org/example/exhibitly/LandingDoneLoginPage.fxml");
-        } else {
-            navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
-        }
+        navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 }

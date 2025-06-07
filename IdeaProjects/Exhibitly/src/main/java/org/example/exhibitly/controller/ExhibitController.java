@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ExhibitController implements Initializable {
+public class ExhibitController extends BaseController implements Initializable {
 
     @FXML private Label exhibitTitleLabel;
     @FXML private Label exhibitDescriptionLabel;
@@ -34,7 +34,7 @@ public class ExhibitController implements Initializable {
     @FXML private ImageView exhibitImageView;
     @FXML private HBox artefactsContainer;
     @FXML private Button logoButton;
-    @FXML private Button loginButton;
+    @FXML private Button loginLogoutButton;
     @FXML private ImageView logoHeaderImageView;
     @FXML private ImageView logoFooter;
 
@@ -49,6 +49,8 @@ public class ExhibitController implements Initializable {
         try {
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {}
+        
+        updateLoginLogoutButton();
 
         artefactList = new ArrayList<>();
         artefactList.add(new Artefact(1, "ARCA GANESHA", "Jawa Timur", 800, "Arca Ganesha dari Jawa Timur.", "/images/arca1.png"));
@@ -65,6 +67,14 @@ public class ExhibitController implements Initializable {
         );
 
         populateExhibitDetails();
+    }
+
+    private void updateLoginLogoutButton() {
+        if (session != null && session.isLoggedIn()) {
+            loginLogoutButton.setText("Logout");
+        } else {
+            loginLogoutButton.setText("Login");
+        }
     }
 
     private void populateExhibitDetails() {
@@ -170,8 +180,12 @@ public class ExhibitController implements Initializable {
     }
 
     @FXML
-    private void onLoginButtonClick(ActionEvent actionEvent) {
-        navigateToPage(actionEvent, "/org/example/exhibitly/login.fxml");
+    private void onLoginLogoutButtonClick(ActionEvent event) {
+        if (session != null && session.isLoggedIn()) {
+            handleLogout(event);
+        } else {
+            navigateToPage(event, "/org/example/exhibitly/login.fxml");
+        }
     }
 
     @FXML
@@ -187,26 +201,5 @@ public class ExhibitController implements Initializable {
     @FXML
     private void onTicketsButtonClick(ActionEvent actionEvent) {
         navigateToPage(actionEvent, "/org/example/exhibitly/Ticket.fxml");
-    }
-
-    private void navigateToPage(ActionEvent event, String path) {
-        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow(); // Casting ke Node diperlukan
-
-            // Buat Scene dengan ukuran tetap 1366x768
-            Scene scene = new Scene(root, 1366, 768);
-            stage.setScene(scene);
-
-            // Set judul Stage secara konsisten
-            stage.setTitle("Museum Nusantara - " + pageName);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
-        }
     }
 }

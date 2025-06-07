@@ -17,9 +17,8 @@ public abstract class BaseController {
     
     protected SessionMangement session = SessionMangement.getSession();
     
-    // Navigation with permission check
     protected void navigateToPage(ActionEvent event, String path) {
-        navigateToPage(event, path, true);
+        navigateToPage(event, path, false);
     }
 
 
