@@ -223,7 +223,8 @@ public class MaintenanceController extends BaseController implements Initializab
         historyDataContainer.getChildren().clear();
 
         List<Maintenance> historyRecords = allMaintenanceRecords.stream()
-                .filter(req -> "Done".equalsIgnoreCase(req.getStatus()) && req.getPerformedDate() != null)
+                .filter(req -> "Done".equalsIgnoreCase(req.getStatus()))
+                .filter(req -> req.getPerformedDate() != null)
                 .sorted(Comparator
                         .comparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Comparator.reverseOrder())
                         .thenComparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime(), Comparator.reverseOrder()))
@@ -269,40 +270,50 @@ public class MaintenanceController extends BaseController implements Initializab
         String description = descriptionArea.getText().trim();
 
         if (artefactNameInput.isEmpty() || requesterNameInput.isEmpty() || description.isEmpty()) {
-            System.err.println("Error: Semua field harus diisi!");
+            showAlert(Alert.AlertType.WARNING, "Input Invalid", "Semua field harus diisi!");
             return;
         }
 
-        int dummyArtefactID = 999;
-        String newRequestID = UUID.randomUUID().toString();
-        Date currentDateTime = new Date();
+        int newMaintenanceID = allMaintenanceRecords.stream()
+                .mapToInt(Maintenance::getMaintenanceID)
+                .max()
+                .orElse(0) + 1;
 
-        // Tambahkan nama requester ke deskripsi agar bisa diambil saat menampilkan
+        int newArtefactID = 100 + newMaintenanceID;
+        String newRequestID = UUID.randomUUID().toString().substring(0, 8);
+        Date currentDateTime = new Date(); 
         String fullDescription = "Requester: " + requesterNameInput + "\n" + description;
 
         Maintenance newMaintenanceRequest = new Maintenance(
-                newRequestID,
-                dummyArtefactID,
-                currentDateTime,
-                "Permintaan User",
-                "Not Done",
-                fullDescription // Simpan deskripsi lengkap dengan nama requester
+                newMaintenanceID,                   
+                currentUser.getActorID(),           
+                null,                       
+                newRequestID,                       
+                newArtefactID,                      
+                artefactNameInput,                  
+                currentDateTime,                    
+                null,                 
+                "User Request",                
+                "Not Done",                  
+                fullDescription                     
         );
 
         allMaintenanceRecords.add(newMaintenanceRequest);
-        System.out.println("New maintenance request added: " + newMaintenanceRequest);
-
-        loadRequests(); // Refresh tampilan
+        loadRequests();
+        
         addRequestForm.setVisible(false);
-        addRequestForm.setVisible(false);
-
+        addRequestForm.setManaged(false);
+        
         requestContentDisplay.setVisible(true);
         requestContentDisplay.setManaged(true);
 
         artefactNameField.clear();
         requesterNameField.clear();
         descriptionArea.clear();
+
+        showAlert(Alert.AlertType.INFORMATION, "Success", "Permintaan maintenance berhasil ditambahkan!");
     }
+
 
     @FXML
     private void onRequestTabClick(ActionEvent event) {
@@ -456,4 +467,9 @@ public class MaintenanceController extends BaseController implements Initializab
         // Sudah di halaman maintenance, tidak perlu ganti scene
         // System.out.println("Already on Maintenance Page");
     }
+
+    // private Maintenance getNewMaintenance() {
+        
+    //     return newMaintenance;
+    // }
 }
