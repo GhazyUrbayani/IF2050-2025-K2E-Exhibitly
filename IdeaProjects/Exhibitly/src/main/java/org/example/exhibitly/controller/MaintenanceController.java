@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import org.example.exhibitly.models.Actor;
@@ -24,7 +25,6 @@ import org.example.exhibitly.models.Staff;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -67,8 +67,8 @@ public class MaintenanceController extends BaseController implements Initializab
     private List<Maintenance> allMaintenanceRecords;
     private Actor currentUser;
 
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
-    private static final SimpleDateFormat DATE_FORMAT_DISPLAY_FULL = new SimpleDateFormat("dd MMMM yyyy"); // Untuk header tanggal
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm"); // Hapus 'new'
+    private static final DateTimeFormatter DATE_FORMATTER_DISPLAY = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Hapus 'new', dan ganti '
     private static final DateTimeFormatter TODAY_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Mengubah ini agar konsisten
 
     @Override
@@ -107,8 +107,8 @@ public class MaintenanceController extends BaseController implements Initializab
 
 
         // Simulate user login
-        currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
-
+        //currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
+        currentUser = new Actor(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Staff");
         updateUserInfo();
 
         loadRequests();
@@ -159,79 +159,88 @@ public class MaintenanceController extends BaseController implements Initializab
         List<Maintenance> openRequests = allMaintenanceRecords.stream()
                 .filter(req -> !"Done".equalsIgnoreCase(req.getStatus()))
                 .sorted(Comparator
-                        .comparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Comparator.reverseOrder())
-                        .thenComparing((Maintenance req) -> req.getRequestDate(), Comparator.reverseOrder())) // Urutkan juga berdasarkan waktu request
+                        .comparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                        .thenComparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime()))
                 .collect(Collectors.toList());
 
-        LocalDate lastRequestDate = null; // Untuk melacak tanggal terakhir yang diproses
+        LocalDate lastRequestDate = null;
+        boolean todayRequestsFound = false;
+        boolean pastRequestsFound = false;
 
         for (Maintenance request : openRequests) {
             LocalDate currentRequestDate = request.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-            // Jika tanggalnya hari ini, masukkan ke todayRequestsContainer
-            if (currentRequestDate.isEqual(todayLocalDate)) {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
-                    GridPane requestItem = fxmlLoader.load();
-                    ((Label) requestItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(request.getRequestDate()));
-                    ((Label) requestItem.lookup("#artefactNameLabel")).setText("Artefak " + request.getArtefactID());
-                    // Asumsi requesterName ada di deskripsi atau field lain
-                    ((Label) requestItem.lookup("#requesterNameLabel")).setText(request.getDescription().split("\n")[0].replace("Requester: ", "").trim()); // Ambil nama requester dari deskripsi
-                    ((Label) requestItem.lookup("#descriptionLabel")).setText(request.getDescription().split("\n").length > 1 ? request.getDescription().split("\n")[1] : request.getDescription()); // Sisanya deskripsi
-                    ((Label) requestItem.lookup("#statusLabel")).setText(request.getStatus());
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
+                GridPane requestItem = fxmlLoader.load();
+                MaintenanceRequestItemController itemController = fxmlLoader.getController(); // Dapatkan controller item
+                itemController.setMaintenanceRequest(request, currentUser); // Set data dan peran
+
+                // Set callback untuk tombol edit di item controller
+
+                itemController.setOnEditAction(() -> showEditRequestDialog(request));
+
+                if (currentRequestDate.isEqual(todayLocalDate)) {
                     todayRequestsContainer.getChildren().add(requestItem);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Untuk permintaan yang bukan hari ini, tambahkan header tanggal jika tanggalnya berbeda dari yang sebelumnya
-                if (lastRequestDate == null || !currentRequestDate.isEqual(lastRequestDate)) {
-                    Label dateHeader = new Label(currentRequestDate.format(TODAY_DATE_FORMATTER)); // Gunakan format tanggal penuh
-                    dateHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
-                    pastRequestsContainer.getChildren().add(dateHeader);
-                    lastRequestDate = currentRequestDate;
-                }
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
-                    GridPane requestItem = fxmlLoader.load();
-                    ((Label) requestItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(request.getRequestDate()));
-                    ((Label) requestItem.lookup("#artefactNameLabel")).setText("Artefak " + request.getArtefactID());
-                    ((Label) requestItem.lookup("#requesterNameLabel")).setText(request.getDescription().split("\n")[0].replace("Requester: ", "").trim());
-                    ((Label) requestItem.lookup("#descriptionLabel")).setText(request.getDescription().split("\n").length > 1 ? request.getDescription().split("\n")[1] : request.getDescription());
-                    ((Label) requestItem.lookup("#statusLabel")).setText(request.getStatus());
+                    todayRequestsFound = true;
+                } else {
+                    if (lastRequestDate == null || !currentRequestDate.isEqual(lastRequestDate)) {
+                        Label dateHeader = new Label(currentRequestDate.format(DATE_FORMATTER_DISPLAY));
+                        dateHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
+                        pastRequestsContainer.getChildren().add(dateHeader);
+                        lastRequestDate = currentRequestDate;
+                    }
                     pastRequestsContainer.getChildren().add(requestItem);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    pastRequestsFound = true;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to load request item: " + e.getMessage());
             }
         }
-        // Jika tidak ada request, tampilkan pesan
-        if (todayRequestsContainer.getChildren().isEmpty()) {
+
+        if (!todayRequestsFound) {
             todayRequestsContainer.getChildren().add(new Label("Tidak ada permintaan maintenance untuk hari ini."));
         }
-        if (pastRequestsContainer.getChildren().isEmpty() && openRequests.stream().noneMatch(req -> !req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isEqual(todayLocalDate))) {
+        if (!pastRequestsFound) {
             pastRequestsContainer.getChildren().add(new Label("Tidak ada permintaan maintenance sebelumnya."));
         }
     }
+    // ... di bagian bawah kelas MaintenanceController, di luar metode lain ...
+
+    // PASTIKAN METODE INI ADA
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+// ...
 
     private void loadHistory() {
         historyDataContainer.getChildren().clear();
 
         List<Maintenance> historyRecords = allMaintenanceRecords.stream()
-                .filter(req -> "Done".equalsIgnoreCase(req.getStatus()))
+                .filter(req -> "Done".equalsIgnoreCase(req.getStatus()) && req.getPerformedDate() != null)
                 .sorted(Comparator
                         .comparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Comparator.reverseOrder())
-                        .thenComparing((Maintenance req) -> req.getPerformedDate(), Comparator.reverseOrder())) // Urutkan juga berdasarkan waktu performed
+                        .thenComparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime(), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
 
-        LocalDate lastPerformedDate = null; // Untuk melacak tanggal terakhir yang diproses di history
+        LocalDate lastPerformedDate = null;
+
+        if (historyRecords.isEmpty()) {
+            historyDataContainer.getChildren().add(new Label("Tidak ada riwayat maintenance."));
+            return;
+        }
 
         for (Maintenance record : historyRecords) {
             LocalDate currentPerformedDate = record.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-            // Tambahkan header tanggal jika tanggalnya berbeda dari yang sebelumnya
             if (lastPerformedDate == null || !currentPerformedDate.isEqual(lastPerformedDate)) {
-                Label dateHeader = new Label(currentPerformedDate.format(TODAY_DATE_FORMATTER)); // Gunakan format tanggal penuh
+                Label dateHeader = new Label(currentPerformedDate.format(DATE_FORMATTER_DISPLAY));
                 dateHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
                 historyDataContainer.getChildren().add(dateHeader);
                 lastPerformedDate = currentPerformedDate;
@@ -239,22 +248,17 @@ public class MaintenanceController extends BaseController implements Initializab
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
                 GridPane historyItem = fxmlLoader.load();
+                MaintenanceRequestItemController itemController = fxmlLoader.getController();
+                itemController.setMaintenanceRequest(record, currentUser);
 
-                // Fill data into the loaded item
-                ((Label) historyItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(record.getPerformedDate()));
-                ((Label) historyItem.lookup("#artefactNameLabel")).setText("Artefak " + record.getArtefactID());
-                // Asumsi requesterName ada di deskripsi atau field lain
-                ((Label) historyItem.lookup("#requesterNameLabel")).setText(record.getDescription().split("\n")[0].replace("Requester: ", "").trim());
-                ((Label) historyItem.lookup("#descriptionLabel")).setText(record.getDescription().split("\n").length > 1 ? record.getDescription().split("\n")[1] : record.getDescription());
-                ((Label) historyItem.lookup("#statusLabel")).setText(record.getStatus());
+                // Callback edit juga untuk history jika Kurator bisa edit history
+                itemController.setOnEditAction(() -> showEditRequestDialog(record));
 
                 historyDataContainer.getChildren().add(historyItem);
             } catch (IOException e) {
                 e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to load history item: " + e.getMessage());
             }
-        }
-        if (historyDataContainer.getChildren().isEmpty()) {
-            historyDataContainer.getChildren().add(new Label("Tidak ada riwayat maintenance."));
         }
     }
 
@@ -360,6 +364,49 @@ public class MaintenanceController extends BaseController implements Initializab
         requesterNameField.clear();
         descriptionArea.clear();
     }
+    // ... di dalam kelas MaintenanceController, mungkin setelah loadHistory() atau di bagian helper methods ...
+
+    // PASTIKAN METODE INI ADA
+    private void showEditRequestDialog(Maintenance requestToEdit) {
+        try {
+            // Pastikan path FXML ini benar!
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/EditRequestDialog.fxml"));
+            Parent page = loader.load();
+
+            // Create the dialog Stage
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Maintenance Request");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            // Mengatur owner ke primary stage (opsional, tapi bagus untuk fokus)
+            // Pastikan 'requestTabButton' sudah diinisialisasi melalui @FXML
+            dialogStage.initOwner(((Node) requestTabButton).getScene().getWindow());
+
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+
+            // Get the controller of the dialog and pass data
+            EditRequestDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setRequest(requestToEdit, currentUser); // Mengirim objek Maintenance dan Actor
+
+            // Show the dialog and wait until it is closed
+            dialogStage.showAndWait();
+
+            // Setelah dialog ditutup, cek apakah perubahan disimpan
+            if (controller.isSaveClicked()) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Permintaan berhasil diperbarui.");
+                loadRequests(); // Refresh tampilan "Request"
+                loadHistory(); // Refresh tampilan "History" (jika ada perubahan status ke Done)
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Gagal membuka form edit: " + e.getMessage());
+        }
+    }
+
+// ...
 
 
 

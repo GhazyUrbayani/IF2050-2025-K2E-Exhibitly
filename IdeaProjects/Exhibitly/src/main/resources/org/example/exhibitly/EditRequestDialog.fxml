@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="editRequestForm" spacing="10.0" alignment="TOP_LEFT"
+      style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);"
+      prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.EditRequestDialogController">
+    <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Edit Maintenance Request" />
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Label text="Artefact Name:" prefWidth="120.0" />
+        <TextField fx:id="editArtefactNameField" promptText="e.g., Patung Ganesha" HBox.hgrow="ALWAYS" />
+    </HBox>
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Label text="Requester Name:" prefWidth="120.0" />
+        <TextField fx:id="editRequesterNameField" promptText="e.g., Museum Staff A" HBox.hgrow="ALWAYS" />
+    </HBox>
+    <HBox spacing="10.0" alignment="TOP_LEFT">
+        <Label text="Description:" prefWidth="120.0" />
+        <TextArea fx:id="editDescriptionArea" promptText="Describe the issue..." wrapText="true" prefHeight="80.0" HBox.hgrow="ALWAYS" />
+    </HBox>
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Label text="Status:" prefWidth="120.0" />
+        <ComboBox fx:id="editStatusComboBox" HBox.hgrow="ALWAYS" />
+    </HBox>
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button mnemonicParsing="false" onAction="#onCancel" style="-fx-background-color: #f0ad4e; -fx-background-radius: 5; -fx-text-fill: white;" text="Cancel" />
+        <Button mnemonicParsing="false" onAction="#onSave" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Save Changes" />
+    </HBox>
+</VBox>
