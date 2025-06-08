@@ -27,7 +27,7 @@ public class EditRequestDialogController {
 
     private Stage dialogStage;
     private Maintenance currentEditingRequest; // Menggunakan objek Maintenance langsung
-    private Actor currentUserRole; // Menggunakan Actor untuk peran
+    private Actor currentUser; // Menggunakan Actor untuk peran
     private boolean saveClicked = false;
 
     // Method untuk mengatur Stage dari dialog
@@ -38,7 +38,7 @@ public class EditRequestDialogController {
     // Method untuk mengatur request yang akan diedit dan peran pengguna
     public void setRequest(Maintenance request, Actor user) {
         this.currentEditingRequest = request;
-        this.currentUserRole = user; // Simpan objek Actor, bukan hanya peran
+        this.currentUser = user; // Simpan objek Actor, bukan hanya peran
 
         // Mengisi field dari objek Maintenance
         // Penting: ArtefactID adalah int, jadi tampilkan sebagai "Artefak [ID]"
@@ -69,13 +69,13 @@ public class EditRequestDialogController {
         editStatusComboBox.setValue(request.getStatus());
 
         // --- ATUR HAK AKSES BERDASARKAN PERAN ---
-        if (currentUserRole.getRole().equalsIgnoreCase("Kurator")) {
+        if (currentUser.getRole().toUpperCase().equalsIgnoreCase("KURATOR")) {
             // Kurator bisa mengedit semua field
             editArtefactNameField.setEditable(true);
             editRequesterNameField.setEditable(true);
             editDescriptionArea.setEditable(true);
             editStatusComboBox.setDisable(false);
-        } else if (currentUserRole.getRole().equalsIgnoreCase("Staff")) {
+        } else if (currentUser.getRole().toUpperCase().equalsIgnoreCase("STAFF")) {
             // Staff hanya bisa mengubah status ComboBox
             editArtefactNameField.setEditable(false);
             editRequesterNameField.setEditable(false);
@@ -98,24 +98,29 @@ public class EditRequestDialogController {
     // Method untuk mendapatkan objek Maintenance yang sudah diedit
     public Maintenance getEditedRequest() {
         // Hanya update field yang bisa diedit oleh peran saat ini
-        if (currentUserRole.getRole().equalsIgnoreCase("Kurator")) {
+        String newStatus = editStatusComboBox.getValue();
+        currentEditingRequest.setStatus(newStatus);
+
+        if (currentUser.getRole().equalsIgnoreCase("Kurator")) {
             // Kurator bisa mengubah requester name dan description
             String updatedRequesterName = editRequesterNameField.getText().trim();
             String updatedDescriptionText = editDescriptionArea.getText().trim();
             String fullUpdatedDescription = "Requester: " + updatedRequesterName + "\n" + updatedDescriptionText;
             currentEditingRequest.setDescription(fullUpdatedDescription);
 
-            // Jika Artefact Name juga diubah oleh Kurator, Anda perlu logic untuk mengupdate artefactID
-            // Misalnya: currentEditingRequest.setArtefactID(Integer.parseInt(editArtefactNameField.getText().replaceAll("[^0-9]", "")));
-            // Ini akan tergantung bagaimana Anda mengelola ArtefactID yang diedit.
-            // Untuk saat ini, kita asumsikan ArtefactID tidak berubah atau ditangani secara terpisah.
+            /*
+            * Jika Artefact Name juga diubah oleh Kurator, Anda perlu logic untuk mengupdate artefactID
+            * Misalnya: currentEditingRequest.setArtefactID(Integer.parseInt(editArtefactNameField.getText().replaceAll("[^0-9]", "")));
+            * Ini akan tergantung bagaimana Anda mengelola ArtefactID yang diedit.
+            * Untuk saat ini, kita asumsikan ArtefactID tidak berubah atau ditangani secara terpisah.
+            */
 
-        } else if (currentUserRole instanceof Staff) {
-            // Staff hanya bisa mengubah status, jadi hanya update status
-            // Field lain tetap seperti aslinya karena mereka tidak editable
+        } else if (currentUser instanceof Staff) {
+            /*
+            * Staff hanya bisa mengubah status, jadi hanya update status
+            * Field lain tetap seperti aslinya karena mereka tidak editable
+            */
         }
-
-        currentEditingRequest.setStatus(editStatusComboBox.getValue());
 
         // Logic untuk setPerformedDate jika status diubah menjadi "Done"
         if ("Done".equalsIgnoreCase(editStatusComboBox.getValue())) {

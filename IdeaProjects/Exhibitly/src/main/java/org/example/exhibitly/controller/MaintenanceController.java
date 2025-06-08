@@ -386,15 +386,27 @@ public class MaintenanceController extends BaseController implements Initializab
             dialogStage.setResizable(false);
 
             // Get the controller of the dialog and pass data
-            EditRequestDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setRequest(requestToEdit, currentUser); // Mengirim objek Maintenance dan Actor
+            EditRequestDialogController requestDialogController = loader.getController();
+            requestDialogController.setDialogStage(dialogStage);
+            requestDialogController.setRequest(requestToEdit, currentUser); // Mengirim objek Maintenance dan Actor
 
             // Show the dialog and wait until it is closed
             dialogStage.showAndWait();
 
             // Setelah dialog ditutup, cek apakah perubahan disimpan
-            if (controller.isSaveClicked()) {
+            if (requestDialogController.isSaveClicked()) {
+                Maintenance updatedMaintenanceRecords = requestDialogController.getEditedRequest();
+
+                for (int i = 0; i < allMaintenanceRecords.size(); i++) {
+                    if (allMaintenanceRecords.get(i).getArtefactID() == updatedMaintenanceRecords.getArtefactID() &&
+                        allMaintenanceRecords.get(i).getRequestID().equals(updatedMaintenanceRecords.getRequestID())) {
+                            
+                            // Set the new maintenance to the existing records.
+                            allMaintenanceRecords.set(i, updatedMaintenanceRecords);
+                            break; //Keluar loop jikalau maintenance tersebut sudah terupdate (karena hanya 1)
+                        }
+                }
+
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Permintaan berhasil diperbarui.");
                 loadRequests(); // Refresh tampilan "Request"
                 loadHistory(); // Refresh tampilan "History" (jika ada perubahan status ke Done)
