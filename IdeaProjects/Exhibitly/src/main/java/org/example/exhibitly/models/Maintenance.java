@@ -6,24 +6,26 @@ public class Maintenance {
     private int maintenanceID;
     private Integer kuratorID;
     private Integer staffID;
-    private String requestID;
+    private String requestName;
     private int artefactID;
+    private String artefactName;
     private Date requestDate;
     private Date performedDate;
     private String type;
     private String status;
     private String description;
 
-    public Maintenance(String newRequestID, int dummyArtefactID, Date currentDateTime, String permintaanUser, String notDone, String description) {
+    public Maintenance(String newRequestName, int dummyArtefactID, Date currentDateTime, String permintaanUser, String notDone, String description) {
     }
 
-    public Maintenance(int maintenanceID, Integer kuratorID, Integer staffID, String requestID, int artefactID,
+    public Maintenance(int maintenanceID, Integer kuratorID, Integer staffID, String requestName, int artefactID, String artefactName,
                        Date requestDate, Date performedDate, String type, String status, String description) {
         this.maintenanceID = maintenanceID;
         this.kuratorID = kuratorID;
         this.staffID = staffID;
-        this.requestID = requestID;
+        this.requestName = requestName;
         this.artefactID = artefactID;
+        this.artefactName = artefactName;
         this.requestDate = requestDate;
         this.performedDate = performedDate;
         this.type = type;
@@ -55,12 +57,12 @@ public class Maintenance {
         this.staffID = staffID;
     }
 
-    public String getRequestID() {
-        return requestID;
+    public String getRequestName() {
+        return requestName;
     }
 
-    public void setRequestID(String requestID) {
-        this.requestID = requestID;
+    public void setRequestName(String requestName) {
+        this.requestName = requestName;
     }
 
     public int getArtefactID() {
@@ -69,6 +71,18 @@ public class Maintenance {
 
     public void setArtefactID(int artefactID) {
         this.artefactID = artefactID;
+    }
+
+    public String getArtefactName() {
+        return artefactName;
+    }
+
+    public void setArtefactName(String artefactName) {
+        this.artefactName = artefactName;
+    }
+
+    public String getArtefactID_Name() {
+        return artefactID + "_" + artefactName;
     }
 
     public Date getRequestDate() {

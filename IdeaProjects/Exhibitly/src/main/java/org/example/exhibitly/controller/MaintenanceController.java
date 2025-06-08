@@ -92,23 +92,23 @@ public class MaintenanceController extends BaseController implements Initializab
 
         // Initial dummy data
         // Untuk contoh ini, saya tambahkan beberapa tanggal berbeda di 'Past Requests'
-        allMaintenanceRecords.add(new Maintenance(1, null, null, UUID.randomUUID().toString().substring(0,8), 101, todayDateUtil, null, "Pembersihan", "Not Done", "Tolong dibersihin ya"));
-        allMaintenanceRecords.add(new Maintenance(2, null, null, UUID.randomUUID().toString().substring(0,8), 102, todayDateUtil, todayDateUtil, "Perbaikan", "Done", "Perlu perbaikan kecil"));
-        allMaintenanceRecords.add(new Maintenance(3, null, null, UUID.randomUUID().toString().substring(0,8), 103, todayDateUtil, null, "Pembersihan", "Not Done", "Debu terlalu tebal"));
+        allMaintenanceRecords.add(new Maintenance(1, null, null, UUID.randomUUID().toString().substring(0,8), 101, "Arca Ganesha", todayDateUtil, null, "Pembersihan", "Not Done", "Tolong dibersihin ya"));
+        allMaintenanceRecords.add(new Maintenance(2, null, null, UUID.randomUUID().toString().substring(0,8), 102, "Arca Jatinangor", todayDateUtil, todayDateUtil, "Perbaikan", "Done", "Perlu perbaikan kecil"));
+        allMaintenanceRecords.add(new Maintenance(3, null, null, UUID.randomUUID().toString().substring(0,8), 103, "Arca Cirebon", todayDateUtil, null, "Pembersihan", "Not Done", "Debu terlalu tebal"));
 
-        allMaintenanceRecords.add(new Maintenance(4, null, null, UUID.randomUUID().toString().substring(0,8), 104, yesterdayDateUtil, yesterdayDateUtil, "Rutin", "Done", "Pembersihan rutin kemarin"));
-        allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Cek stabilitas kemarin"));
-        allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, yesterdayDateUtil, null, "Pembersihan", "Not Done", "Perlu penanganan khusus kemarin"));
+        allMaintenanceRecords.add(new Maintenance(4, null, null, UUID.randomUUID().toString().substring(0,8), 104, "Arca Tamfest", yesterdayDateUtil, yesterdayDateUtil, "Rutin", "Done", "Pembersihan rutin kemarin"));
+        allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, "Arca Ganyang", yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Cek stabilitas kemarin"));
+        allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, "Arca Cisitu", yesterdayDateUtil, null, "Pembersihan", "Not Done", "Perlu penanganan khusus kemarin"));
 
-        allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Sensor tidak berfungsi"));
-        allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, threeDaysAgoDateUtil, null, "Cek", "Not Done", "Lampu display mati"));
+        allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, "Arca Tubis", threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Sensor tidak berfungsi"));
+        allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, "Arca Saraga", threeDaysAgoDateUtil, null, "Cek", "Not Done", "Lampu display mati"));
 
-        allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Display kusam (Done)"));
+        allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, "Arca Tamansari", twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Display kusam (Done)"));
 
 
         // Simulate user login
         //currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
-        currentUser = new Actor(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Staff");
+        currentUser = new Actor(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Kurator");
         updateUserInfo();
 
         loadRequests();
@@ -399,7 +399,7 @@ public class MaintenanceController extends BaseController implements Initializab
 
                 for (int i = 0; i < allMaintenanceRecords.size(); i++) {
                     if (allMaintenanceRecords.get(i).getArtefactID() == updatedMaintenanceRecords.getArtefactID() &&
-                        allMaintenanceRecords.get(i).getRequestID().equals(updatedMaintenanceRecords.getRequestID())) {
+                        allMaintenanceRecords.get(i).getRequestName().equals(updatedMaintenanceRecords.getRequestName())) {
                             
                             // Set the new maintenance to the existing records.
                             allMaintenanceRecords.set(i, updatedMaintenanceRecords);

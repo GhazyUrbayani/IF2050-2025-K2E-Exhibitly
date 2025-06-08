@@ -66,7 +66,7 @@ public class MaintenanceRequestItemController {
         this.currentUser = user;
 
         timeLabel.setText(TIME_FORMAT.format(request.getRequestDate()));
-        artefactNameLabel.setText("Artefak " + request.getArtefactID());
+        artefactNameLabel.setText(request.getArtefactID_Name());
 
         // Parse requester name from description, if applicable
         String fullDescription = request.getDescription();

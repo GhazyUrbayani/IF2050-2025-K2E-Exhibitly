@@ -42,7 +42,8 @@ public class EditRequestDialogController {
 
         // Mengisi field dari objek Maintenance
         // Penting: ArtefactID adalah int, jadi tampilkan sebagai "Artefak [ID]"
-        editArtefactNameField.setText("Artefak " + request.getArtefactID());
+        String artefactName = request.getArtefactName();
+        editArtefactNameField.setText(artefactName);
 
         // Parsing nama requester dari deskripsi (seperti di MaintenanceRequestItemController)
         String fullDescription = request.getDescription();
@@ -98,15 +99,25 @@ public class EditRequestDialogController {
     // Method untuk mendapatkan objek Maintenance yang sudah diedit
     public Maintenance getEditedRequest() {
         // Hanya update field yang bisa diedit oleh peran saat ini
+        String newArtefactName = editArtefactNameField.getText();
+        String newRequesterName = editRequesterNameField.getText();
+        String newDescriptionArea = editDescriptionArea.getText();
         String newStatus = editStatusComboBox.getValue();
+        Date newRequestDate = new Date();
+
+        currentEditingRequest.setArtefactName(newArtefactName);
+        // currentEditingRequest.setArtefactID(ARTEFACT_CREATORS.getArtefactID(newArtefactName));
+        currentEditingRequest.setRequestName(newRequesterName);
+        currentEditingRequest.setDescription(newDescriptionArea);
         currentEditingRequest.setStatus(newStatus);
+        currentEditingRequest.setRequestDate(newRequestDate);
 
         if (currentUser.getRole().equalsIgnoreCase("Kurator")) {
             // Kurator bisa mengubah requester name dan description
-            String updatedRequesterName = editRequesterNameField.getText().trim();
-            String updatedDescriptionText = editDescriptionArea.getText().trim();
-            String fullUpdatedDescription = "Requester: " + updatedRequesterName + "\n" + updatedDescriptionText;
-            currentEditingRequest.setDescription(fullUpdatedDescription);
+            // String updatedRequesterName = editRequesterNameField.getText().trim();
+            // String updatedDescriptionText = editDescriptionArea.getText().trim();
+            // String fullUpdatedDescription = "Requester: " + updatedRequesterName + "\n" + updatedDescriptionText;
+            // currentEditingRequest.setDescription(fullUpdatedDescription);
 
             /*
             * Jika Artefact Name juga diubah oleh Kurator, Anda perlu logic untuk mengupdate artefactID
