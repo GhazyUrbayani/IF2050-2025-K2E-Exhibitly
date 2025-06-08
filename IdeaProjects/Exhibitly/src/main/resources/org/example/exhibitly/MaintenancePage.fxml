@@ -16,8 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.ComboBox?> 
 
 <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
     <children>
@@ -131,18 +130,45 @@
                             </children>
                         </HBox>
 
-                        <VBox fx:id="requestContentDisplay" spacing="10.0" visible="true" managed="true">
-                            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Today's Requests" />
-                            <VBox fx:id="todayRequestsContainer" spacing="5.0" />
-                            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 20 0 0 0;" text="Past Requests" />
-                            <VBox fx:id="pastRequestsContainer" spacing="5.0" />
+                        <VBox fx:id="addRequestForm" spacing="10.0" alignment="TOP_LEFT"
+                              style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;"
+                              prefWidth="500.0" visible="false" managed = "false">
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="New Maintenance Request" />
+                            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                <Label text="Artefact Name:" prefWidth="120.0" />
+                                <TextField fx:id="artefactNameField" promptText="e.g., Patung Ganesha" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                <Label text="Requester Name:" prefWidth="120.0" />
+                                <TextField fx:id="requesterNameField" promptText="e.g., Museum Staff A" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                            <HBox spacing="10.0" alignment="TOP_LEFT">
+                                <Label text="Description:" prefWidth="120.0" />
+                                <TextArea fx:id="descriptionArea" promptText="Describe the issue..." wrapText="true" prefHeight="80.0" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                <Button mnemonicParsing="false" onAction="#onCancelAddRequest" style="-fx-background-color: #f0ad4e; -fx-background-radius: 5; -fx-text-fill: white;" text="Cancel" />
+                                <Button mnemonicParsing="false" onAction="#onSubmitNewRequest" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Submit Request" />
+                            </HBox>
+                        </VBox>
+
+
+                        <VBox fx:id="requestContentDisplay" spacing="10.0" managed="false">
+                            <Label fx:id="todayDateLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Today - [Tanggal Sekarang]" />
+                            <VBox fx:id="todayRequestsContainer" spacing="5.0">
+                            </VBox>
+
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Past Requests" /> <VBox fx:id="pastRequestsContainer" spacing="5.0">
+                        </VBox>
                         </VBox>
 
                         <VBox fx:id="historyContent" spacing="10.0" visible="false" managed="false">
-                            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Maintenance History" />
-                            <VBox fx:id="historyDataContainer" spacing="5.0" />
+                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="History Data Goes Here" />
+                            <VBox fx:id="historyDataContainer" spacing="5.0">
+                            </VBox>
                         </VBox>
 
+                        <Region VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
             </content>
