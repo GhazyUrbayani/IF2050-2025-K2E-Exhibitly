@@ -9,17 +9,17 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.Region; // Import Region
+// import javafx.scene.layout.Region; // Hapus atau biarkan terkomentar jika Region tidak lagi digunakan
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import org.example.exhibitly.models.Actor;
 import org.example.exhibitly.models.Maintenance;
 import org.example.exhibitly.models.Staff;
-import org.example.exhibitly.models.SessionMangement;
+import org.example.exhibitly.models.DummyStaffData; // Pastikan ini diimpor jika SessionMangement dihapus dan diganti dummy
+// import org.example.exhibitly.models.SessionMangement; // Hapus atau komentari jika tidak digunakan
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,7 +41,7 @@ public class MaintenanceController implements Initializable {
     @FXML private Label userRoleLabel;
     @FXML private VBox routineScheduleSection;
     @FXML private Label jadwalPembersihanLabel;
-    @FXML private Region rightSpacer; // Deklarasikan fx:id untuk spacer
+    // @FXML private Region rightSpacer; // Biarkan ini dikomentari atau hapus jika memang tidak ada di FXML
 
     @FXML private Button requestTabButton;
     @FXML private Button historyTabButton;
@@ -53,10 +53,6 @@ public class MaintenanceController implements Initializable {
 
     @FXML private Label todayDateLabel;
 
-    @FXML private VBox addRequestForm;
-    @FXML private TextField artefactNameField;
-    @FXML private TextField requesterNameField;
-    @FXML private TextArea descriptionArea;
     @FXML private Button addRequestButton;
 
     @FXML private Button LogoutButton;
@@ -67,31 +63,33 @@ public class MaintenanceController implements Initializable {
     private Actor currentUser;
 
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
-    private static final DateTimeFormatter TODAY_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMMリエステル");
-    private static final SimpleDateFormat DATE_FORMAT_DISPLAY = new SimpleDateFormat("dd MMM yyyy"); // Untuk tampilan di History
-
+    private static final DateTimeFormatter TODAY_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Format disamakan
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // ... (SAMA SEPERTI SEBELUMNYA: dummy data, inisialisasi SessionManager, dll.) ...
-
         allMaintenanceRecords = new ArrayList<>();
+        // ... (Dummy data tetap seperti sebelumnya) ...
         Date todayDateUtil = new Date();
         Date yesterdayDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date twoDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date threeDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        allMaintenanceRecords.add(new Maintenance(1, null, null, UUID.randomUUID().toString().substring(0,8), 101, todayDateUtil, null, "Pembersihan", "Not Done", "Requester: Sendi Putra Alicia\nTolong dibersihin ya"));
-        allMaintenanceRecords.add(new Maintenance(2, null, null, UUID.randomUUID().toString().substring(0,8), 102, todayDateUtil, todayDateUtil, "Perbaikan", "Done", "Requester: Joko Santoso\nPerlu perbaikan kecil"));
-        allMaintenanceRecords.add(new Maintenance(3, null, null, UUID.randomUUID().toString().substring(0,8), 103, todayDateUtil, null, "Pembersihan", "Not Done", "Requester: Rina Dewi\nDebu terlalu tebal"));
-        allMaintenanceRecords.add(new Maintenance(4, null, null, UUID.randomUUID().toString().substring(0,8), 104, yesterdayDateUtil, yesterdayDateUtil, "Rutin", "Done", "Requester: Bambang Wijaya\nPembersihan rutin kemarin"));
-        allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Requester: Siska Putri\nCek stabilitas kemarin"));
-        allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, yesterdayDateUtil, null, "Pembersihan", "Not Done", "Requester: Andi Setiawan\nPerlu penanganan khusus kemarin"));
-        allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Requester: Citra Ayu\nSensor tidak berfungsi"));
-        allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, threeDaysAgoDateUtil, null, "Cek", "Not Done", "Requester: Bayu Firmansyah\nLampu display mati"));
-        allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Requester: Dedi Kusuma\nDisplay kusam (Done)"));
+        allMaintenanceRecords.add(new Maintenance(1, null, null, UUID.randomUUID().toString().substring(0,8), 101, todayDateUtil, null, "Pembersihan", "Not Done", "Requester: Sendi Putra Alicia\nTargeted Staff: Stanislaus Ardy Bramantyo\nTolong dibersihin ya"));
+        allMaintenanceRecords.add(new Maintenance(2, null, null, UUID.randomUUID().toString().substring(0,8), 102, todayDateUtil, todayDateUtil, "Perbaikan", "Done", "Requester: Joko Santoso\nTargeted Staff: Budi Santoso\nPerlu perbaikan kecil"));
+        allMaintenanceRecords.add(new Maintenance(3, null, null, UUID.randomUUID().toString().substring(0,8), 103, todayDateUtil, null, "Pembersihan", "Not Done", "Requester: Rina Dewi\nTargeted Staff: Citra Dewi\nDebu terlalu tebal"));
+        allMaintenanceRecords.add(new Maintenance(4, null, null, UUID.randomUUID().toString().substring(0,8), 104, yesterdayDateUtil, yesterdayDateUtil, "Rutin", "Done", "Requester: Bambang Wijaya\nTargeted Staff: Denny Wijaya\nPembersihan rutin kemarin"));
+        allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Requester: Siska Putri\nTargeted Staff: Eka Putri\nCek stabilitas kemarin"));
+        allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, yesterdayDateUtil, null, "Pembersihan", "Not Done", "Requester: Andi Setiawan\nTargeted Staff: Stanislaus Ardy Bramantyo, Budi Santoso\nPerlu penanganan khusus kemarin"));
+        allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Requester: Citra Ayu\nTargeted Staff: Citra Dewi\nSensor tidak berfungsi"));
+        allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, threeDaysAgoDateUtil, null, "Cek", "Not Done", "Requester: Bayu Firmansyah\nTargeted Staff: Denny Wijaya\nLampu display mati"));
+        allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Requester: Dedi Kusuma\nTargeted Staff: Eka Putri\nDisplay kusam (Done)"));
 
-        currentUser = currentUser = new Actor(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Staff"); // Contoh Staff
+        // Gunakan DummyStaffData untuk mendapatkan currentUser (Stanislaus Ardy Bramantyo)
+        currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
+        // Jika Anda ingin menguji role staff, bisa diinisialisasi di sini atau pastikan login sebagai Staff
+        // currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Staff", "Setiap Hari, 09.00 - 15.00");
+        // currentUser = new Actor(10, "curator", "pass", "Jane Doe", "Curator"); // Untuk role lain
+
         updateUserInfo();
         loadRequests();
         loadHistory();
@@ -102,22 +100,81 @@ public class MaintenanceController implements Initializable {
         historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
         requestContentDisplay.setVisible(true);
         historyContent.setVisible(false);
-        addRequestForm.setVisible(false);
     }
 
     private void updateUserInfo() {
         if (currentUser != null) {
-            userNameLabel.setText(currentUser.getName() + "!");
-            userRoleLabel.setText("(" + currentUser.getRole() + ")");
+            userNameLabel.setText(currentUser.getRole() + "!");
+            userRoleLabel.setText("(" + currentUser.getName() + ")");
 
-            // Tampilkan atau sembunyikan jadwal rutin dan tombol add request berdasarkan role
-            if ("Staff".equalsIgnoreCase(currentUser.getRole())) {
-                routineScheduleSection.setVisible(true);
-                //addRequestButton.setVisible(false); // Staff tidak perlu tombol add request karena mereka menangani, bukan request
-            } else { // Public/Visitor/Other roles can add request
-                routineScheduleSection.setVisible(false);
-                //addRequestButton.setVisible(true);
+            boolean isStaff = "Staff".equalsIgnoreCase(currentUser.getRole());
+
+            routineScheduleSection.setVisible(isStaff);
+            routineScheduleSection.setManaged(isStaff);
+
+            // Hapus atau komentari baris ini karena rightSpacer tidak ada lagi di FXML
+            // if (rightSpacer != null) { // if block tidak perlu jika @FXML dideklarasikan
+            //     rightSpacer.setVisible(!isStaff);
+            //     rightSpacer.setManaged(!isStaff);
+            // }
+
+            // Add Request button hanya untuk Non-Staff (Public/Curator)
+            addRequestButton.setVisible(!isStaff);
+            addRequestButton.setManaged(!isStaff); // Tambahkan ini agar tombol tidak memakan ruang
+            addRequestButton.setText("Add Request"); // Mengatur teks tombol untuk pop-up
+
+            if (isStaff && currentUser instanceof Staff) {
+                Staff staff = (Staff) currentUser;
+                if (jadwalPembersihanLabel != null) {
+                    jadwalPembersihanLabel.setText(staff.getJadwalPemeliharaan());
+                }
             }
+        } else {
+            // Ini penting: Jika currentUser null, ini bisa menjadi penyebab (null) di UI Anda
+            userNameLabel.setText("Guest");
+            userRoleLabel.setText("(Undefined Role)");
+            routineScheduleSection.setVisible(false);
+            routineScheduleSection.setManaged(false);
+            addRequestButton.setVisible(true); // Default to visible for guest if no user
+            addRequestButton.setManaged(true);
+        }
+    }
+
+    // ... (Sisa metode onAddRequestButtonClick, loadRequests, loadHistory, navigasi tidak berubah) ...
+
+    @FXML
+    public void onAddRequestButtonClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/add_maintenance_request_popup.fxml"));
+            Parent root = loader.load();
+
+            AddMaintenanceRequestPopupController popupController = loader.getController();
+
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            popupStage.setTitle("Add New Maintenance Request");
+
+            Scene popupScene = new Scene(root);
+            // Hanya tambahkan stylesheet jika pathnya benar dan file ada
+            // if (getClass().getResource("/css/style.css") != null) {
+            //     popupScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            // }
+
+            popupStage.setScene(popupScene);
+            popupController.setDialogStage(popupStage);
+            popupStage.showAndWait();
+
+            Maintenance newRequest = popupController.getNewMaintenanceRequest();
+            if (newRequest != null) {
+                allMaintenanceRecords.add(newRequest);
+                System.out.println("New maintenance request submitted: " + newRequest);
+                loadRequests();
+                onRequestTabClick(null);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat pop-up Add Maintenance Request: " + e.getMessage());
         }
     }
 
@@ -126,47 +183,85 @@ public class MaintenanceController implements Initializable {
         pastRequestsContainer.getChildren().clear();
         LocalDate todayLocalDate = LocalDate.now(ZoneId.systemDefault());
 
-        // Filter dan Urutkan permintaan yang belum selesai
         List<Maintenance> openRequests = allMaintenanceRecords.stream()
-                .filter(req -> !"Done".equalsIgnoreCase(req.getStatus())) // Hanya tampilkan yang belum Done
+                .filter(req -> !"Done".equalsIgnoreCase(req.getStatus()))
                 .sorted(Comparator
-                        // Urutkan berdasarkan tanggal request (terbaru duluan)
                         .comparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Comparator.reverseOrder())
-                        // Kemudian berdasarkan waktu request (terbaru duluan)
-                        .thenComparing((Maintenance req) -> TIME_FORMAT.format(req.getRequestDate()), Comparator.reverseOrder()))
+                        .thenComparing((Maintenance req) -> req.getRequestDate(), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
 
+        LocalDate lastRequestDate = null;
+
         for (Maintenance request : openRequests) {
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
-                GridPane requestItem = fxmlLoader.load();
+            LocalDate currentRequestDate = request.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                // Fill data into the loaded item
-                ((Label) requestItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(request.getRequestDate())); // Gunakan waktu dari requestDate
-                ((Label) requestItem.lookup("#artefactNameLabel")).setText("Artefak " + request.getArtefactID()); // Menggunakan artefactID sebagai placeholder
-                // Asumsi requesterName ada di deskripsi atau field lain, atau kita bisa pakai current user name
-                // Untuk demo, kita pakai nama current user jika request baru
-                ((Label) requestItem.lookup("#requesterNameLabel")).setText(request.getRequestID().substring(0,8) + " (Req ID)"); // Placeholder, bisa diganti dengan nama asli requester
-                ((Label) requestItem.lookup("#descriptionLabel")).setText(request.getDescription());
-                ((Label) requestItem.lookup("#statusLabel")).setText(request.getStatus());
+            if (currentRequestDate.isEqual(todayLocalDate)) {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
+                    GridPane requestItem = fxmlLoader.load();
+                    ((Label) requestItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(request.getRequestDate()));
+                    ((Label) requestItem.lookup("#artefactNameLabel")).setText("Artefak ID: " + request.getArtefactID());
 
-                // Group by date
-                if (request.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isEqual(todayLocalDate)) {
+                    String[] parts = request.getDescription().split("\n", 3);
+                    String requesterName = "N/A";
+                    String descriptionContent = request.getDescription();
+                    if (parts.length > 0 && parts[0].startsWith("Requester: ")) {
+                        requesterName = parts[0].replace("Requester: ", "").trim();
+                    }
+                    if (parts.length > 2) {
+                        descriptionContent = parts[2];
+                    } else if (parts.length == 2 && !parts[1].startsWith("Targeted Staff:")) {
+                        descriptionContent = parts[1];
+                    } else if (parts.length == 2 && parts[1].startsWith("Targeted Staff:")) {
+                        descriptionContent = "No description provided.";
+                    }
+
+                    ((Label) requestItem.lookup("#requesterNameLabel")).setText(requesterName);
+                    ((Label) requestItem.lookup("#descriptionLabel")).setText(descriptionContent);
+                    ((Label) requestItem.lookup("#statusLabel")).setText(request.getStatus());
                     todayRequestsContainer.getChildren().add(requestItem);
-                } else {
-                    // Anda mungkin ingin menambahkan label tanggal di sini jika tanggalnya berubah
-                    pastRequestsContainer.getChildren().add(requestItem);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+            } else {
+                if (lastRequestDate == null || !currentRequestDate.isEqual(lastRequestDate)) {
+                    Label dateHeader = new Label(currentRequestDate.format(TODAY_DATE_FORMATTER));
+                    dateHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
+                    pastRequestsContainer.getChildren().add(dateHeader);
+                    lastRequestDate = currentRequestDate;
+                }
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
+                    GridPane requestItem = fxmlLoader.load();
+                    ((Label) requestItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(request.getRequestDate()));
+                    ((Label) requestItem.lookup("#artefactNameLabel")).setText("Artefak ID: " + request.getArtefactID());
+                    String[] parts = request.getDescription().split("\n", 3);
+                    String requesterName = "N/A";
+                    String descriptionContent = request.getDescription();
+                    if (parts.length > 0 && parts[0].startsWith("Requester: ")) {
+                        requesterName = parts[0].replace("Requester: ", "").trim();
+                    }
+                    if (parts.length > 2) {
+                        descriptionContent = parts[2];
+                    } else if (parts.length == 2 && !parts[1].startsWith("Targeted Staff:")) {
+                        descriptionContent = parts[1];
+                    } else if (parts.length == 2 && parts[1].startsWith("Targeted Staff:")) {
+                        descriptionContent = "No description provided.";
+                    }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                    ((Label) requestItem.lookup("#requesterNameLabel")).setText(requesterName);
+                    ((Label) requestItem.lookup("#descriptionLabel")).setText(descriptionContent);
+                    ((Label) requestItem.lookup("#statusLabel")).setText(request.getStatus());
+                    pastRequestsContainer.getChildren().add(requestItem);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        // If no requests, display a message
         if (todayRequestsContainer.getChildren().isEmpty()) {
             todayRequestsContainer.getChildren().add(new Label("Tidak ada permintaan maintenance untuk hari ini."));
         }
-        if (pastRequestsContainer.getChildren().isEmpty()) {
+        if (pastRequestsContainer.getChildren().isEmpty() && openRequests.stream().noneMatch(req -> !req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isEqual(todayLocalDate))) {
             pastRequestsContainer.getChildren().add(new Label("Tidak ada permintaan maintenance sebelumnya."));
         }
     }
@@ -175,24 +270,43 @@ public class MaintenanceController implements Initializable {
         historyDataContainer.getChildren().clear();
 
         List<Maintenance> historyRecords = allMaintenanceRecords.stream()
-                .filter(req -> "Done".equalsIgnoreCase(req.getStatus())) // Filter for 'Done' status
+                .filter(req -> "Done".equalsIgnoreCase(req.getStatus()))
                 .sorted(Comparator
-                        // Urutkan berdasarkan tanggal performed (terbaru duluan)
                         .comparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Comparator.reverseOrder())
-                        // Kemudian berdasarkan waktu performed (terbaru duluan)
-                        .thenComparing((Maintenance req) -> TIME_FORMAT.format(req.getPerformedDate()), Comparator.reverseOrder()))
+                        .thenComparing((Maintenance req) -> req.getPerformedDate(), Comparator.reverseOrder()))
                 .collect(Collectors.toList());
 
+        LocalDate lastPerformedDate = null;
+
         for (Maintenance record : historyRecords) {
+            LocalDate currentPerformedDate = record.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (lastPerformedDate == null || !currentPerformedDate.isEqual(lastPerformedDate)) {
+                Label dateHeader = new Label(currentPerformedDate.format(TODAY_DATE_FORMATTER));
+                dateHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10 0 5 0;");
+                historyDataContainer.getChildren().add(dateHeader);
+                lastPerformedDate = currentPerformedDate;
+            }
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/maintenance_request_item.fxml"));
                 GridPane historyItem = fxmlLoader.load();
 
-                // Fill data into the loaded item
-                ((Label) historyItem.lookup("#timeLabel")).setText(DATE_FORMAT_DISPLAY.format(record.getPerformedDate()) + " " + TIME_FORMAT.format(record.getPerformedDate())); // Tampilkan tanggal & waktu
-                ((Label) historyItem.lookup("#artefactNameLabel")).setText("Artefak " + record.getArtefactID()); // Menggunakan artefactID sebagai placeholder
-                ((Label) historyItem.lookup("#requesterNameLabel")).setText(record.getRequestID() != null ? record.getRequestID().substring(0,8) + " (Req ID)" : "N/A"); // RequestID
-                ((Label) historyItem.lookup("#descriptionLabel")).setText(record.getDescription());
+                ((Label) historyItem.lookup("#timeLabel")).setText(TIME_FORMAT.format(record.getPerformedDate()));
+                ((Label) historyItem.lookup("#artefactNameLabel")).setText("Artefak ID: " + record.getArtefactID());
+                String[] parts = record.getDescription().split("\n", 3);
+                String requesterName = "N/A";
+                String descriptionContent = record.getDescription();
+                if (parts.length > 0 && parts[0].startsWith("Requester: ")) {
+                    requesterName = parts[0].replace("Requester: ", "").trim();
+                }
+                if (parts.length > 2) {
+                    descriptionContent = parts[2];
+                } else if (parts.length == 2 && !parts[1].startsWith("Targeted Staff:")) {
+                    descriptionContent = parts[1];
+                }
+
+                ((Label) historyItem.lookup("#requesterNameLabel")).setText(requesterName);
+                ((Label) historyItem.lookup("#descriptionLabel")).setText(descriptionContent);
                 ((Label) historyItem.lookup("#statusLabel")).setText(record.getStatus());
 
                 historyDataContainer.getChildren().add(historyItem);
@@ -204,92 +318,73 @@ public class MaintenanceController implements Initializable {
             historyDataContainer.getChildren().add(new Label("Tidak ada riwayat maintenance."));
         }
     }
+    @FXML
+    public void onRequestTabClick(ActionEvent event) {
+        requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
+        historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
+        requestContentDisplay.setVisible(true);
+        historyContent.setVisible(false);
+    }
 
+    @FXML
+    public void onHistoryTabClick(ActionEvent event) {
+        historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
+        requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
+        requestContentDisplay.setVisible(false);
+        historyContent.setVisible(true);
+    }
 
-    // ... (Metode loadRequests(), loadHistory(), onSubmitNewRequest(), onCancelAddRequest(), onAddRequestButtonClick() sama seperti sebelumnya) ...
-    // Pastikan metode navigateToPage dan metode navigasi lainnya juga sudah diupdate
-
-    private void navigateToPage(ActionEvent event, String path) {
-        String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
+    // Metode navigasi lainnya (jika ada dan tidak berubah)
+    @FXML
+    private void onLogoutButtonClick(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 1366, 768);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            stage.setScene(scene);
-            stage.setTitle("Museum Nusantara - " + pageName);
-            stage.show();
+            Parent loginParent = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/login_page.fxml")); // Sesuaikan path FXML Anda
+            Scene loginScene = new Scene(loginParent);
+            Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+            window.setScene(loginScene);
+            window.show();
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Gagal memuat halaman " + pageName + ": " + e.getMessage());
+            System.err.println("Gagal memuat halaman login: " + e.getMessage());
         }
-    }
-
-    // Metode untuk tombol navigasi header (jika di MaintenanceController)
-    @FXML
-    private void onExhibitButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/exhibit_page.fxml");
-    }
-
-    @FXML
-    private void onArtefactButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/artefact_page.fxml");
-    }
-
-    @FXML
-    private void onTicketsButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/tickets_page.fxml");
-    }
-
-    @FXML
-    private void onLogoButtonClick(ActionEvent event) {
-        navigateToPage(event, "/org/example/exhibitly/landing_page.fxml");
     }
 
     @FXML
     private void onMaintenanceButtonClick(ActionEvent event) {
-        // Sudah di halaman maintenance, tidak perlu navigasi
+        // Sudah di halaman maintenance, tidak perlu melakukan apa-apa
+        // Atau bisa refresh halaman jika diinginkan
     }
 
     @FXML
-    private void onLogoutButtonClick(ActionEvent event) throws IOException {
+    private void onLogoButtonClick(ActionEvent event) {
+        try {
+            Parent homeParent = FXMLLoader.load(getClass().getResource("/org/example/exhibitly/home_page.fxml")); // Sesuaikan path FXML Anda
+            Scene homeScene = new Scene(homeParent);
+            Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+            window.setScene(homeScene);
+            window.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Gagal memuat halaman home: " + e.getMessage());
+        }
+    }
+
+    // placeholder methods for FXML onAction that might be present
+    @FXML
+    public void onExhibitButtonClick(ActionEvent actionEvent) {
+        System.out.println("Exhibit button clicked!");
+        // Tambahkan navigasi ke halaman Exhibit di sini
     }
 
     @FXML
-    private void onRequestTabClick(ActionEvent event) {
-        requestContentDisplay.setVisible(true);
-        historyContent.setVisible(false);
-        addRequestForm.setVisible(false); // Pastikan form tertutup saat pindah tab
-        requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
-        historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
+    public void onArtefactButtonClick(ActionEvent actionEvent) {
+        System.out.println("Artefact button clicked!");
+        // Tambahkan navigasi ke halaman Artefact di sini
     }
 
     @FXML
-    private void onHistoryTabClick(ActionEvent event) {
-        requestContentDisplay.setVisible(false);
-        historyContent.setVisible(true);
-        addRequestForm.setVisible(false); // Pastikan form tertutup saat pindah tab
-        historyTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;");
-        requestTabButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0 0 0 0;");
-    }
-
-    @FXML
-    private void onAddRequestButtonClick(ActionEvent event) {
-        requestContentDisplay.setVisible(false);
-        historyContent.setVisible(false);
-        addRequestForm.setVisible(true);
-    }
-
-    @FXML
-    private void onCancelAddRequest(ActionEvent event) {
-        addRequestForm.setVisible(false);
-        requestContentDisplay.setVisible(true);
-        // Clear fields
-        artefactNameField.clear();
-        requesterNameField.clear();
-        descriptionArea.clear();
+    public void onTicketsButtonClick(ActionEvent actionEvent) {
+        System.out.println("Tickets button clicked!");
+        // Tambahkan navigasi ke halaman Tickets di sini
     }
 }
