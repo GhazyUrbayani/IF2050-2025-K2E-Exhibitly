@@ -14,7 +14,7 @@ public class Maintenance {
     private String status;
     private String description;
 
-    public Maintenance(Integer o, Object kuratorID, Object staffID, String newRequestID, int dummyArtefactID, Date requestDate, Date currentDateTime, String permintaanUser, String notDone, String description) {
+    public Maintenance(String newRequestID, int dummyArtefactID, Date currentDateTime, String permintaanUser, String notDone, String description) {
     }
 
     public Maintenance(int maintenanceID, Integer kuratorID, Integer staffID, String requestID, int artefactID,

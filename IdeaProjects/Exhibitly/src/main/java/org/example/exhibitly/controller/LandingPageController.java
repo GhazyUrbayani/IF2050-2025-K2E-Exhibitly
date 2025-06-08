@@ -30,7 +30,7 @@ public class LandingPageController extends BaseController implements Initializab
     @FXML private Button onTicketButtonClick;
     @FXML private Button onLogoButtonClick;
     @FXML private Button logoButton;
-    
+
     @FXML private ImageView LandingImageView;
     @FXML private ImageView Landing2ImageView;
     @FXML private ImageView myImageView;
@@ -118,7 +118,7 @@ public class LandingPageController extends BaseController implements Initializab
         if (session != null && session.isLoggedIn()) {
             loginLogoutButton.setText("Logout");
             maintenanceButton.setVisible(true);
-        
+
             if (userInfoLabel != null) {
                 if (session.isLoggedIn()) {
                     userInfoLabel.setText("Welcome, " + session.getCurrentActor().getName() + "!");
