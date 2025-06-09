@@ -53,8 +53,7 @@ public class MaintenanceController extends BaseController implements Initializab
     @FXML private TextArea descriptionArea;
     @FXML private Button addRequestButton;
 
-    @FXML
-    private Button logoButton;
+    @FXML private ImageView logoFooter;
 
     // ... (Elemen FXML header/footer lainnya) ...
 
@@ -204,8 +203,10 @@ public class MaintenanceController extends BaseController implements Initializab
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
                 GridPane requestItem = fxmlLoader.load();
-                MaintenanceRequestItemController itemController = fxmlLoader.getController();
-                itemController.setMaintenanceRequest(request, currentUser);
+                MaintenanceRequestItemController itemController = fxmlLoader.getController(); // Dapatkan controller item
+                itemController.setMaintenanceRequest(request, currentUser); // Set data dan peran
+
+                // Set callback untuk tombol edit di item controller
 
                 itemController.setOnEditAction(() -> showEditRequestDialog(request));
 
