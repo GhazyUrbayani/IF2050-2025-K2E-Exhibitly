@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,16 +16,12 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ComboBox?>
-
 <?import javafx.scene.layout.RowConstraints?>
 
 <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
     <children>
         <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-
         <HBox alignment="CENTER" spacing="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="68.0">
             <children>
                 <Button onAction="#onExhibitButtonClick" style="-fx-background-color: transparent;" text="EXHIBIT" textFill="WHITE">
@@ -40,181 +38,164 @@
                 </Button>
             </children>
         </HBox>
-
-        <Button fx:id="logoButton" onAction="#onLogoButtonClick" prefHeight="70.0" prefWidth="200.0"
-                style="-fx-background-color: transparent;"
-                AnchorPane.leftAnchor="583.0" AnchorPane.rightAnchor="583.0" AnchorPane.topAnchor="0.0">
+        <Button fx:id="logoButton" onAction="#onLogoButtonClick" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="583.0" AnchorPane.rightAnchor="583.0" AnchorPane.topAnchor="0.0">
             <graphic>
                 <ImageView fx:id="logoHeaderImageView" fitHeight="70.0" fitWidth="200.0" preserveRatio="true" />
             </graphic>
             <cursor><Cursor fx:constant="HAND" /></cursor>
         </Button>
-        <Pane prefHeight="0.1" style="-fx-background-color: white;"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
-
         <Button fx:id="LogoutButton" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: black; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-border-width: 0.3;" text="Logout" textFill="WHITE" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="20.0">
-            <font>
-                <Font size="14.0" />
-            </font>
-            <cursor>
-                <Cursor fx:constant="HAND" />
-            </cursor>
+            <font><Font size="14.0" /></font>
+            <cursor><Cursor fx:constant="HAND" /></cursor>
         </Button>
-
         <Button fx:id="MaintenanceButton" mnemonicParsing="false" onAction="#onMaintenanceButtonClick" prefHeight="40.0" prefWidth="104.0" style="-fx-background-color: #B6B09F; -fx-pref-height: 30; -fx-border-color: white; -fx-border-radius: 20; -fx-background-radius: 20; -fx-border-width: 0.3;" text="Maintenance" textFill="black" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="20.0">
-            <font>
-                <Font size="14.0" />
-            </font>
-            <cursor>
-                <Cursor fx:constant="HAND" />
-            </cursor>
+            <font><Font size="14.0" /></font>
+            <cursor><Cursor fx:constant="HAND" /></cursor>
         </Button>
-
         <Pane prefHeight="0.1" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
+
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                    AnchorPane.topAnchor="100.0" AnchorPane.bottomAnchor="150.0"
+                    AnchorPane.topAnchor="100.0" AnchorPane.bottomAnchor="0.0"
                     AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <content>
-                <VBox alignment="TOP_LEFT" spacing="20.0" style="-fx-background-color: #F8F8F8;">
-                    <padding>
-                        <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
-                    </padding>
-                    <children>
-                        <GridPane alignment="TOP_CENTER" prefWidth="1266.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="NEVER" minWidth="0.0" prefWidth="250.0" />
-                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                                <ColumnConstraints hgrow="NEVER" minWidth="0.0" prefWidth="250.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints vgrow="NEVER" />
-                            </rowConstraints>
+                <AnchorPane>
+                    <VBox fx:id="mainContentVBox" alignment="TOP_LEFT" spacing="20.0" style="-fx-background-color: #F8F8F8;"
+                          AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="150.0">
+                        <padding>
+                            <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
+                        </padding>
+                        <children>
+                            <GridPane alignment="TOP_CENTER" prefWidth="1266.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="NEVER" minWidth="0.0" prefWidth="250.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="0.0" prefWidth="250.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints vgrow="NEVER" />
+                                </rowConstraints>
 
-                            <VBox fx:id="routineScheduleSection" spacing="5.0" visible="true" managed="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Jadwal pemeliharaan" />
-                                <Label fx:id="jadwalPembersihanLabel" text="[Jadwal Pembersihan Dinamis]" />
+                                <VBox fx:id="routineScheduleSection" spacing="5.0" visible="true" managed="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Jadwal pemeliharaan" />
+                                    <Label fx:id="jadwalPembersihanLabel" text="[Jadwal Pembersihan Dinamis]" />
+                                </VBox>
+
+                                <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: black; -fx-font-family: 'Playfair Display SC Bold'; -fx-letter-spacing: 2px;" text="MAINTENANCE" />
+                                    <Label fx:id="userNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Halo "/>
+                                    <Label fx:id="userRoleLabel" style="-fx-font-size: 16px; -fx-font-weight: normal; -fx-text-fill: gray;" text="([Role Pengguna])" />
+                                </VBox>
+
+                                <Region fx:id="rightSpacer" GridPane.columnIndex="2" GridPane.rowIndex="0" visible="true" managed="true" prefWidth="250.0" />
+                            </GridPane>
+
+                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                <Button fx:id="requestTabButton" mnemonicParsing="false" onAction="#onRequestTabClick" style="-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;" text="Request">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                                    <cursor><Cursor fx:constant="HAND" /></cursor>
+                                </Button>
+                                <Button fx:id="historyTabButton" mnemonicParsing="false" onAction="#onHistoryTabClick" style="-fx-background-color: transparent;" text="History">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                                    <cursor><Cursor fx:constant="HAND" /></cursor>
+                                </Button>
+                                <Button fx:id="addRequestButton" mnemonicParsing="false" onAction="#onAddRequestButtonClick" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Add Request">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="12.0" /></font>
+                                    <cursor><Cursor fx:constant="HAND" /></cursor>
+                                </Button>
+                            </HBox>
+
+                            <VBox fx:id="addRequestForm" spacing="10.0" alignment="TOP_LEFT"
+                                  style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);"
+                                  prefWidth="500.0" visible="false" managed="false"
+                                  VBox.vgrow="NEVER" >
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="New Maintenance Request" />
+
+                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                    <Label text="Artefact Name:" prefWidth="120.0" />
+                                    <ComboBox fx:id="artefactComboBox" promptText="Select Artefact" HBox.hgrow="ALWAYS" />
+                                </HBox>
+
+                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                    <Label text="Performed By:" prefWidth="120.0" />
+                                    <ComboBox fx:id="performedByStaffComboBox" promptText="Select Staff" HBox.hgrow="ALWAYS" />
+                                </HBox>
+
+                                <HBox spacing="10.0" alignment="TOP_LEFT">
+                                    <Label text="Description:" prefWidth="120.0" />
+                                    <TextArea fx:id="descriptionArea" promptText="Describe the issue..." wrapText="true" prefHeight="150.0" HBox.hgrow="ALWAYS" />
+                                </HBox>
+                                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                    <Button mnemonicParsing="false" onAction="#onCancelAddRequest" style="-fx-background-color: #f0ad4e; -fx-background-radius: 5; -fx-text-fill: white;" text="Cancel" />
+                                    <Button mnemonicParsing="false" onAction="#onSubmitNewRequest" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Submit Request" />
+                                </HBox>
                             </VBox>
 
-                            <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: black; -fx-font-family: 'Playfair Display SC Bold'; -fx-letter-spacing: 2px;" text="MAINTENANCE" />
-                                <Label fx:id="userNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Halo "/>
-                                <Label fx:id="userRoleLabel" style="-fx-font-size: 16px; -fx-font-weight: normal; -fx-text-fill: gray;" text="([Role Pengguna])" />
+
+                            <VBox fx:id="requestContentDisplay" spacing="10.0" managed="true">
+                                <Label fx:id="todayDateLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Today - [Tanggal Sekarang]" />
+                                <VBox fx:id="todayRequestsContainer" spacing="5.0">
+                                </VBox>
+
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Past Requests" />
+                                <VBox fx:id="pastRequestsContainer" spacing="5.0">
+                                </VBox>
                             </VBox>
 
-                            <Region fx:id="rightSpacer" GridPane.columnIndex="2" GridPane.rowIndex="0" visible="true" managed="true" prefWidth="250.0" />
-                        </GridPane>
-
-                        <HBox alignment="CENTER_LEFT" spacing="20.0">
-                            <Button fx:id="requestTabButton" mnemonicParsing="false" onAction="#onRequestTabClick" style="-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 0 0 2 0;" text="Request">
-                                <font>
-                                    <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                                </font>
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                            <Button fx:id="historyTabButton" mnemonicParsing="false" onAction="#onHistoryTabClick" style="-fx-background-color: transparent;" text="History">
-                                <font>
-                                    <Font name="Plus Jakarta Sans Bold" size="14.0" />
-                                </font>
-                                <cursor>
-                                    <Cursor fx:constant="HAND" /></cursor>
-                            </Button>
-                            <Button fx:id="addRequestButton" mnemonicParsing="false" onAction="#onAddRequestButtonClick" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Add Request">
-                                <font>
-                                    <Font name="Plus Jakarta Sans Bold" size="12.0" />
-                                </font>
-                                <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                </cursor>
-                            </Button>
-                        </HBox>
-
-                        <VBox fx:id="addRequestForm" spacing="10.0" alignment="TOP_LEFT"
-                              style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);"
-                              prefWidth="500.0" visible="false" managed="false"
-                              VBox.vgrow="NEVER" >
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="New Maintenance Request" />
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Label text="Artefact Name:" prefWidth="120.0" />
-                                <TextField fx:id="artefactNameField" promptText="e.g., Patung Ganesha" HBox.hgrow="ALWAYS" />
-                            </HBox>
-                            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                                <Label text="Requester Name:" prefWidth="120.0" />
-                                <TextField fx:id="requesterNameField" promptText="e.g., Museum Staff A" HBox.hgrow="ALWAYS" />
-                            </HBox>
-                            <HBox spacing="10.0" alignment="TOP_LEFT">
-                                <Label text="Description:" prefWidth="120.0" />
-                                <TextArea fx:id="descriptionArea" promptText="Describe the issue..." wrapText="true" prefHeight="80.0" HBox.hgrow="ALWAYS" />
-                            </HBox>
-                            <HBox spacing="10.0" alignment="CENTER_RIGHT">
-                                <Button mnemonicParsing="false" onAction="#onCancelAddRequest" style="-fx-background-color: #f0ad4e; -fx-background-radius: 5; -fx-text-fill: white;" text="Cancel" />
-                                <Button mnemonicParsing="false" onAction="#onSubmitNewRequest" style="-fx-background-color: #5cb85c; -fx-background-radius: 5; -fx-text-fill: white;" text="Submit Request" />
-                            </HBox>
-                        </VBox>
-
-
-                        <VBox fx:id="requestContentDisplay" spacing="10.0" managed="true">
-                            <Label fx:id="todayDateLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Today - [Tanggal Sekarang]" />
-                            <VBox fx:id="todayRequestsContainer" spacing="5.0">
+                            <VBox fx:id="historyContent" spacing="10.0" visible="false" managed="false">
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="History Data Goes Here" />
+                                <VBox fx:id="historyDataContainer" spacing="5.0">
+                                </VBox>
                             </VBox>
 
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Past Requests" /> <VBox fx:id="pastRequestsContainer" spacing="5.0">
-                        </VBox>
-                        </VBox>
+                            <Region VBox.vgrow="ALWAYS" />
+                        </children>
+                    </VBox>
 
-                        <VBox fx:id="historyContent" spacing="10.0" visible="false" managed="false">
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="History Data Goes Here" />
-                            <VBox fx:id="historyDataContainer" spacing="5.0">
+                    <AnchorPane prefHeight="150.0" style="-fx-background-color: #B6B09F;"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <children>
+                            <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0">
+                                <Label text="Museum Nusantara" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                                </Label>
+                                <Label text="Jl. Ganesa No. 10" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Indonesia 40132." textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
                             </VBox>
-                        </VBox>
 
-                        <Region VBox.vgrow="ALWAYS" />
-                    </children>
-                </VBox>
+                            <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="50.0">
+                                <Label text="Jam Berkunjung" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
+                                </Label>
+                                <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Senin Museum tutup." textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                                <Label text="Akses terakhir 17.30 WIB" textFill="WHITE">
+                                    <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
+                                </Label>
+                            </VBox>
+                            <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="WHITE"
+                                   AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+
+                            <VBox alignment="CENTER" spacing="5.0"
+                                  AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                <children>
+                                    <ImageView fx:id="logoFooter" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" />
+                                </children>
+                            </VBox>
+                        </children>
+                    </AnchorPane>
+                </AnchorPane>
             </content>
         </ScrollPane>
-        <AnchorPane prefHeight="150.0" style="-fx-background-color: #B6B09F;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
-            <children>
-                <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0">
-                    <Label text="Museum Nusantara" textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
-                    </Label>
-                    <Label text="Jl. Ganesa No. 10" textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
-                    </Label>
-                    <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
-                    </Label>
-                    <Label text="Indonesia 40132." textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
-                    </Label>
-                </VBox>
-
-                <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="50.0">
-                    <Label text="Jam Berkunjung" textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Bold" size="14.0" /></font>
-                    </Label>
-                    <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
-                    </Label>
-                    <Label text="Senin Museum tutup." textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
-                    </Label>
-                    <Label text="Akses terakhir 17.30 WIB" textFill="WHITE">
-                        <font><Font name="Plus Jakarta Sans Regular" size="12.0" /></font>
-                    </Label>
-                </VBox>
-                <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="WHITE"
-                       AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-
-                <VBox alignment="CENTER" spacing="5.0"
-                      AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                    <children>
-                        <ImageView fx:id="logoFooter" fitHeight="60.0" fitWidth="60.0" preserveRatio="true" />
-                    </children>
-                </VBox>
-            </children>
-        </AnchorPane>
     </children>
 </AnchorPane>
