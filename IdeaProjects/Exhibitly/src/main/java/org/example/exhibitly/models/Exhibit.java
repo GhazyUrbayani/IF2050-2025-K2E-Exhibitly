@@ -1,7 +1,7 @@
 package org.example.exhibitly.models;
 
-// import java.util.List;
-// import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Exhibit {
     private int exhibitID;
@@ -9,10 +9,11 @@ public class Exhibit {
     private String title;
     private String description;
     private String mediaURL;
-    // private List<Artefact> artefacts;
+    private String curatorName;
+    private List<Artefact> artefacts;
 
     public Exhibit() {
-        // this.artefacts = new ArrayList<>();
+        this.artefacts = new ArrayList<>();
     }
 
     public Exhibit(int exhibitID, int kuratorID, String title, String description, String mediaURL) {
@@ -21,7 +22,7 @@ public class Exhibit {
         this.title = title;
         this.description = description;
         this.mediaURL = mediaURL;
-        // this.artefacts = new ArrayList<>();
+        this.artefacts = new ArrayList<>();
     }
 
     public int getExhibitID() {
@@ -64,8 +65,19 @@ public class Exhibit {
         this.mediaURL = mediaURL;
     }
 
-    // Contoh methods jika List<Artefact> digunakan
-    // public List<Artefact> getArtefacts() { return artefacts; }
-    // public void setArtefacts(List<Artefact> artefacts) { this.artefacts = artefacts; }
-    // public void addArtefact(Artefact artefact) { this.artefacts.add(artefact); }
+    public List<Artefact> getArtefacts() { 
+        return artefacts; 
+    }
+    public void setArtefacts(List<Artefact> artefacts) { 
+        this.artefacts = artefacts; 
+    }
+    public void addArtefact(Artefact artefact) { 
+        this.artefacts.add(artefact); 
+    }
+    public String getCuratorName() { 
+        return curatorName; 
+    }
+    public void setCuratorName(String curatorName) { 
+        this.curatorName = curatorName; 
+    }
 }

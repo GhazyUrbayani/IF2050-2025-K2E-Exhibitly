@@ -24,16 +24,22 @@ public class MaintenanceRequestItemController {
     @FXML private Button editButton;
     @FXML private ImageView pensilicon; // Ini fx:id untuk ImageView Anda
 
-    private Maintenance maintenanceRequest; // Untuk menyimpan data Maintenance yang terkait
-    private Actor currentUser; // Untuk menyimpan peran pengguna saat ini
-    private Runnable onEditAction; // Callback untuk aksi edit
+    @FXML
+    private Button logoButton;
+
+    private Maintenance maintenanceRequest;
+    private Actor currentUser;
+    private Runnable onEditAction;
 
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
 
     @FXML
     public void initialize() {
-        // Muat gambar pensilicon di sini
         try {
+            ImageView logoHeader = (ImageView) logoButton.getGraphic();
+            ImageView logoFooter = (ImageView) logoButton.getGraphic();
+            logoHeader.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+            logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
             InputStream iconStream = getClass().getResourceAsStream("/images/pensil.png");
             if (iconStream != null) {
                 pensilicon.setImage(new Image(iconStream));

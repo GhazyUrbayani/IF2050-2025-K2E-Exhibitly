@@ -60,7 +60,8 @@ public class MaintenanceController extends BaseController implements Initializab
     @FXML private TextArea descriptionArea;
     @FXML private Button addRequestButton;
 
-    @FXML private ImageView logoFooter;
+    @FXML
+    private Button logoButton;
 
     // ... (Elemen FXML header/footer lainnya) ...
 
@@ -79,6 +80,9 @@ public class MaintenanceController extends BaseController implements Initializab
 //        }
 
         try {
+            ImageView logoHeaderImageView = (ImageView) logoButton.getGraphic();
+            ImageView logoFooter = (ImageView) logoButton.getGraphic();
+            logoHeaderImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {
             System.out.println("[Erorr] Couldn't load logo");
@@ -173,10 +177,8 @@ public class MaintenanceController extends BaseController implements Initializab
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Maintenance_Request_Item.fxml"));
                 GridPane requestItem = fxmlLoader.load();
-                MaintenanceRequestItemController itemController = fxmlLoader.getController(); // Dapatkan controller item
-                itemController.setMaintenanceRequest(request, currentUser); // Set data dan peran
-
-                // Set callback untuk tombol edit di item controller
+                MaintenanceRequestItemController itemController = fxmlLoader.getController();
+                itemController.setMaintenanceRequest(request, currentUser);
 
                 itemController.setOnEditAction(() -> showEditRequestDialog(request));
 
@@ -268,6 +270,11 @@ public class MaintenanceController extends BaseController implements Initializab
         String artefactNameInput = artefactNameField.getText().trim();
         String requesterNameInput = requesterNameField.getText().trim();
         String description = descriptionArea.getText().trim();
+
+        if (artefactNameInput.length() > 100) {
+            showAlert(Alert.AlertType.ERROR, "Input Invalid", "Nama artefak tidak boleh lebih dari 100 karakter!");
+            return;
+        }
 
         if (artefactNameInput.isEmpty() || requesterNameInput.isEmpty() || description.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Input Invalid", "Semua field harus diisi!");

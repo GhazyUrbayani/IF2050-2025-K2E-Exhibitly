@@ -5,20 +5,24 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.exhibitly.models.Artefact;
 
@@ -29,6 +33,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
 
 public class ArtefactController extends BaseController implements Initializable {
 
@@ -64,11 +74,16 @@ public class ArtefactController extends BaseController implements Initializable 
 
     // Data artefak (simulasi dari database)
     private List<Artefact> allArtefacts;
+    private Connection connection;
+
     @FXML
     private Button logoButton;
+    @FXML 
+    private Button addArtefactButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.connection = new DatabaseConnection().getConnection();
         // Inisialisasi gambar header dan footer
         try {
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
@@ -85,34 +100,30 @@ public class ArtefactController extends BaseController implements Initializable 
         }
 
         updateLoginLogoutButton();
-
-        // Contoh data artefak sesuai entity model
-        allArtefacts = new ArrayList<>();
-        allArtefacts.add(new Artefact(1, "ARCA GANESHA", "Jawa Timur", 800, "Arca Ganesha dari Jawa Timur.", "/images/arca1.png"));
-        allArtefacts.add(new Artefact(2, "ARCA CIREBON", "Jawa Barat", 1400, "Arca Cirebon dari Jawa Barat.", "/images/arca2.png"));
-        allArtefacts.add(new Artefact(3, "ARCA JATINANGOR", "Jawa Barat", 1200, "Arca Jatinangor dari Jawa Barat.", "/images/arca3.png"));
-        allArtefacts.add(new Artefact(4, "ARCA DAGU", "DKI Jakarta", 1000, "Arca Dagu dari DKI Jakarta.", "/images/arca4.png"));
-        allArtefacts.add(new Artefact(5, "ARCA TUBIS", "DI Yogyakarta", 700, "Arca Tubis dari DI Yogyakarta.", "/images/arca5.png"));
-        allArtefacts.add(new Artefact(6, "ARCA CISITU", "Jawa Barat", 900, "Arca Cisitu dari Jawa Barat.", "/images/arca6.png"));
-
-        /* Real Time Update for each Filter */
-        // searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-        //     applyAllFilter();
-        // });
-
-        // periodFromField.textProperty().addListener((observable, oldValue, newValue) -> {
-        //     applyAllFilter();
-        // });
-
-        // periodToField.textProperty().addListener((observable, oldValue, newValue) -> {
-        //     applyAllFilter();
-        // });
-
-        // setupRegionFilterListeners();
-
+        loadAllArtefactsFromDB();
         setupEnterKeyHandlers();
-
         displayArtefacts(allArtefacts);
+        setupRoleBasedAccess();
+    }
+
+    private void loadAllArtefactsFromDB() {
+        allArtefacts = new ArrayList<>();
+        String sql = "SELECT * FROM Artefact";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                allArtefacts.add(new Artefact(
+                    rs.getInt("artefactID"),
+                    rs.getString("title"),
+                    rs.getString("region"),
+                    rs.getInt("period"),
+                    rs.getString("description"),
+                    rs.getString("mediaURL")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateLoginLogoutButton() {
@@ -124,53 +135,18 @@ public class ArtefactController extends BaseController implements Initializable 
     }
 
     private void displayArtefacts(List<Artefact> artefactsToDisplay) {
-        artefactGrid.getChildren().clear(); // Bersihkan grid sebelum menambahkan yang baru
+        artefactGrid.getChildren().clear();
 
         int column = 0;
         int row = 0;
-        int maxColumns = 3; // Sesuai dengan ColumnConstraints di FXML
+        int maxColumns = 3;
 
         for (Artefact artefact : artefactsToDisplay) {
-            // Membuat VBox sebagai template untuk setiap artefak
-            VBox artefactCard = new VBox(10); // Spacing 10px
-            artefactCard.setAlignment(Pos.CENTER);
-            artefactCard.setStyle("-fx-border-color: #DDDDDD; -fx-border-width: 1px; -fx-padding: 10px; -fx-background-color: white;");
-
-            ImageView imageView = new ImageView();
-            imageView.setFitWidth(200); // Ukuran gambar di card
-            imageView.setFitHeight(200);
-            imageView.setPreserveRatio(true);
-
-            // Muat gambar artefak
-            try {
-                imageView.setImage(new Image(getClass().getResourceAsStream(artefact.getMediaURL())));
-            } catch (Exception e) {
-                System.err.println("Failed to load image for: " + artefact.getTitle() + " from " + artefact.getMediaURL());
-                imageView.setImage(new Image(getClass().getResourceAsStream("/org/example/exhibitly/images/placeholder.png"))); // Gambar placeholder
-            }
-
-            Label nameLabel = new Label(artefact.getTitle());
-            nameLabel.setFont(Font.font("Plus Jakarta Sans Bold", FontWeight.BOLD, 14));
-            nameLabel.setWrapText(true);
-            nameLabel.setAlignment(Pos.CENTER);
-            nameLabel.setMaxWidth(200);
-
-            Label regionLabel = new Label(artefact.getRegion());
-            regionLabel.setFont(Font.font("Plus Jakarta Sans Regular", 12));
-            regionLabel.setTextFill(javafx.scene.paint.Color.GRAY);
-
-            // Tombol "Lihat Selengkapnya"
-            Button detailButton = new Button("Lihat Selengkapnya");
-            detailButton.setStyle("-fx-background-color: #555555; -fx-text-fill: white;");
-            detailButton.setOnAction(e -> showArtefactDetail(artefact)); // Menambahkan aksi klik
-
-            artefactCard.getChildren().addAll(imageView, nameLabel, regionLabel, detailButton);
-
-            // Tambahkan artefak ke GridPane
+            VBox artefactCard = createArtefactCard(artefact);
             artefactGrid.add(artefactCard, column, row);
-
+            
             column++;
-            if (column == maxColumns) {
+            if (column == 3) {
                 column = 0;
                 row++;
             }
@@ -178,10 +154,95 @@ public class ArtefactController extends BaseController implements Initializable 
         resultsCountLabel.setText(artefactsToDisplay.size() + " RESULTS");
     }
 
+    private VBox createArtefactCard(Artefact artefact) {
+        VBox card = new VBox(10);
+        card.setAlignment(Pos.CENTER);
+        card.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-border-color: #DDDDDD;" +
+            "-fx-border-width: 1px;" +
+            "-fx-padding: 15px;" +
+            "-fx-border-radius: 8px;" + 
+            "-fx-background-radius: 8px;"
+        );
+    
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(200);
+        imageView.setPreserveRatio(true);
+
+        String url = artefact.getMediaURL();
+        try {
+            Image image;
+            if (url != null && url.startsWith("http")) {
+                image = new Image(url, true);
+            } else {
+                image = new Image(getClass().getResourceAsStream(url));
+            }
+            imageView.setImage(image);
+        } catch (Exception e) {
+            System.err.println("Gagal memuat gambar: " + url);
+            // imageView.setImage(new Image(getClass().getResourceAsStream("/images/placeholder.png")));
+        }
+    
+        Label nameLabel = new Label(artefact.getTitle());
+        nameLabel.setFont(Font.font("Plus Jakarta Sans", FontWeight.BOLD, 16));
+    
+        Label regionLabel = new Label(artefact.getRegion());
+        regionLabel.setFont(Font.font("Plus Jakarta Sans", FontWeight.NORMAL, 12));
+        regionLabel.setTextFill(javafx.scene.paint.Color.GRAY);
+    
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER);
+    
+        if (session.isKurator()) {
+            Button editButton = new Button("Edit");
+            editButton.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+            editButton.setCursor(Cursor.HAND);
+            editButton.setOnAction(e -> handleEditArtefact(artefact));
+            buttonContainer.getChildren().add(editButton);
+        }
+    
+        Button detailButton = new Button("Detail");
+        detailButton.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+        detailButton.setCursor(Cursor.HAND);
+        detailButton.setOnAction(e -> showArtefactDetail(artefact));
+        buttonContainer.getChildren().add(detailButton);
+    
+        card.getChildren().addAll(imageView, nameLabel, regionLabel, buttonContainer);
+    
+        return card;
+    }
+
+    private void setupRoleBasedAccess() {
+        if (addArtefactButton != null) {
+            addArtefactButton.setVisible(session.isKurator());
+            addArtefactButton.setManaged(session.isKurator());
+        }
+    }
+
+    private void handleDeleteArtefact(Artefact artefact) {
+        System.out.println("Delete artefact: " + artefact.getTitle());
+        String sql = "DELETE FROM Artefact WHERE artefactID = ?";
+        try (Connection conn = new DatabaseConnection().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, artefact.getArtefactID());
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("Artefak berhasil dihapus: " + artefact.getTitle());
+                loadAllArtefactsFromDB(); 
+                displayArtefacts(allArtefacts);
+            } else {
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showArtefactDetail(Artefact artefact) {
-        // Implementasi untuk menampilkan detail artefak (bisa berupa pop-up atau halaman baru)
         System.out.println("Detail for: " + artefact.getTitle() + " (" + artefact.getArtefactID() + ")");
-        // Contoh: Membuat pop-up sederhana
         Stage detailStage = new Stage();
         VBox detailLayout = new VBox(10);
         detailLayout.setPadding(new javafx.geometry.Insets(20));
@@ -327,19 +388,114 @@ public class ArtefactController extends BaseController implements Initializable 
 
     // --- CRUD Methods sesuai Entity Model ---
 
-    public void addArtefact(Artefact artefact) {
-        allArtefacts.add(artefact);
-        displayArtefacts(allArtefacts);
+    @FXML
+    private void handleAddArtefact() {
+        showAddEditDialog(null);
+    }
+    private void handleEditArtefact(Artefact artefact) {
+        showAddEditDialog(artefact);
     }
 
-    public void editArtefact(int artefactID, Artefact updatedArtefact) {
-        for (int i = 0; i < allArtefacts.size(); i++) {
-            if (allArtefacts.get(i).getArtefactID() == artefactID) {
-                allArtefacts.set(i, updatedArtefact);
-                break;
+    @FXML
+    private void onAddArtefactButtonClick(ActionEvent event) {
+        showAddEditDialog(null);
+    }
+
+    private void showAddEditDialog(Artefact artefactToEdit) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/AddEditArtefactDialog.fxml"));
+            Parent page = loader.load();
+
+            TextField titleField = (TextField) page.lookup("#titleField");
+            TextField regionField = (TextField) page.lookup("#regionField");
+            TextField periodField = (TextField) page.lookup("#periodField");
+            TextField mediaURLField = (TextField) page.lookup("#mediaURLField");
+            TextArea descriptionArea = (TextArea) page.lookup("#descriptionArea");
+            Button saveButton = (Button) page.lookup("#saveButton");
+            Button cancelButton = (Button) page.lookup("#cancelButton");
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle(artefactToEdit == null ? "Tambah Artefak Baru" : "Edit Artefak");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(artefactGrid.getScene().getWindow());
+            dialogStage.setScene(new Scene(page));
+
+            if (artefactToEdit != null) {
+                titleField.setText(artefactToEdit.getTitle());
+                regionField.setText(artefactToEdit.getRegion());
+                periodField.setText(String.valueOf(artefactToEdit.getPeriod()));
+                mediaURLField.setText(artefactToEdit.getMediaURL());
+                descriptionArea.setText(artefactToEdit.getDescription());
             }
+
+            saveButton.setOnAction(e -> {
+                try {            
+                    String sql;
+                    if (artefactToEdit == null) {
+                        int nextId = 1;
+                        String maxIdSql = "SELECT MAX(artefactID) FROM Artefact";
+                        try (Statement stmt = connection.createStatement();
+                             ResultSet rs = stmt.executeQuery(maxIdSql)) {
+                            if (rs.next()) {
+                                nextId = rs.getInt(1) + 1;
+                            }
+                        }
+                        sql = "INSERT INTO Artefact (artefactID, title, region, period, description, mediaURL) VALUES (?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                            pstmt.setInt(1, nextId);
+                            pstmt.setString(2, titleField.getText());
+                            pstmt.setString(3, regionField.getText());
+                            pstmt.setInt(4, Integer.parseInt(periodField.getText()));
+                            pstmt.setString(5, descriptionArea.getText());
+                            pstmt.setString(6, mediaURLField.getText());
+                            pstmt.executeUpdate();
+                        }
+                    } else {
+                        sql = "UPDATE Artefact SET title = ?, region = ?, period = ?, description = ?, mediaURL = ? WHERE artefactID = ?";
+                    }
+                    
+                    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                        pstmt.setString(1, titleField.getText());
+                        pstmt.setString(2, regionField.getText());
+                        pstmt.setInt(3, Integer.parseInt(periodField.getText()));
+                        pstmt.setString(4, descriptionArea.getText());
+                        pstmt.setString(5, mediaURLField.getText());
+                        if (artefactToEdit != null) {
+                            pstmt.setInt(6, artefactToEdit.getArtefactID());
+                        }
+                        pstmt.executeUpdate();
+                    }
+                    
+                    loadAllArtefactsFromDB();
+                    displayArtefacts(allArtefacts);
+                    dialogStage.close();
+
+                    javafx.application.Platform.runLater(() -> {
+                        try {
+                            FXMLLoader artefactLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
+                            Parent root = artefactLoader.load();
+                            Stage stage = (Stage) artefactGrid.getScene().getWindow();
+                            stage.setScene(new Scene(root, 1366, 768));
+                            stage.setTitle("Museum Nusantara - Artefact");
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+            
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } catch (NumberFormatException ex) {
+                    periodField.setStyle("-fx-border-color: red;");
+                }
+            });
+
+            cancelButton.setOnAction(e -> dialogStage.close());
+
+            dialogStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        displayArtefacts(allArtefacts);
     }
 
     public void deleteArtefact(int artefactID) {
@@ -435,31 +591,6 @@ public class ArtefactController extends BaseController implements Initializable 
 
         applyAllFilter();
     }
-
-    // Event handler dari Header (pastikan sudah disesuaikan dengan ActionEvent/MouseEvent)
-    
-    // Jika logo adalah ImageView yang di-klik, gunakan MouseEvent:
-    /*
-    @FXML
-    private ImageView logoHeaderImageView; // Asumsi fx:id untuk ImageView logo di header
-    // ... di initialize()
-    // logoHeaderImageView.setOnMouseClicked(this::onLogoImageClick);
-    // ...
-    private void onLogoImageClick(MouseEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/LandingPage.fxml"));
-            Parent landingPage = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(landingPage));
-            stage.setTitle("Museum Nusantara - Landing Page");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat halaman landing page: " + e.getMessage());
-        }
-    }
-    */
-
 
     @FXML
     private void onLoginLogoutButtonClick(ActionEvent event) {

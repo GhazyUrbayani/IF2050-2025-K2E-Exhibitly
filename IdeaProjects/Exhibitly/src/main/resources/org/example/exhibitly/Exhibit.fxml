@@ -72,14 +72,26 @@
                                <Insets top="40.0" right="100.0" bottom="40.0" left="100.0" />
                            </padding>
                             <children>
-                                <Label text="CURRENT EXHIBIT" style="-fx-font-size: 32px; -fx-font-family: 'Plus Jakarta Sans Bold'; -fx-text-fill: #222;" />
+                                <Label text="CURRENT EXHIBIT" alignment="CENTER" style="-fx-font-size: 32px; -fx-font-family: 'Plus Jakarta Sans Bold'; -fx-text-fill: #222; " />
                                 <HBox spacing="40.0" alignment="CENTER_LEFT">
                                     <children>
                                         <VBox spacing="20.0" alignment="TOP_LEFT" prefWidth="500.0">
                                             <children>
-                                                <Label fx:id="exhibitTitleLabel" style="-fx-font-size: 28px; -fx-font-family: 'Playfair Display SC Bold'; -fx-text-fill: #111;" text="ART HISTORY EXHIBITION"/>
+                                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                                    <Label fx:id="exhibitTitleLabel" style="-fx-font-size: 28px; -fx-font-family: 'Playfair Display SC Bold'; -fx-text-fill: #111;" text="ART HISTORY EXHIBITION"/>
+                                                    <Button fx:id="editExhibitButton"
+                                                            text="Edit"
+                                                            style="-fx-background-color: #888; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 6px 16px;"
+                                                            onAction="#onEditExhibitButtonClick"
+                                                            visible="false" managed="false"/>
+                                                </HBox>
                                                 <Label fx:id="exhibitDescriptionLabel" wrapText="true" style="-fx-font-size: 16px; -fx-font-family: 'Plus Jakarta Sans Regular'; -fx-text-fill: #444;" text="Deskripsi panjang pameran akan muncul di sini."/>
                                                 <Label fx:id="curatorNameLabel" style="-fx-font-size: 15px; -fx-font-family: 'Plus Jakarta Sans Bold'; -fx-text-fill: #888;" text="KURATOR: SENDI PUTRA ALICIA"/>
+                                                <Button fx:id="addArtefactToExhibitButton"
+                                                        text="Tambah Artefak ke Exhibit"
+                                                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 6px 16px;"
+                                                        onAction="#onAddArtefactToExhibitClick"
+                                                        visible="false" managed="false"/>
                                             </children>
                                         </VBox>
                                         <ImageView fx:id="exhibitImageView" fitHeight="320.0" fitWidth="400.0" preserveRatio="true" style="-fx-effect: dropshadow(gaussian, #888, 10, 0, 0, 2);" />
@@ -88,11 +100,8 @@
                                 <VBox spacing="15.0" alignment="TOP_LEFT">
                                     <children>
                                         <Label text="ARTEFACTS:" style="-fx-font-size: 20px; -fx-font-family: 'Plus Jakarta Sans Bold'; -fx-text-fill: #222;" />
-                                        <HBox fx:id="artefactsContainer" spacing="30.0" alignment="CENTER_LEFT" />
+                                        <HBox fx:id="artefactsContainer" spacing="25.0" alignment="CENTER_LEFT" />
                                     </children>
-                                    <VBox.margin>
-                                        <Insets top="30.0" />
-                                    </VBox.margin>
                                 </VBox>
                             </children>
                         </VBox>

@@ -60,7 +60,7 @@
 
         <Button fx:id="logoButton" onAction="#onLogoButtonClick" prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="583.0" AnchorPane.rightAnchor="583.0" AnchorPane.topAnchor="1.0">
             <graphic>
-                <ImageView fx:id="ticketHeaderImage" fitHeight="100.0" fitWidth="200.0" preserveRatio="true" />
+                <ImageView fx:id="logoHeaderImage" fitHeight="100.0" fitWidth="200.0" preserveRatio="true" />
             </graphic>
             <cursor>
                 <Cursor fx:constant="HAND" />

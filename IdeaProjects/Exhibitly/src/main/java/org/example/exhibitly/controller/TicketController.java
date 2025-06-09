@@ -20,10 +20,7 @@ import java.util.ResourceBundle;
 
 public class TicketController extends BaseController implements Initializable {
     @FXML
-    private ImageView ticketHeaderImage;
-
-    @FXML
-    private ImageView logoFooter;
+    private Button logoButton;
 
     @FXML
     private Button loginLogoutButton;
@@ -47,7 +44,9 @@ public class TicketController extends BaseController implements Initializable {
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ticketHeaderImage.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+            ImageView logoHeaderImage = (ImageView) logoButton.getGraphic();
+            ImageView logoFooter = (ImageView) logoButton.getGraphic();
+            logoHeaderImage.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {
             System.out.println("[Erorr] Couldn't load logo");

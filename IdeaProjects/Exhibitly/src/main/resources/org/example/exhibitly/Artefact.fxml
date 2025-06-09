@@ -136,7 +136,7 @@
                                             <Label text="TO" />
                                             <TextField fx:id="periodToField" prefWidth="80.0" promptText="To" />
                                         </HBox>
-                                        <Button mnemonicParsing="false" onAction="#onValidatePeriodFilter" text="VALIDATE FILTERS" />
+                                        <Button mnemonicParsing="false" onAction="#onValidatePeriodFilter" text="VALIDATE FILTERS" style="-fx-background-color: #333333; -fx-text-fill: white;" />
                                     </VBox>
 
                                     <!-- Filter Region -->
@@ -147,7 +147,7 @@
                                         <CheckBox fx:id="JawaTengahCheckBox" text="Jawa Tengah" />
                                         <CheckBox fx:id="DIYogyakartaCheckBox" text="DI Yogyakarta" />
                                         <CheckBox fx:id="JawaTimurCheckBox" text="Jawa Timur" />
-                                        <Button mnemonicParsing="false" onAction="#onValidateRegionFilter" text="VALIDATE FILTERS" />
+                                        <Button mnemonicParsing="false" onAction="#onValidateRegionFilter" text="VALIDATE FILTERS" style="-fx-background-color: #333333; -fx-text-fill: white;" />
                                     </VBox>
 
                                     <Region VBox.vgrow="ALWAYS" />
@@ -158,35 +158,43 @@
                                     <HBox.margin>
                                         <Insets right="50.0" />
                                     </HBox.margin>
+                                    <children>
 
-                                    <!-- Bar pencarian -->
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                        <TextField fx:id="searchTextField" promptText="SEARCH MUSEUM NUSANTARA COLLECTION"
-                                                   style="-fx-pref-height: 40px; -fx-font-size: 14px;" HBox.hgrow="ALWAYS" />
-                                        <Button onAction="#onSearch"
-                                                style="-fx-background-color: #333333; -fx-text-fill: white; -fx-pref-width: 80px; -fx-pref-height: 40px;"
-                                                text="SEARCH" />
-                                    </HBox>
+                                        <!-- Bar pencarian -->
+                                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <TextField fx:id="searchTextField" promptText="SEARCH MUSEUM NUSANTARA COLLECTION"
+                                                        style="-fx-pref-height: 40px; -fx-font-size: 14px;" HBox.hgrow="ALWAYS" />
+                                                <Button onAction="#onSearch"
+                                                        style="-fx-background-color: #333333; -fx-text-fill: white; -fx-pref-width: 80px; -fx-pref-height: 40px;"
+                                                        text="SEARCH" />
+                                            </HBox>
+                                        
+                                            <Button fx:id="addArtefactButton"
+                                                    text="Add Artefact"
+                                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px;"
+                                                    alignment="CENTER_LEFT"
+                                                    onAction="#onAddArtefactButtonClick"
+                                                    />
 
-                                    <!-- Label hasil pencarian -->
-                                    <Label fx:id="resultsCountLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="6 RESULTS" />
+                                        <!-- Label hasil pencarian -->
+                                        <Label fx:id="resultsCountLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="6 RESULTS" />
 
-                                    <!-- Grid artefact -->
-                                    <ScrollPane fitToWidth="true" prefHeight="550.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-                                        <content>
-                                            <GridPane fx:id="artefactGrid" hgap="20.0" vgap="20.0">
-                                                <padding>
-                                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                </padding>
-                                                <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                </columnConstraints>
-                                            </GridPane>
-                                        </content>
-                                    </ScrollPane>
-
+                                        <!-- Grid artefact -->
+                                        <ScrollPane fitToWidth="true" prefHeight="550.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                                            <content>
+                                                <GridPane fx:id="artefactGrid" hgap="20.0" vgap="20.0">
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    </columnConstraints>
+                                                </GridPane>
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
                                 </VBox>
                             </children>
                         </HBox>

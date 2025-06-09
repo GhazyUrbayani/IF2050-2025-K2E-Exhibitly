@@ -70,8 +70,8 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ImageView logoImageView = (ImageView) logoButton.getGraphic();
-            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+            ImageView logoHeader = (ImageView) logoButton.getGraphic();
+            logoHeader.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
         } catch (Exception e) {
             System.err.println("Error loading logo for button: " + e.getMessage());
             e.printStackTrace();
