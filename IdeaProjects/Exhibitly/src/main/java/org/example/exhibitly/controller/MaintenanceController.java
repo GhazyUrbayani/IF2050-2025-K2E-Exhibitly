@@ -7,19 +7,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import org.example.exhibitly.models.Actor;
+import org.example.exhibitly.models.Artefact;
 import org.example.exhibitly.models.Maintenance;
 import org.example.exhibitly.models.Staff;
 
@@ -28,12 +25,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MaintenanceController extends BaseController implements Initializable {
@@ -46,6 +38,7 @@ public class MaintenanceController extends BaseController implements Initializab
 
     @FXML private Button requestTabButton;
     @FXML private Button historyTabButton;
+    @FXML private Button logoButton;
     @FXML private VBox requestContentDisplay;
     @FXML private VBox historyContent;
     @FXML private VBox todayRequestsContainer;
@@ -55,8 +48,8 @@ public class MaintenanceController extends BaseController implements Initializab
     @FXML private Label todayDateLabel;
 
     @FXML private VBox addRequestForm;
-    @FXML private TextField artefactNameField;
-    @FXML private TextField requesterNameField;
+    @FXML private ComboBox<String> artefactComboBox;
+    @FXML private ComboBox<String> performedByStaffComboBox;
     @FXML private TextArea descriptionArea;
     @FXML private Button addRequestButton;
 
@@ -71,12 +64,21 @@ public class MaintenanceController extends BaseController implements Initializab
     private static final DateTimeFormatter DATE_FORMATTER_DISPLAY = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Hapus 'new', dan ganti '
     private static final DateTimeFormatter TODAY_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Mengubah ini agar konsisten
 
+    private List<Staff> allStaffs; // Pastikan ini ada dan diisi
+    private List<Artefact> allArtefacts; // Pastikan ini ada dan diisi
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 //        if (!session.isLoggedIn() && !session.isKurator()) {
 //            return;
 //        }
+        try {
+            ImageView logoImageView = (ImageView) logoButton.getGraphic();
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
+        } catch (Exception e) {
+            System.err.println("Error loading logo for button: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         try {
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
@@ -105,6 +107,34 @@ public class MaintenanceController extends BaseController implements Initializab
 
         allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, "Arca Tamansari", twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Display kusam (Done)"));
 
+        // Dummy data untuk Artefak
+        // --- MENGISI ARTEFAK COMBOBOX (SAMA) ---
+        allArtefacts = new ArrayList<>();
+        //int artefactID, String title, String region, int period, String description, String mediaURL
+        allArtefacts.add(new Artefact(101, "Patung Ganesha", "Hell", 200, "x", "x"));
+        allArtefacts.add(new Artefact(102, "Lukisan Monalisa", "Hell", 200, "x", "x"));
+        allArtefacts.add(new Artefact(103, "Kendi Tanah Liat", "Hell", 200, "x", "x"));
+        artefactComboBox.getItems().clear();
+        for (Artefact artefact : allArtefacts) {
+            artefactComboBox.getItems().add(artefact.getTitle() + " (ID: " + artefact.getArtefactID() + ")");
+        }
+        artefactComboBox.getItems().add("Select Artefact");
+        artefactComboBox.setValue("Select Artefact");
+
+        // Dummy data untuk Staff (Anda perlu mendapatkan ini dari daftar Staff Anda)
+        // Jika Anda memiliki List<Staff> allStaffs, Anda bisa menggunakannya di sini
+        allStaffs = new ArrayList<>();
+        allStaffs.add(new Staff(1, "Staff", "staff_a_username", "Staff A", "s")); // Contoh: id, role, username, name
+        allStaffs.add(new Staff(2, "Staff", "staff_b_username", "Staff B", "s"));
+        allStaffs.add(new Staff(3, "Staff", "staff_c_username", "Staff C", "s"));
+        // Tambahkan opsi "Unassigned" atau "Belum Ditugaskan"
+        performedByStaffComboBox.getItems().add("Unassigned"); // Opsi default untuk Staff yang belum ditugaskan
+
+        for (Staff staff : allStaffs) {
+            performedByStaffComboBox.getItems().add(staff.getName()); // Tampilkan hanya nama staff
+        }
+        // Set "Unassigned" sebagai nilai default saat pertama kali dimuat
+        performedByStaffComboBox.setValue("Unassigned");
 
         // Simulate user login
         //currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
@@ -265,55 +295,84 @@ public class MaintenanceController extends BaseController implements Initializab
 
     @FXML
     private void onSubmitNewRequest(ActionEvent event) {
-        String artefactNameInput = artefactNameField.getText().trim();
-        String requesterNameInput = requesterNameField.getText().trim();
+        String selectedArtefactDisplayName = artefactComboBox.getValue();
+        // --- PERUBAHAN DI SINI: Requester name diambil dari currentUser ---
+        String requesterNameInput = (currentUser != null) ? currentUser.getName() : "Unknown Requester";
+        String selectedPerformedByStaffName = performedByStaffComboBox.getValue();
         String description = descriptionArea.getText().trim();
 
-        if (artefactNameInput.isEmpty() || requesterNameInput.isEmpty() || description.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Input Invalid", "Semua field harus diisi!");
+        // Validasi input: requesterNameInput tidak perlu divalidasi emptiness karena diambil otomatis
+        if (selectedArtefactDisplayName == null || selectedPerformedByStaffName == null || description.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Tidak Lengkap", "Artefak, Performed By, dan Deskripsi harus diisi!");
             return;
         }
 
+        // ... (logika ekstraksi Artefact ID dan Nama Artefak tetap sama) ...
+        int artefactID = 0;
+        String artefactNameForMaintenance = "";
+        try {
+            int startIndex = selectedArtefactDisplayName.indexOf("(ID: ") + "(ID: ".length();
+            int endIndex = selectedArtefactDisplayName.indexOf(")");
+            artefactID = Integer.parseInt(selectedArtefactDisplayName.substring(startIndex, endIndex));
+            artefactNameForMaintenance = selectedArtefactDisplayName.substring(0, startIndex - "(ID: ".length()).trim();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Error Parsing Artefak ID/Nama", "Format artefak tidak valid. Pilih artefak dari daftar.");
+            e.printStackTrace();
+            return;
+        }
+
+        // ... (logika mencari performedByActorID tetap sama) ...
+        int performedByActorID = -1;
+        if (!"Unassigned".equalsIgnoreCase(selectedPerformedByStaffName)) {
+            Optional<Staff> chosenStaff = allStaffs.stream()
+                    .filter(s -> s.getName().equalsIgnoreCase(selectedPerformedByStaffName))
+                    .findFirst();
+            if (chosenStaff.isPresent()) {
+                performedByActorID = chosenStaff.get().getActorID();
+            }
+        }
+
+        // ... (logika newMaintenanceID, newRequestID, currentDateTime tetap sama) ...
         int newMaintenanceID = allMaintenanceRecords.stream()
                 .mapToInt(Maintenance::getMaintenanceID)
                 .max()
                 .orElse(0) + 1;
-
-        int newArtefactID = 100 + newMaintenanceID;
         String newRequestID = UUID.randomUUID().toString().substring(0, 8);
-        Date currentDateTime = new Date(); 
+        Date currentDateTime = new Date();
+
+        // --- Format fullDescription (SAMA) ---
         String fullDescription = "Requester: " + requesterNameInput + "\n" + description;
 
+        // --- Buat objek Maintenance (SAMA) ---
         Maintenance newMaintenanceRequest = new Maintenance(
-                newMaintenanceID,                   
-                currentUser.getActorID(),           
-                null,                       
-                newRequestID,                       
-                newArtefactID,                      
-                artefactNameInput,                  
-                currentDateTime,                    
-                null,                 
-                "User Request",                
-                "Not Done",                  
-                fullDescription                     
+                newMaintenanceID,
+                currentUser.getActorID(),
+                performedByActorID,
+                newRequestID,
+                artefactID,
+                artefactNameForMaintenance,
+                currentDateTime,
+                null,
+                "User Request",
+                "Not Done",
+                fullDescription
         );
 
         allMaintenanceRecords.add(newMaintenanceRequest);
-        loadRequests();
-        
-        addRequestForm.setVisible(false);
-        addRequestForm.setManaged(false);
-        
+        showAlert(Alert.AlertType.INFORMATION, "Sukses", "Permintaan maintenance baru berhasil ditambahkan!");
+
+        // ... (kembali ke tampilan permintaan dan bersihkan form) ...
+        setAllContentInvisible();
         requestContentDisplay.setVisible(true);
         requestContentDisplay.setManaged(true);
+        loadRequests();
 
-        artefactNameField.clear();
-        requesterNameField.clear();
+        // Bersihkan form:
+        artefactComboBox.getSelectionModel().select("Select Artefact");
+        // requesterNameField.clear(); <-- HAPUS BARIS INI
+        performedByStaffComboBox.getSelectionModel().select("Unassigned");
         descriptionArea.clear();
-
-        showAlert(Alert.AlertType.INFORMATION, "Success", "Permintaan maintenance berhasil ditambahkan!");
     }
-
 
     @FXML
     private void onRequestTabClick(ActionEvent event) {
@@ -346,37 +405,47 @@ public class MaintenanceController extends BaseController implements Initializab
 
     @FXML
     private void onAddRequestButtonClick(ActionEvent event) {
-        // Tampilkan form dan sembunyikan daftar request/history
-
-        requestContentDisplay.setVisible(false);
-        requestContentDisplay.setManaged(false);
-
-        historyContent.setVisible(false);
-        historyContent.setManaged(false);
-
+        setAllContentInvisible();
         addRequestForm.setVisible(true);
         addRequestForm.setManaged(true);
-        // Reset form fields
-        artefactNameField.clear();
-        requesterNameField.clear();
-        descriptionArea.clear();
+
+        // Reset form fields:
+        artefactComboBox.getSelectionModel().select("Select Artefact"); // Membersihkan pilihan Artefak ComboBox
+        descriptionArea.clear(); // Membersihkan TextArea
+
+        // --- Perubahan untuk Performed By Staff ComboBox (TETAP SAMA) ---
+        performedByStaffComboBox.getSelectionModel().select("Unassigned"); // Set default ke Unassigned
+
+        // Hanya Kurator yang bisa memilih staff untuk 'Performed By'
+        if (currentUser != null && "Kurator".equalsIgnoreCase(currentUser.getRole())) {
+            performedByStaffComboBox.setDisable(false); // Kurator bisa memilih
+        } else {
+            performedByStaffComboBox.setDisable(true);  // Selain Kurator (termasuk Staff), tidak bisa memilih
+        }
     }
 
     @FXML
     private void onCancelAddRequest(ActionEvent event) {
-        // Sembunyikan form dan kembali ke tampilan request
-        addRequestForm.setVisible(false);
-        addRequestForm.setManaged(false);
-
+        setAllContentInvisible();
         requestContentDisplay.setVisible(true);
         requestContentDisplay.setManaged(true);
-        // Bersihkan form
-        artefactNameField.clear();
-        requesterNameField.clear();
+
+        // Bersihkan form:
+        artefactComboBox.getSelectionModel().select("Select Artefact");
+        performedByStaffComboBox.getSelectionModel().select("Unassigned");
         descriptionArea.clear();
     }
     // ... di dalam kelas MaintenanceController, mungkin setelah loadHistory() atau di bagian helper methods ...
 
+    private void setAllContentInvisible() {
+
+        requestContentDisplay.setVisible(false);
+        requestContentDisplay.setManaged(false);
+        historyContent.setVisible(false);
+        historyContent.setManaged(false);
+        addRequestForm.setVisible(false);
+        addRequestForm.setManaged(false);
+    }
     // PASTIKAN METODE INI ADA
     private void showEditRequestDialog(Maintenance requestToEdit) {
         try {
