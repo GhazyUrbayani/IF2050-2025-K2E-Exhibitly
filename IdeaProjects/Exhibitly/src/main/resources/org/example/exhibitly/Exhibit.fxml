@@ -72,7 +72,7 @@
                                <Insets top="40.0" right="100.0" bottom="40.0" left="100.0" />
                            </padding>
                             <children>
-                                <Label text="CURRENT EXHIBIT" alignment="CENTER" style="-fx-font-size: 32px; -fx-font-family: 'Plus Jakarta Sans Bold'; -fx-text-fill: #222; " />
+                                <Label text="CURRENT EXHIBIT" alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 32px; -fx-font-family: 'Plus Jakarta Sans Bold'; -fx-text-fill: #222; " />
                                 <HBox spacing="40.0" alignment="CENTER_LEFT">
                                     <children>
                                         <VBox spacing="20.0" alignment="TOP_LEFT" prefWidth="500.0">

@@ -307,12 +307,15 @@ public class ExhibitController extends BaseController implements Initializable {
 
         saveButton.setOnAction(e -> {
             try {
-                String sql = "UPDATE Exhibit SET title = ?, description = ?, mediaURL = ? WHERE exhibitID = ?";
+                int loggedInKuratorId = session.getActor().getActorID();
+
+                String sql = "UPDATE Exhibit SET title = ?, description = ?, mediaURL = ?, kuratorID = ? WHERE exhibitID = ?";
                 try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                     pstmt.setString(1, titleField.getText());
                     pstmt.setString(2, descriptionArea.getText());
                     pstmt.setString(3, mediaURLField.getText());
-                    pstmt.setInt(4, exhibitData.getExhibitID());
+                    pstmt.setInt(4, loggedInKuratorId);
+                    pstmt.setInt(5, exhibitData.getExhibitID());
                     pstmt.executeUpdate();
                 }
                 loadExhibitDataFromDB(exhibitData.getExhibitID());
