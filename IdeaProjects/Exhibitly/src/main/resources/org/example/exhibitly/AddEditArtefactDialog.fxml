@@ -18,7 +18,7 @@
     <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
     <Label text="Region:" GridPane.rowIndex="1" />
-    <ComboBox fx:id="regionComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-background-color: #333; -fx-text-fill: white;"/>
+    <ComboBox fx:id="regionComboBox" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
     <Label text="Periode (Tahun):" GridPane.rowIndex="2" />
     <TextField fx:id="periodField" GridPane.columnIndex="1" GridPane.rowIndex="2" />

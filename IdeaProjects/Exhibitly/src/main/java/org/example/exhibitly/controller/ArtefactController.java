@@ -404,7 +404,6 @@ public class ArtefactController extends BaseController implements Initializable 
             regionComboBox.getItems().addAll(
                 "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "DI Yogyakarta", "Jawa Timur"
             );
-            regionComboBox.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
 
             TextField titleField = (TextField) page.lookup("#titleField");
             TextField periodField = (TextField) page.lookup("#periodField");
