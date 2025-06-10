@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -101,7 +102,6 @@ public class ArtefactController extends BaseController implements Initializable 
 
         updateLoginLogoutButton();
         loadAllArtefactsFromDB();
-        setupEnterKeyHandlers();
         displayArtefacts(allArtefacts);
         setupRoleBasedAccess();
     }
@@ -253,11 +253,16 @@ public class ArtefactController extends BaseController implements Initializable 
         detailImageView.setFitWidth(300);
         detailImageView.setFitHeight(300);
         detailImageView.setPreserveRatio(true);
-        try {
-            detailImageView.setImage(new Image(getClass().getResourceAsStream(artefact.getMediaURL())));
-        } catch (Exception e) {
-            detailImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/exhibitly/images/placeholder.png")));
+        Image img = null;
+        if (artefact.getMediaURL() != null && artefact.getMediaURL().startsWith("http")) {
+            img = new Image(artefact.getMediaURL(), true);
+        } else if (artefact.getMediaURL() != null) {
+            java.io.InputStream is = getClass().getResourceAsStream(artefact.getMediaURL());
+            if (is != null) {
+                img = new Image(is);
+            }
         }
+        detailImageView.setImage(img);
 
         Label name = new Label(artefact.getTitle());
         name.setFont(Font.font("Plus Jakarta Sans Bold", FontWeight.BOLD, 18));
@@ -278,17 +283,6 @@ public class ArtefactController extends BaseController implements Initializable 
         detailStage.setTitle(artefact.getTitle() + " Details");
         detailStage.show();
     }
-
-    // --- Key Handlers ---
-
-    private void setupEnterKeyHandlers() {
-        searchTextField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                onSearch();
-            }
-        });
-    }
-
 
     // --- Event Handlers (dari header dan filter) ---
 
@@ -406,8 +400,13 @@ public class ArtefactController extends BaseController implements Initializable 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/AddEditArtefactDialog.fxml"));
             Parent page = loader.load();
 
+            ComboBox<String> regionComboBox = (ComboBox<String>) page.lookup("#regionComboBox");
+            regionComboBox.getItems().addAll(
+                "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "DI Yogyakarta", "Jawa Timur"
+            );
+            regionComboBox.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
+
             TextField titleField = (TextField) page.lookup("#titleField");
-            TextField regionField = (TextField) page.lookup("#regionField");
             TextField periodField = (TextField) page.lookup("#periodField");
             TextField mediaURLField = (TextField) page.lookup("#mediaURLField");
             TextArea descriptionArea = (TextArea) page.lookup("#descriptionArea");
@@ -422,7 +421,7 @@ public class ArtefactController extends BaseController implements Initializable 
 
             if (artefactToEdit != null) {
                 titleField.setText(artefactToEdit.getTitle());
-                regionField.setText(artefactToEdit.getRegion());
+                regionComboBox.setValue(artefactToEdit.getRegion());
                 periodField.setText(String.valueOf(artefactToEdit.getPeriod()));
                 mediaURLField.setText(artefactToEdit.getMediaURL());
                 descriptionArea.setText(artefactToEdit.getDescription());
@@ -444,7 +443,7 @@ public class ArtefactController extends BaseController implements Initializable 
                         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                             pstmt.setInt(1, nextId);
                             pstmt.setString(2, titleField.getText());
-                            pstmt.setString(3, regionField.getText());
+                            pstmt.setString(3, regionComboBox.getValue());
                             pstmt.setInt(4, Integer.parseInt(periodField.getText()));
                             pstmt.setString(5, descriptionArea.getText());
                             pstmt.setString(6, mediaURLField.getText());
@@ -456,7 +455,7 @@ public class ArtefactController extends BaseController implements Initializable 
                     
                     try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                         pstmt.setString(1, titleField.getText());
-                        pstmt.setString(2, regionField.getText());
+                        pstmt.setString(2, regionComboBox.getValue());
                         pstmt.setInt(3, Integer.parseInt(periodField.getText()));
                         pstmt.setString(4, descriptionArea.getText());
                         pstmt.setString(5, mediaURLField.getText());
@@ -469,18 +468,6 @@ public class ArtefactController extends BaseController implements Initializable 
                     loadAllArtefactsFromDB();
                     displayArtefacts(allArtefacts);
                     dialogStage.close();
-
-                    javafx.application.Platform.runLater(() -> {
-                        try {
-                            FXMLLoader artefactLoader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/Artefact.fxml"));
-                            Parent root = artefactLoader.load();
-                            Stage stage = (Stage) artefactGrid.getScene().getWindow();
-                            stage.setScene(new Scene(root, 1366, 768));
-                            stage.setTitle("Museum Nusantara - Artefact");
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                    });
             
                 } catch (SQLException ex) {
                     ex.printStackTrace();

@@ -295,7 +295,9 @@ public class ExhibitController extends BaseController implements Initializable {
 
         HBox buttonBox = new HBox(10);
         Button saveButton = new Button("Simpan");
+        saveButton.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
         Button cancelButton = new Button("Batal");
+        cancelButton.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
         buttonBox.getChildren().addAll(saveButton, cancelButton);
 
         layout.getChildren().addAll(
@@ -307,7 +309,7 @@ public class ExhibitController extends BaseController implements Initializable {
 
         saveButton.setOnAction(e -> {
             try {
-                int loggedInKuratorId = session.getActor().getActorID();
+                int loggedInKuratorId = session.getCurrentActor().getActorID();
 
                 String sql = "UPDATE Exhibit SET title = ?, description = ?, mediaURL = ?, kuratorID = ? WHERE exhibitID = ?";
                 try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -354,6 +356,7 @@ public class ExhibitController extends BaseController implements Initializable {
             layout.getChildren().addAll(checkBoxes);
 
             Button addButton = new Button("Tambah");
+            addButton.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
             addButton.setOnAction(e -> {
                 for (CheckBox cb : checkBoxes) {
                     if (cb.isSelected()) {

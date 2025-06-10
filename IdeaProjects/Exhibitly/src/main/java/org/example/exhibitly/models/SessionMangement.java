@@ -5,7 +5,7 @@ public class SessionMangement {
     private Actor currentActor;
     private boolean isLoggedIn;
  
-    private SessionMangement() { //Private karena mengimplementasikan Singleton
+    private SessionMangement() {
         this.currentActor = null;
         this.isLoggedIn = false;
     }
