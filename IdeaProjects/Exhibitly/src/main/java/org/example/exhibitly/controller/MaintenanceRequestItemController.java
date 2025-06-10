@@ -24,8 +24,7 @@ public class MaintenanceRequestItemController {
     @FXML private Button editButton;
     @FXML private ImageView pensilicon; // Ini fx:id untuk ImageView Anda
 
-    @FXML
-    private Button logoButton;
+
 
     private Maintenance maintenanceRequest;
     private Actor currentUser;
@@ -36,20 +35,8 @@ public class MaintenanceRequestItemController {
     @FXML
     public void initialize() {
         try {
-            ImageView logoHeader = (ImageView) logoButton.getGraphic();
-            ImageView logoFooter = (ImageView) logoButton.getGraphic();
-            logoHeader.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
-            logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
-            InputStream iconStream = getClass().getResourceAsStream("/images/pensil.png");
-            if (iconStream != null) {
-                pensilicon.setImage(new Image(iconStream));
-            } else {
-                System.err.println("Icon not found: /icons/pencil_icon.png");
-                // Fallback jika gambar tidak ditemukan
-                editButton.setText("Edit");
-                pensilicon.setVisible(false);
-                pensilicon.setManaged(false);
-            }
+            ImageView pensilicon = (ImageView) editButton.getGraphic();
+            pensilicon.setImage(new Image(getClass().getResourceAsStream("/images/pensil.png")));
         } catch (Exception e) {
             System.err.println("Error loading edit icon: " + e.getMessage());
             editButton.setText("Edit");
