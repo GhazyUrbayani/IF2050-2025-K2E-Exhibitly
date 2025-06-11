@@ -426,9 +426,68 @@ public class ArtefactController extends BaseController implements Initializable 
                 descriptionArea.setText(artefactToEdit.getDescription());
             }
 
+            Label errorLabel = new Label();
+            errorLabel.setStyle("-fx-text-fill: red;");
+
+            Parent parent = page.getParent();
+            if (parent instanceof VBox) {
+                VBox dialogVBox = (VBox) parent;
+                if (!dialogVBox.getChildren().contains(errorLabel)) {
+                    dialogVBox.getChildren().add(errorLabel);
+                }
+            } else if (page instanceof GridPane) {
+                ((GridPane) page).add(errorLabel, 0, 6, 2, 1); // kolom 0, row 6, span 2 kolom
+            }
+
             saveButton.setOnAction(e -> {
-                try {            
-                    String sql;
+
+                titleField.setStyle("");
+                periodField.setStyle("");
+                regionComboBox.setStyle("");
+                errorLabel.setText("");
+            
+                String title = titleField.getText().trim();
+                String region = regionComboBox.getValue();
+                String periodText = periodField.getText().trim();
+            
+                if (title.isEmpty()) {
+                    titleField.setStyle("-fx-border-color: red;");
+                    errorLabel.setText("Judul artefak wajib diisi.");
+                    return;
+                }
+                try (PreparedStatement checkStmt = connection.prepareStatement(
+                        "SELECT artefactID FROM Artefact WHERE LOWER(title) = ?")) {
+                    checkStmt.setString(1, title.toLowerCase());
+                    ResultSet rs = checkStmt.executeQuery();
+                    if (rs.next()) {
+                        int foundId = rs.getInt("artefactID");
+                        if (artefactToEdit == null || artefactToEdit.getArtefactID() != foundId) {
+                            titleField.setStyle("-fx-border-color: red;");
+                            errorLabel.setText("Judul artefak sudah ada di database.");
+                            return;
+                        }
+                    }
+                } catch (SQLException ex) {
+                    errorLabel.setText("Gagal cek duplikasi judul.");
+                    return;
+                }
+            
+                if (region == null || region.isEmpty()) {
+                    regionComboBox.setStyle("-fx-border-color: red;");
+                    errorLabel.setText("Region wajib dipilih.");
+                    return;
+                }
+            
+                int period;
+                try {
+                    period = Integer.parseInt(periodText);
+                } catch (NumberFormatException ex) {
+                    periodField.setStyle("-fx-border-color: red;");
+                    errorLabel.setText("Periode harus berupa angka.");
+                    return;
+                }
+            
+                try {
                     if (artefactToEdit == null) {
                         int nextId = 1;
                         String maxIdSql = "SELECT MAX(artefactID) FROM Artefact";
@@ -438,40 +497,33 @@ public class ArtefactController extends BaseController implements Initializable 
                                 nextId = rs.getInt(1) + 1;
                             }
                         }
-                        sql = "INSERT INTO Artefact (artefactID, title, region, period, description, mediaURL) VALUES (?, ?, ?, ?, ?, ?)";
+                        String sql = "INSERT INTO Artefact (artefactID, title, region, period, description, mediaURL) VALUES (?, ?, ?, ?, ?, ?)";
                         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                             pstmt.setInt(1, nextId);
-                            pstmt.setString(2, titleField.getText());
-                            pstmt.setString(3, regionComboBox.getValue());
-                            pstmt.setInt(4, Integer.parseInt(periodField.getText()));
+                            pstmt.setString(2, title);
+                            pstmt.setString(3, region);
+                            pstmt.setInt(4, period);
                             pstmt.setString(5, descriptionArea.getText());
                             pstmt.setString(6, mediaURLField.getText());
                             pstmt.executeUpdate();
                         }
                     } else {
-                        sql = "UPDATE Artefact SET title = ?, region = ?, period = ?, description = ?, mediaURL = ? WHERE artefactID = ?";
-                    }
-                    
-                    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                        pstmt.setString(1, titleField.getText());
-                        pstmt.setString(2, regionComboBox.getValue());
-                        pstmt.setInt(3, Integer.parseInt(periodField.getText()));
-                        pstmt.setString(4, descriptionArea.getText());
-                        pstmt.setString(5, mediaURLField.getText());
-                        if (artefactToEdit != null) {
+                        String sql = "UPDATE Artefact SET title = ?, region = ?, period = ?, description = ?, mediaURL = ? WHERE artefactID = ?";
+                        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                            pstmt.setString(1, title);
+                            pstmt.setString(2, region);
+                            pstmt.setInt(3, period);
+                            pstmt.setString(4, descriptionArea.getText());
+                            pstmt.setString(5, mediaURLField.getText());
                             pstmt.setInt(6, artefactToEdit.getArtefactID());
+                            pstmt.executeUpdate();
                         }
-                        pstmt.executeUpdate();
                     }
-                    
                     loadAllArtefactsFromDB();
                     displayArtefacts(allArtefacts);
                     dialogStage.close();
-            
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
-                } catch (NumberFormatException ex) {
-                    periodField.setStyle("-fx-border-color: red;");
+                    errorLabel.setText("Gagal menyimpan artefak.");
                 }
             });
 
