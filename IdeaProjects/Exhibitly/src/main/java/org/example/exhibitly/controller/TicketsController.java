@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.UUID; // Untuk generate Ticket ID
+import java.util.UUID;
 
 public class TicketsController extends BaseController implements Initializable {
 
@@ -46,7 +46,7 @@ public class TicketsController extends BaseController implements Initializable {
     @FXML private TextField emailField;
     @FXML private TextField quantityField;
 
-    private int ticketQuantity = 1; // Default jumlah tiket
+    private int ticketQuantity = 1;
 
     // --- Inisialisasi Controller ---
     @Override
@@ -64,7 +64,7 @@ public class TicketsController extends BaseController implements Initializable {
         } catch (Exception e) {
             System.out.println("[Erorr] Couldn't load logo");
         }
-        // Inisialisasi jumlah tiket
+
         quantityField.setText(String.valueOf(ticketQuantity));
 
         // Inisialisasi logo (opsional, jika Anda punya gambar logo)
@@ -100,40 +100,44 @@ public class TicketsController extends BaseController implements Initializable {
             return;
         }
 
+        if (!isValidEmail(email)) {
+            showAlert(Alert.AlertType.ERROR, "Email Tidak Valid", "Format email tidak valid. Email harus mengandung '@', '.', dan domain yang benar (misal: user@domain.com).");
+            return;
+        }
+
         // --- Logika untuk Generate QR Code dan ID Tiket ---
-        // ID Tiket akan menjadi bagian dari data QR code
-        String ticketId = UUID.randomUUID().toString().substring(0, 10).toUpperCase(); // Contoh ID tiket
+        String ticketId = UUID.randomUUID().toString().substring(0, 10).toUpperCase();
         String qrCodeData = String.format("Ticket ID: %s\nName: %s\nEmail: %s\nQuantity: %d",
                 ticketId, name, email, ticketQuantity);
 
         try {
-            BufferedImage qrImage = generateQRCodeImage(qrCodeData, 200, 200); // Ukuran QR code
+            BufferedImage qrImage = generateQRCodeImage(qrCodeData, 200, 200);
             Image fxImage = SwingFXUtils.toFXImage(qrImage, null);
             qrCodeImageView.setImage(fxImage);
-            ticketNumberLabel.setText("No. Tiket: " + ticketId); // Tampilkan nomor tiket di UI
+            ticketNumberLabel.setText("No. Tiket: " + ticketId);
         } catch (WriterException e) {
             showAlert(Alert.AlertType.ERROR, "QR Code Error", "Gagal membuat QR Code: " + e.getMessage());
             e.printStackTrace();
             return;
         }
 
-        // Buat objek Ticket (kelas Ticket tidak perlu tahu tentang User)
-        // Anda perlu membuat kelas model Ticket jika belum ada
         Ticket newTicket = new Ticket(ticketId, name, email, ticketQuantity, new java.util.Date());
-        // Simpan objek newTicket ini ke daftar tiket, database, dll., jika diperlukan.
-        // Contoh: SomeTicketService.saveTicket(newTicket);
 
 
         showAlert(Alert.AlertType.INFORMATION, "Pembelian Sukses!",
                 "Tiket berhasil dibeli!\nNomor Tiket: " + ticketId + "\nQR Code Anda telah dibuat.");
 
-        // Opsional: Bersihkan form setelah pembelian
         nameField.clear();
         emailField.clear();
         ticketQuantity = 1;
         quantityField.setText(String.valueOf(ticketQuantity));
     }
 
+    private boolean isValidEmail(String email) {
+        int atIdx = email.indexOf('@');
+        int dotIdx = email.lastIndexOf('.');
+        return atIdx > 0 && dotIdx > atIdx + 1 && dotIdx < email.length() - 1;
+    }
 
     // --- Metode Helper untuk Generate QR Code (Menggunakan ZXing) ---
     private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
@@ -167,14 +171,11 @@ public class TicketsController extends BaseController implements Initializable {
 
     @FXML
     private void onTicketsButtonClick(ActionEvent event) {
-        // Sudah di halaman Tickets, atau refresh
         // loadScene("/org/example/exhibitly/tickets-view.fxml", event);
-        // Do nothing or handle refresh if needed
     }
 
     @FXML
     private void onLogoButtonClick(ActionEvent event) {
-        // Navigasi ke halaman utama atau dashboard, sesuaikan dengan alur aplikasi Anda
         navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 
