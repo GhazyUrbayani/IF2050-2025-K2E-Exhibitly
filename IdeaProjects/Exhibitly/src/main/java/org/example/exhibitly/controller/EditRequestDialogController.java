@@ -1,4 +1,3 @@
-// src/main/java/org/example/exhibitly/controller/EditRequestDialogController.java
 package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
@@ -6,7 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.example.exhibitly.models.Maintenance
+import org.example.exhibitly.models.Maintenance;
 import org.example.exhibitly.models.Actor;
 import javafx.scene.control.Alert;
 import java.util.Date;
