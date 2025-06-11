@@ -173,8 +173,20 @@
                                                     text="Add Artefact"
                                                     style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px;"
                                                     alignment="CENTER_LEFT"
-                                                    onAction="#onAddArtefactButtonClick"
-                                                    />
+                                                    onAction="#onAddArtefactButtonClick" />
+
+                                            <HBox spacing="10">
+                                                <Button fx:id="deleteSelectedButton"
+                                                        text="Delete Selected"
+                                                        style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px;"
+                                                        onAction="#onDeleteSelectedArtClick"
+                                                        visible="false" managed="false"/>
+                                                <Button fx:id="deleteAllButton"
+                                                        text="Delete All"
+                                                        style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px;"
+                                                        onAction="#onDeleteAllArtClick"
+                                                        visible="false" managed="false"/>
+                                            </HBox>
 
                                         <!-- Label hasil pencarian -->
                                         <Label fx:id="resultsCountLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="6 RESULTS" />

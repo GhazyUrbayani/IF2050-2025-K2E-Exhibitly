@@ -49,6 +49,7 @@ public class ExhibitController extends BaseController implements Initializable {
     @FXML private ImageView logoFooter;
     @FXML private Button editExhibitButton;
     @FXML private Button addArtefactToExhibitButton;
+    @FXML private Button deleteArtefactFromExhibitButton;
 
     private Exhibit exhibitData;
     private Connection connection;
@@ -255,6 +256,10 @@ public class ExhibitController extends BaseController implements Initializable {
             addArtefactToExhibitButton.setVisible(isKurator);
             addArtefactToExhibitButton.setManaged(isKurator);
         }
+        if (deleteArtefactFromExhibitButton != null) {
+            deleteArtefactFromExhibitButton.setVisible(isKurator);
+            deleteArtefactFromExhibitButton.setManaged(isKurator);
+        }
     }
 
     // --- Navigation Header ---
@@ -373,6 +378,57 @@ public class ExhibitController extends BaseController implements Initializable {
             dialogStage.setScene(new Scene(layout));
             dialogStage.showAndWait();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onDeleteArtefactFromExhibitClick(ActionEvent event) {
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Hapus Artefak dari Exhibit");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(exhibitTitleLabel.getScene().getWindow());
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new javafx.geometry.Insets(20));
+        layout.setAlignment(Pos.CENTER_LEFT);
+
+        List<Artefact> artefactsInExhibit = exhibitData.getArtefacts();
+        List<CheckBox> checkBoxes = new ArrayList<>();
+        for (Artefact artefact : artefactsInExhibit) {
+            CheckBox cb = new CheckBox(artefact.getTitle());
+            cb.setUserData(artefact);
+            checkBoxes.add(cb);
+        }
+        layout.getChildren().addAll(checkBoxes);
+
+        Button deleteButton = new Button("Hapus");
+        deleteButton.setStyle("-fx-background-color: #C62828; -fx-text-fill: white;");
+        deleteButton.setOnAction(e -> {
+            for (CheckBox cb : checkBoxes) {
+                if (cb.isSelected()) {
+                    Artefact artefact = (Artefact) cb.getUserData();
+                    handleDeleteArtefactFromExhibit(artefact.getArtefactID(), exhibitData.getExhibitID());
+                }
+            }
+            loadExhibitDataFromDB(exhibitData.getExhibitID());
+            populateExhibitDetails();
+            setupRoleBasedAccess();
+            dialogStage.close();
+        });
+        layout.getChildren().add(deleteButton);
+
+        dialogStage.setScene(new Scene(layout));
+        dialogStage.showAndWait();
+    }
+
+    private void handleDeleteArtefactFromExhibit(int artefactID, int exhibitID) {
+        String sql = "DELETE FROM Artefact_Exhibit WHERE artefactID = ? AND exhibitID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, artefactID);
+            stmt.setInt(2, exhibitID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

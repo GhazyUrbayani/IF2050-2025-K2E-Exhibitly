@@ -8,7 +8,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -73,14 +75,18 @@ public class ArtefactController extends BaseController implements Initializable 
     @FXML
     private CheckBox  JawaTimurCheckBox;
 
-    // Data artefak (simulasi dari database)
     private List<Artefact> allArtefacts;
     private Connection connection;
+    private Set<Integer> selectedArtefactIds = new HashSet<>();
 
     @FXML
     private Button logoButton;
     @FXML 
     private Button addArtefactButton;
+    @FXML
+    private Button deleteSelectedButton;
+    @FXML
+    private Button deleteAllButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -159,7 +165,7 @@ public class ArtefactController extends BaseController implements Initializable 
         card.setAlignment(Pos.CENTER);
         card.setStyle(
             "-fx-background-color: white;" +
-            "-fx-border-color: #DDDDDD;" +
+            "-fx-border-color: #333;" +
             "-fx-border-width: 1px;" +
             "-fx-padding: 15px;" +
             "-fx-border-radius: 8px;" + 
@@ -194,20 +200,35 @@ public class ArtefactController extends BaseController implements Initializable 
     
         HBox buttonContainer = new HBox(10);
         buttonContainer.setAlignment(Pos.CENTER);
-    
-        if (session.isKurator()) {
-            Button editButton = new Button("Edit");
-            editButton.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
-            editButton.setCursor(Cursor.HAND);
-            editButton.setOnAction(e -> handleEditArtefact(artefact));
-            buttonContainer.getChildren().add(editButton);
-        }
-    
+
+        CheckBox selectCheckBox = new CheckBox();
+        selectCheckBox.setOnAction(e -> {
+            if (selectCheckBox.isSelected()) {
+                selectedArtefactIds.add(artefact.getArtefactID());
+            } else {
+                selectedArtefactIds.remove(artefact.getArtefactID());
+            }
+        });
+        
         Button detailButton = new Button("Detail");
         detailButton.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
         detailButton.setCursor(Cursor.HAND);
         detailButton.setOnAction(e -> showArtefactDetail(artefact));
         buttonContainer.getChildren().add(detailButton);
+    
+        if (session.isKurator()) {
+            Button editButton = new Button("Edit");
+            editButton.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+            editButton.setCursor(Cursor.HAND);
+            editButton.setOnAction(e -> handleEditArtefact(artefact));
+            buttonContainer.getChildren().add(editButton);
+
+            Button deleteButton = new Button("Delete");
+            deleteButton.setStyle("-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+            deleteButton.setCursor(Cursor.HAND);
+            deleteButton.setOnAction(e -> {handleDeleteArtefact(artefact); });
+            buttonContainer.getChildren().add(deleteButton);
+        }
     
         card.getChildren().addAll(imageView, nameLabel, regionLabel, buttonContainer);
     
@@ -219,26 +240,142 @@ public class ArtefactController extends BaseController implements Initializable 
             addArtefactButton.setVisible(session.isKurator());
             addArtefactButton.setManaged(session.isKurator());
         }
+        if (deleteSelectedButton != null) {
+            deleteSelectedButton.setVisible(session.isKurator());
+            deleteSelectedButton.setManaged(session.isKurator());
+        }
+        if (deleteAllButton != null) {
+            deleteAllButton.setVisible(session.isKurator());
+            deleteAllButton.setManaged(session.isKurator());
+        }
     }
 
     private void handleDeleteArtefact(Artefact artefact) {
-        System.out.println("Delete artefact: " + artefact.getTitle());
-        String sql = "DELETE FROM Artefact WHERE artefactID = ?";
-        try (Connection conn = new DatabaseConnection().getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, artefact.getArtefactID());
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                System.out.println("Artefak berhasil dihapus: " + artefact.getTitle());
-                loadAllArtefactsFromDB(); 
-                displayArtefacts(allArtefacts);
-            } else {
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Konfirmasi Hapus Artefak");
+        confirmAlert.setHeaderText("Yakin ingin menghapus artefak \"" + artefact.getTitle() + "\"?");
+        confirmAlert.setContentText("Artefak akan dihapus dari database. Tindakan ini tidak dapat dibatalkan.");
+    
+        confirmAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try (Connection conn = new DatabaseConnection().getConnection()) {
+    
+                    String deleteRelasiKurator = "DELETE FROM Kurator_Artefact WHERE artefactID = ?";
+                    try (PreparedStatement pstmtKurator = conn.prepareStatement(deleteRelasiKurator)) {
+                        pstmtKurator.setInt(1, artefact.getArtefactID());
+                        pstmtKurator.executeUpdate();
+                    }
+    
+                    String sql = "DELETE FROM Artefact WHERE artefactID = ?";
+                    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                        pstmt.setInt(1, artefact.getArtefactID());
+                        int affectedRows = pstmt.executeUpdate();
+    
+                        if (affectedRows > 0) {
+                            loadAllArtefactsFromDB();
+                            displayArtefacts(allArtefacts);
+                        }
+                    }
+                } catch (SQLException e) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Gagal Menghapus Artefak");
+                    errorAlert.setHeaderText("Artefak gagal dihapus.");
+                    errorAlert.setContentText("Pastikan artefak sedang tidak digunakan di Exhibit");
+                    errorAlert.showAndWait();
+                }
             }
+        });
+    }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // --- Handler untuk Delete Selected ---
+    private void handleDeleteSelectedArtefacts() {
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Pilih Artefak yang Akan Dihapus");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(artefactGrid.getScene().getWindow());
+    
+        VBox layout = new VBox(10);
+        layout.setPadding(new javafx.geometry.Insets(20));
+        layout.setAlignment(Pos.CENTER_LEFT);
+    
+        List<CheckBox> checkBoxes = new ArrayList<>();
+        for (Artefact artefact : allArtefacts) {
+            CheckBox cb = new CheckBox(artefact.getTitle());
+            cb.setUserData(artefact);
+            checkBoxes.add(cb);
         }
+        layout.getChildren().addAll(checkBoxes);
+    
+        Button deleteButton = new Button("Hapus");
+        deleteButton.setStyle("-fx-background-color: #C62828; -fx-text-fill: white;");
+        deleteButton.setOnAction(e -> {
+            List<Artefact> artefakTerpilih = new ArrayList<>();
+            for (CheckBox cb : checkBoxes) {
+                if (cb.isSelected()) {
+                    artefakTerpilih.add((Artefact) cb.getUserData());
+                }
+            }
+            if (artefakTerpilih.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Pilih minimal satu artefak!", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+        
+            StringBuilder sb = new StringBuilder("Yakin ingin menghapus artefak berikut?\n");
+            for (Artefact a : artefakTerpilih) {
+                sb.append("- ").append(a.getTitle()).append("\n");
+            }
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, sb.toString(), ButtonType.OK, ButtonType.CANCEL);
+            confirmAlert.setTitle("Konfirmasi Hapus Artefak");
+            confirmAlert.setHeaderText("Konfirmasi Penghapusan");
+        
+            confirmAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try (Connection conn = new DatabaseConnection().getConnection()) {
+                        for (Artefact artefact : artefakTerpilih) {
+
+                            String deleteRelasiKurator = "DELETE FROM Kurator_Artefact WHERE artefactID = ?";
+                            try (PreparedStatement pstmtKurator = conn.prepareStatement(deleteRelasiKurator)) {
+                                pstmtKurator.setInt(1, artefact.getArtefactID());
+                                pstmtKurator.executeUpdate();
+                            }
+                            String sql = "DELETE FROM Artefact WHERE artefactID = ?";
+                            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                                pstmt.setInt(1, artefact.getArtefactID());
+                                pstmt.executeUpdate();
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Gagal menghapus artefak. Pastikan tidak sedang digunakan di Exhibit!", ButtonType.OK);
+                        errorAlert.showAndWait();
+                    }
+                    loadAllArtefactsFromDB();
+                    displayArtefacts(allArtefacts);
+                    dialogStage.close();
+                }
+            });
+        });
+        layout.getChildren().add(deleteButton);
+    
+        dialogStage.setScene(new Scene(layout));
+        dialogStage.showAndWait();
+    }
+    
+    // --- Handler untuk Delete All ---
+    private void handleDeleteAllArtefacts() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Yakin ingin menghapus SEMUA artefak?", ButtonType.YES, ButtonType.NO);
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.executeUpdate("DELETE FROM Artefact");
+                    allArtefacts.clear();
+                    displayArtefacts(allArtefacts);
+                } catch (SQLException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Gagal menghapus semua artefak. Pastikan sedang tidak digunakan di Exhibit!", ButtonType.OK);
+                    alert.showAndWait();
+                }
+            }
+        });
     }
 
     private void showArtefactDetail(Artefact artefact) {
@@ -395,6 +532,16 @@ public class ArtefactController extends BaseController implements Initializable 
         showAddEditDialog(null);
     }
 
+    @FXML
+    private void onDeleteSelectedArtClick(ActionEvent event) {
+        handleDeleteSelectedArtefacts();
+    }
+
+    @FXML
+    private void onDeleteAllArtClick(ActionEvent event) {
+        handleDeleteAllArtefacts();
+    }
+
     private void showAddEditDialog(Artefact artefactToEdit) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/AddEditArtefactDialog.fxml"));
@@ -481,6 +628,11 @@ public class ArtefactController extends BaseController implements Initializable 
                 int period;
                 try {
                     period = Integer.parseInt(periodText);
+                    if (periodText.length() > 4 || period < 0) {
+                        periodField.setStyle("-fx-border-color: red;");
+                        errorLabel.setText("Periode harus berupa angka maksimal 4 digit.");
+                        return;
+                    }
                 } catch (NumberFormatException ex) {
                     periodField.setStyle("-fx-border-color: red;");
                     errorLabel.setText("Periode harus berupa angka.");

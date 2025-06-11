@@ -81,7 +81,7 @@
                                                     <Label fx:id="exhibitTitleLabel" style="-fx-font-size: 28px; -fx-font-family: 'Playfair Display SC Bold'; -fx-text-fill: #111;" text="ART HISTORY EXHIBITION"/>
                                                     <Button fx:id="editExhibitButton"
                                                             text="Edit"
-                                                            style="-fx-background-color: #888; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 6px 16px;"
+                                                            style="-fx-background-color: #333; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 6px 16px;"
                                                             onAction="#onEditExhibitButtonClick"
                                                             visible="false" managed="false"/>
                                                 </HBox>
@@ -91,6 +91,12 @@
                                                         text="Tambah Artefak ke Exhibit"
                                                         style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 6px 16px;"
                                                         onAction="#onAddArtefactToExhibitClick"
+                                                        visible="false" managed="false"/>
+                                                <HBox fx:id="artefactsContainer" spacing="25.0" alignment="CENTER_LEFT" />
+                                                <Button fx:id="deleteArtefactFromExhibitButton"
+                                                        text="Hapus Artefak dari Exhibit"
+                                                        style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 6px 16px;"
+                                                        onAction="#onDeleteArtefactFromExhibitClick"
                                                         visible="false" managed="false"/>
                                             </children>
                                         </VBox>
