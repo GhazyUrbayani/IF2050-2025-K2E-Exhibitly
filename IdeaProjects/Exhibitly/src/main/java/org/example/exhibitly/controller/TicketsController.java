@@ -20,15 +20,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-// import org.example.exhibitly.Main; // TIDAK DIGUNAKAN LAGI
-// import org.example.exhibitly.model.User; // TIDAK DIGUNAKAN LAGI
-import org.example.exhibitly.models.Ticket; // Tetap digunakan untuk objek tiket, tapi tidak ada dependency User
+import javafx.scene.control.TextArea;
+
+import org.example.exhibitly.models.Ticket;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -123,9 +128,17 @@ public class TicketsController extends BaseController implements Initializable {
 
         Ticket newTicket = new Ticket(ticketId, name, email, ticketQuantity, new java.util.Date());
 
+        boolean success = saveTicketToDB(ticketId, name, email, ticketQuantity);
+        if (!success) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Gagal menyimpan tiket ke database.");
+            return;
+        }
 
         showAlert(Alert.AlertType.INFORMATION, "Pembelian Sukses!",
                 "Tiket berhasil dibeli!\nNomor Tiket: " + ticketId + "\nQR Code Anda telah dibuat.");
+
+        // Tambahkan pemanggilan feedback dialog setelah pembelian sukses
+        showFeedbackDialog(ticketId);
 
         nameField.clear();
         emailField.clear();
@@ -137,6 +150,75 @@ public class TicketsController extends BaseController implements Initializable {
         int atIdx = email.indexOf('@');
         int dotIdx = email.lastIndexOf('.');
         return atIdx > 0 && dotIdx > atIdx + 1 && dotIdx < email.length() - 1;
+    }
+
+    private boolean saveTicketToDB(String ticketId, String name, String email, int quantity) {
+        String sql = "INSERT INTO Visitor_Ticket (ticketID, name, email, ticketQuantity) VALUES (?, ?, ?, ?)";
+        try (Connection conn = new DatabaseConnection().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, ticketId);
+            pstmt.setString(2, name);
+            pstmt.setString(3, email);
+            pstmt.setInt(4, quantity);
+
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Ubah parameter visitorID dari int ke String
+    private void showFeedbackDialog(String visitorID) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/FeedbackDialog.fxml"));
+            Parent page = loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Form Feedback");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(nameField.getScene().getWindow());
+            dialogStage.setScene(new Scene(page));
+
+            TextArea feedbackTextArea = (TextArea) page.lookup("#feedbackTextArea");
+            Button submitFeedbackButton = (Button) page.lookup("#submitFeedbackButton");
+
+            submitFeedbackButton.setOnAction(e -> {
+                String comment = feedbackTextArea.getText();
+                if (comment.isBlank()) {
+                    showAlert(Alert.AlertType.WARNING, "Input Kosong", "Mohon isi masukan Anda.");
+                    return;
+                }
+                saveFeedbackToDB(visitorID, 1, comment);
+                dialogStage.close();
+                showAlert(Alert.AlertType.INFORMATION, "Sukses", "Terima kasih atas masukan Anda!");
+            });
+
+            dialogStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Ubah parameter visitorID dari int ke String
+    private void saveFeedbackToDB(String visitorID, int exhibitID, String comment) {
+        String sql = "INSERT INTO Feedback (visitorID, exhibitID, comment) VALUES (?, ?, ?)";
+        try (Connection conn = new DatabaseConnection().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, visitorID);
+            pstmt.setInt(2, exhibitID);
+            pstmt.setString(3, comment);
+            pstmt.executeUpdate();
+            
+            System.out.println("Feedback berhasil disimpan ke database.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // --- Metode Helper untuk Generate QR Code (Menggunakan ZXing) ---
