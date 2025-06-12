@@ -1,0 +1,26 @@
+build.gradle.kts
+plugins {
+    kotlin("jvm") version "1.5.31"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    jvmArgs("--add-opens", "org.example.exhibitly/<package>=ALL-UNNAMED")
+}
+
+.vscode/settings.json
+{
+    "java.test.config": {
+        "jvmArgs": [
+            "--add-opens",
+            "org.example.exhibitly/<package>=ALL-UNNAMED"
+        ]
+    }
+}

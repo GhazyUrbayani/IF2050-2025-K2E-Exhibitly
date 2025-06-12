@@ -59,11 +59,10 @@ public class ArtefactController extends BaseController implements Initializable 
     private GridPane artefactGrid;
 
     @FXML
-    private TextField periodFromField;
+    protected TextField periodFromField;
     @FXML
-    private TextField periodToField;
+    protected TextField periodToField;
 
-    /* CheckBox Attributes */
     @FXML
     private CheckBox  DKIJakartaCheckBox;
     @FXML
@@ -110,6 +109,19 @@ public class ArtefactController extends BaseController implements Initializable 
         loadAllArtefactsFromDB();
         displayArtefacts(allArtefacts);
         setupRoleBasedAccess();
+
+        /* Real Time Update for each Filter */
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            applyAllFilter();
+        });
+
+        // periodFromField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
+
+        // periodToField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
     }
 
     private void loadAllArtefactsFromDB() {
@@ -440,6 +452,29 @@ public class ArtefactController extends BaseController implements Initializable 
     }
 
 
+    protected List<Artefact> filterByPeriod(List<Artefact> artefactList) {
+        String fromPeriod = periodFromField != null ? periodFromField.getText().trim() : "";
+        String toPeriod = periodToField != null ? periodToField.getText().trim() : "";
+        if (fromPeriod.isEmpty() && toPeriod.isEmpty()) {
+            return artefactList;
+        }
+        List<Artefact> filterArtefact = new java.util.ArrayList<>();
+        try {
+            int fromYear = fromPeriod.isEmpty() ? Integer.MIN_VALUE : Integer.parseInt(fromPeriod);
+            int toYear = toPeriod.isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(toPeriod);
+            for (Artefact entry : artefactList) {
+                int period = entry.getPeriod();
+                if (period >= fromYear && period <= toYear) {
+                    filterArtefact.add(entry);
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid period format!");
+            return artefactList;
+        }
+        return filterArtefact;
+    }
+
     private void applyAllFilter() {
         List<Artefact> filterArtefact = new ArrayList<>(allArtefacts);
 
@@ -725,29 +760,6 @@ public class ArtefactController extends BaseController implements Initializable 
             }
         }
         return filterArtefacts;
-    }
-
-    private List<Artefact> filterByPeriod(List<Artefact> artefactList) {
-        String fromPeriod = periodFromField != null ? periodFromField.getText().trim() : "";
-        String toPeriod = periodToField != null ? periodToField.getText().trim() : "";
-        if (fromPeriod.isEmpty() && toPeriod.isEmpty()) {
-            return artefactList;
-        }
-        List<Artefact> filterArtefact = new ArrayList<>();
-        try {
-            int fromYear = fromPeriod.isEmpty() ? Integer.MIN_VALUE : Integer.parseInt(fromPeriod);
-            int toYear = toPeriod.isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(toPeriod);
-            for (Artefact entry : artefactList) {
-                int period = entry.getPeriod();
-                if (period >= fromYear && period <= toYear) {
-                    filterArtefact.add(entry);
-                }
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid period format!");
-            return artefactList;
-        }
-        return filterArtefact;
     }
 
     @FXML
