@@ -19,6 +19,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
 <AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.exhibitly.controller.MaintenanceController">
     <children>
         <Region prefHeight="100.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
@@ -81,9 +83,25 @@
                                 </VBox>
 
                                 <VBox alignment="TOP_CENTER" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                    <Label style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: black; -fx-font-family: 'Playfair Display SC Bold'; -fx-letter-spacing: 2px;" text="MAINTENANCE" />
-                                    <Label fx:id="userNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Halo "/>
-                                    <Label fx:id="userRoleLabel" style="-fx-font-size: 16px; -fx-font-weight: normal; -fx-text-fill: gray;" text="([Role Pengguna])" />
+                                    <TextFlow style="-fx-text-alignment: center;">
+                                        <Text text="M " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="A " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="I " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="N " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="T " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="E " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="N " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="A " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="N " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="C " style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                        <Text text="E"  style="-fx-font-size: 36px; -fx-font-family: 'Playfair Display SC'; -fx-fill: black; -fx-font-weight: bold;" />
+                                    </TextFlow>
+                                    <Label fx:id="userNameLabel" text="Halo " textFill="Black">
+                                        <font><Font name="Plus Jakarta Sans Bold" size="24.0" /></font>
+                                    </Label>
+                                    <Label fx:id="userRoleLabel" text="([Role Pengguna])" textFill="gray" >
+                                        <font><Font name="Plus Jakarta Sans Bold" size="16.0" /></font>
+                                    </Label>
                                 </VBox>
 
                                 <Region fx:id="rightSpacer" GridPane.columnIndex="2" GridPane.rowIndex="0" visible="true" managed="true" prefWidth="250.0" />

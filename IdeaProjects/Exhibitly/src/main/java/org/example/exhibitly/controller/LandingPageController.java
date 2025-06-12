@@ -1,18 +1,19 @@
 package org.example.exhibitly.controller;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -42,6 +43,22 @@ public class LandingPageController extends BaseController implements Initializab
     private List<String> welcomeMessages;
     private int currentMessageIndex = 0;
     private Timeline timeline;
+    @FXML
+    private ImageView KaryaKoleksiImageView; // ID untuk ImageView gambar lukisan
+    @FXML
+    private StackPane karyaKoleksiPane;
+
+    @FXML
+    private VBox koleksiHoverArea; // NEW: VBox yang akan menjadi hotspot hover
+    @FXML
+    private VBox defaultContent;   // VBox untuk konten default
+    @FXML
+    private VBox hoverContent;     // VBox untuk konten saat di-hover
+    @FXML private Label titleLabel;
+    @FXML private Label subtitleLabel;
+    @FXML private Label paragraphLabel;
+
+
 
     // === Initialization ===
     @Override
@@ -50,6 +67,47 @@ public class LandingPageController extends BaseController implements Initializab
         setupWelcomeMessages();
         startWelcomeTextAnimation();
         updateUserInterface();
+        // --- Logika Hover untuk Karya Koleksi Section (Dipasang pada koleksiHoverArea) ---
+// --- Logika Hover untuk Karya Koleksi Section ---
+        koleksiHoverArea.setOnMouseEntered(e -> animateIn());
+        koleksiHoverArea.setOnMouseExited(e -> animateOut());
+
+        paragraphLabel.setOpacity(0.0);
+        titleLabel.setTranslateY(0);
+        subtitleLabel.setTranslateY(0);
+
+    }
+    private void animateIn() {
+        // Geser ke atas
+        TranslateTransition up = new TranslateTransition(Duration.millis(300), titleLabel);
+        up.setToY(-40);
+
+        // Geser ke bawah
+        TranslateTransition down = new TranslateTransition(Duration.millis(300), subtitleLabel);
+        down.setToY(40);
+
+        // Fade in paragraf
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), paragraphLabel);
+        fadeIn.setToValue(1.0);
+
+        ParallelTransition pt = new ParallelTransition(up, down, fadeIn);
+        pt.play();
+    }
+
+    private void animateOut() {
+        // Kembalikan posisi
+        TranslateTransition resetTitle = new TranslateTransition(Duration.millis(300), titleLabel);
+        resetTitle.setToY(0);
+
+        TranslateTransition resetSubtitle = new TranslateTransition(Duration.millis(300), subtitleLabel);
+        resetSubtitle.setToY(0);
+
+        // Fade out paragraf
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), paragraphLabel);
+        fadeOut.setToValue(0.0);
+
+        ParallelTransition pt = new ParallelTransition(resetTitle, resetSubtitle, fadeOut);
+        pt.play();
     }
 
     private void loadImages() {
@@ -57,6 +115,7 @@ public class LandingPageController extends BaseController implements Initializab
         imageMappings.put(LandingImageView, "/images/Landing.png");
         imageMappings.put(Landing2ImageView, "/images/Landing2.png");
         imageMappings.put(logoFooter, "/images/logo2.png");
+        imageMappings.put(KaryaKoleksiImageView, "/images/eye.png");
 
         for (Map.Entry<ImageView, String> entry : imageMappings.entrySet()) {
             try {
