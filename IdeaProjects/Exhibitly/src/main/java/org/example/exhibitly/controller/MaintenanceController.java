@@ -1,5 +1,6 @@
 package org.example.exhibitly.controller;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +20,16 @@ import org.example.exhibitly.models.Actor;
 import org.example.exhibitly.models.Artefact;
 import org.example.exhibitly.models.Maintenance;
 import org.example.exhibitly.models.Staff;
+import org.example.exhibitly.util.ArtefactRepository;
+import org.example.exhibitly.util.DatabaseConnection;
+import org.example.exhibitly.util.MaintenanceRepository;
+import org.example.exhibitly.util.StaffRepository;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -59,6 +67,9 @@ public class MaintenanceController extends BaseController implements Initializab
 
     private List<Maintenance> allMaintenanceRecords;
     private Actor currentUser;
+    private StaffRepository staffRepository;
+    private MaintenanceRepository maintenanceRepository;
+    private ArtefactRepository artefactRepository;
 
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm"); // Hapus 'new'
     private static final DateTimeFormatter DATE_FORMATTER_DISPLAY = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Hapus 'new', dan ganti '
@@ -86,47 +97,53 @@ public class MaintenanceController extends BaseController implements Initializab
             System.out.println("[Erorr] Couldn't load logo");
         }
 
+        maintenanceRepository = new MaintenanceRepository();
         allMaintenanceRecords = new ArrayList<>();
-        Date todayDateUtil = new Date(); // java.util.Date untuk dummy data
-        Date yesterdayDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date twoDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date threeDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        // Initial dummy data
-        // Untuk contoh ini, saya tambahkan beberapa tanggal berbeda di 'Past Requests'
-        allMaintenanceRecords.add(new Maintenance(1, null, null, UUID.randomUUID().toString().substring(0,8), 101, "Arca Ganesha", todayDateUtil, null, "Pembersihan", "Not Done", "Tolong dibersihin ya"));
-        allMaintenanceRecords.add(new Maintenance(2, null, null, UUID.randomUUID().toString().substring(0,8), 102, "Arca Jatinangor", todayDateUtil, todayDateUtil, "Perbaikan", "Done", "Perlu perbaikan kecil"));
-        allMaintenanceRecords.add(new Maintenance(3, null, null, UUID.randomUUID().toString().substring(0,8), 103, "Arca Cirebon", todayDateUtil, null, "Pembersihan", "Not Done", "Debu terlalu tebal"));
-
-        allMaintenanceRecords.add(new Maintenance(4, null, null, UUID.randomUUID().toString().substring(0,8), 104, "Arca Tamfest", yesterdayDateUtil, yesterdayDateUtil, "Rutin", "Done", "Pembersihan rutin kemarin"));
-        allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, "Arca Ganyang", yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Cek stabilitas kemarin"));
-        allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, "Arca Cisitu", yesterdayDateUtil, null, "Pembersihan", "Not Done", "Perlu penanganan khusus kemarin"));
-
-        allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, "Arca Tubis", threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Sensor tidak berfungsi"));
-        allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, "Arca Saraga", threeDaysAgoDateUtil, null, "Cek", "Not Done", "Lampu display mati"));
-
-        allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, "Arca Tamansari", twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Display kusam (Done)"));
+        loadMaintenances();
+//        Date todayDateUtil = new Date(); // java.util.Date untuk dummy data
+//        Date yesterdayDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        Date twoDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        Date threeDaysAgoDateUtil = Date.from(LocalDate.now(ZoneId.systemDefault()).minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant());
+//
+//        // Initial dummy data
+//        // Untuk contoh ini, saya tambahkan beberapa tanggal berbeda di 'Past Requests'
+//        allMaintenanceRecords.add(new Maintenance(1, null, null, UUID.randomUUID().toString().substring(0,8), 101, "Arca Ganesha", todayDateUtil, null, "Pembersihan", "Not Done", "Tolong dibersihin ya"));
+//        allMaintenanceRecords.add(new Maintenance(2, null, null, UUID.randomUUID().toString().substring(0,8), 102, "Arca Jatinangor", todayDateUtil, todayDateUtil, "Perbaikan", "Done", "Perlu perbaikan kecil"));
+//        allMaintenanceRecords.add(new Maintenance(3, null, null, UUID.randomUUID().toString().substring(0,8), 103, "Arca Cirebon", todayDateUtil, null, "Pembersihan", "Not Done", "Debu terlalu tebal"));
+//
+//        allMaintenanceRecords.add(new Maintenance(4, null, null, UUID.randomUUID().toString().substring(0,8), 104, "Arca Tamfest", yesterdayDateUtil, yesterdayDateUtil, "Rutin", "Done", "Pembersihan rutin kemarin"));
+//        allMaintenanceRecords.add(new Maintenance(5, null, null, UUID.randomUUID().toString().substring(0,8), 105, "Arca Ganyang", yesterdayDateUtil, yesterdayDateUtil, "Inspeksi", "Done", "Cek stabilitas kemarin"));
+//        allMaintenanceRecords.add(new Maintenance(6, null, null, UUID.randomUUID().toString().substring(0,8), 106, "Arca Cisitu", yesterdayDateUtil, null, "Pembersihan", "Not Done", "Perlu penanganan khusus kemarin"));
+//
+//        allMaintenanceRecords.add(new Maintenance(8, null, null, UUID.randomUUID().toString().substring(0,8), 108, "Arca Tubis", threeDaysAgoDateUtil, null, "Perbaikan", "Not Done", "Sensor tidak berfungsi"));
+//        allMaintenanceRecords.add(new Maintenance(9, null, null, UUID.randomUUID().toString().substring(0,8), 109, "Arca Saraga", threeDaysAgoDateUtil, null, "Cek", "Not Done", "Lampu display mati"));
+//
+//        allMaintenanceRecords.add(new Maintenance(7, null, null, UUID.randomUUID().toString().substring(0,8), 107, "Arca Tamansari", twoDaysAgoDateUtil, twoDaysAgoDateUtil, "Perbaikan", "Done", "Display kusam (Done)"));
 
         // Dummy data untuk Artefak
         // --- MENGISI ARTEFAK COMBOBOX (SAMA) ---
+        artefactRepository = new ArtefactRepository();
         allArtefacts = new ArrayList<>();
+        loadArtefacts();
         //int artefactID, String title, String region, int period, String description, String mediaURL
-        allArtefacts.add(new Artefact(101, "Patung Ganesha", "Hell", 200, "x", "x"));
-        allArtefacts.add(new Artefact(102, "Lukisan Monalisa", "Hell", 200, "x", "x"));
-        allArtefacts.add(new Artefact(103, "Kendi Tanah Liat", "Hell", 200, "x", "x"));
-        artefactComboBox.getItems().clear();
-        for (Artefact artefact : allArtefacts) {
-            artefactComboBox.getItems().add(artefact.getTitle() + " (ID: " + artefact.getArtefactID() + ")");
-        }
+//        allArtefacts.add(new Artefact(101, "Patung Ganesha", "Hell", 200, "x", "x"));
+//        allArtefacts.add(new Artefact(102, "Lukisan Monalisa", "Hell", 200, "x", "x"));
+//        allArtefacts.add(new Artefact(103, "Kendi Tanah Liat", "Hell", 200, "x", "x"));
+//        artefactComboBox.getItems().clear();
+//        for (Artefact artefact : allArtefacts) {
+//            artefactComboBox.getItems().add(artefact.getTitle() + " (ID: " + artefact.getArtefactID() + ")");
+//        }
         artefactComboBox.getItems().add("Select Artefact");
         artefactComboBox.setValue("Select Artefact");
 
         // Dummy data untuk Staff (Anda perlu mendapatkan ini dari daftar Staff Anda)
         // Jika Anda memiliki List<Staff> allStaffs, Anda bisa menggunakannya di sini
+        staffRepository = new StaffRepository();
         allStaffs = new ArrayList<>();
-        allStaffs.add(new Staff(1, "Staff", "staff_a_username", "Staff A", "s")); // Contoh: id, role, username, name
-        allStaffs.add(new Staff(2, "Staff", "staff_b_username", "Staff B", "s"));
-        allStaffs.add(new Staff(3, "Staff", "staff_c_username", "Staff C", "s"));
+        loadStaffs();
+//        allStaffs.add(new Staff(1, "Staff", "staff_a_username", "Staff A", "s")); // Contoh: id, role, username, name
+//        allStaffs.add(new Staff(2, "Staff", "staff_b_username", "Staff B", "s"));
+//        allStaffs.add(new Staff(3, "Staff", "staff_c_username", "Staff C", "s"));
         // Tambahkan opsi "Unassigned" atau "Belum Ditugaskan"
         performedByStaffComboBox.getItems().add("Unassigned"); // Opsi default untuk Staff yang belum ditugaskan
 
@@ -158,6 +175,75 @@ public class MaintenanceController extends BaseController implements Initializab
         addRequestForm.setVisible(false);
         addRequestForm.setManaged(false);
     }
+
+    private void loadStaffs() {
+        Task<List<Staff>> loadTask = new Task<List<Staff>>() {
+            protected List<Staff> call () throws  Exception{
+                return staffRepository.getAllStaffs();
+            }
+        };
+
+        loadTask.setOnSucceeded(event -> {
+            allStaffs = loadTask.getValue();
+            performedByStaffComboBox.getItems().clear();
+            for (Staff staff : allStaffs) {
+                performedByStaffComboBox.getItems().add(staff.getName());
+            }
+            System.out.println("Loaded " + allStaffs.size() + " staffs");
+        });
+
+        loadTask.setOnFailed(event -> {
+            System.err.println("Error loading staffs: " + loadTask.getException().getMessage());
+        });
+
+        new Thread(loadTask).start();
+    }
+
+
+    private void loadMaintenances() {
+        Task<List<Maintenance>> loadTask = new Task<List<Maintenance>>() {
+            protected List<Maintenance> call () throws  Exception{
+                return maintenanceRepository.getAllMaintenances();
+            }
+        };
+
+        loadTask.setOnSucceeded(event -> {
+            allMaintenanceRecords = loadTask.getValue();
+//            loadRequests();
+//            loadHistory();
+            System.out.println("Loaded " + allMaintenanceRecords.size() + " maintenances");
+        });
+
+        loadTask.setOnFailed(event -> {
+            System.err.println("Error loading maintenances: " + loadTask.getException().getMessage());
+        });
+
+        new Thread(loadTask).start();
+    }
+
+    private void loadArtefacts() {
+        Task<List<Artefact>> loadTask = new Task<List<Artefact>>() {
+            protected List<Artefact> call () throws  Exception{
+                return artefactRepository.getAllArtefacts();
+            }
+        };
+
+        loadTask.setOnSucceeded(event -> {
+            allArtefacts = loadTask.getValue();
+            artefactComboBox.getItems().clear();
+            for (Artefact artefact : allArtefacts) {
+                artefactComboBox.getItems().add(artefact.getTitle() + " (ID: " + artefact.getArtefactID() + ")");
+            }
+            System.out.println("Loaded " + allArtefacts.size() + " artefacts");
+        });
+
+        loadTask.setOnFailed(event -> {
+            System.err.println("Error loading artefacts: " + loadTask.getException().getMessage());
+        });
+
+        new Thread(loadTask).start();
+    }
+
 
     private void updateUserInfo() {
         if (currentUser != null) {
