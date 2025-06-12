@@ -11,7 +11,6 @@ public class Maintenance {
     private String artefactName;
     private Date requestDate;
     private Date performedDate;
-    private String type;
     private String status;
     private String description;
 
@@ -19,7 +18,7 @@ public class Maintenance {
     }
 
     public Maintenance(int maintenanceID, Integer kuratorID, Integer staffID, String requestName, int artefactID, String artefactName,
-                       Date requestDate, Date performedDate, String type, String status, String description) {
+                       Date requestDate, Date performedDate, String status, String description) {
         this.maintenanceID = maintenanceID;
         this.kuratorID = kuratorID;
         this.staffID = staffID;
@@ -28,7 +27,6 @@ public class Maintenance {
         this.artefactName = artefactName;
         this.requestDate = requestDate;
         this.performedDate = performedDate;
-        this.type = type;
         this.status = status;
         this.description = description;
     }
@@ -99,14 +97,6 @@ public class Maintenance {
 
     public void setPerformedDate(Date performedDate) {
         this.performedDate = performedDate;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getStatus() {

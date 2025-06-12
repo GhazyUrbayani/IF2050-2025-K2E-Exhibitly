@@ -159,8 +159,8 @@ public class MaintenanceController extends BaseController implements Initializab
         currentUser = session.getCurrentActor();
         updateUserInfo();
 
-        loadRequests();
-        loadHistory();
+//        loadRequests();
+//        loadHistory();
 
         todayDateLabel.setText("Today - " + LocalDate.now(ZoneId.systemDefault()).format(TODAY_DATE_FORMATTER));
 
@@ -210,8 +210,8 @@ public class MaintenanceController extends BaseController implements Initializab
 
         loadTask.setOnSucceeded(event -> {
             allMaintenanceRecords = loadTask.getValue();
-//            loadRequests();
-//            loadHistory();
+            loadRequests();
+            loadHistory();
             System.out.println("Loaded " + allMaintenanceRecords.size() + " maintenances");
         });
 
@@ -440,7 +440,6 @@ public class MaintenanceController extends BaseController implements Initializab
                 artefactNameForMaintenance,
                 currentDateTime,
                 null,
-                "User Request",
                 "Not Done",
                 fullDescription
         );
