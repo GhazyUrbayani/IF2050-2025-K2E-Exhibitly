@@ -12,7 +12,6 @@ import java.util.Date;
 import org.example.exhibitly.models.Staff;
 import org.example.exhibitly.models.Actor;
 
-
 public class EditRequestDialogController {
 
     @FXML
@@ -40,44 +39,28 @@ public class EditRequestDialogController {
         String artefactName = request.getArtefactName();
         editArtefactNameField.setText(artefactName);
 
-        String fullDescription = request.getDescription();
-        String requesterName = "Unknown";
-        String actualDescription = fullDescription;
-
-        if (fullDescription != null && fullDescription.startsWith("Requester: ")) {
-            String[] parts = fullDescription.split("\n", 2);
-            requesterName = parts[0].replace("Requester: ", "").trim();
-            if (parts.length > 1) {
-                actualDescription = parts[1].trim();
-            } else {
-                actualDescription = "";
-            }
-        } else {
-            requesterName = "N/A";
-        }
-
-        editRequesterNameField.setText(requesterName);
-        editDescriptionArea.setText(actualDescription);
+        editArtefactNameField.setText(request.getArtefactName());
+        editRequesterNameField.setText(request.getRequestName());
+        editDescriptionArea.setText(request.getDescription());
 
         editStatusComboBox.getItems().clear();
         editStatusComboBox.getItems().addAll("Done", "Not Done");
         editStatusComboBox.setValue(request.getStatus());
 
-        // --- ATUR HAK AKSES BERDASARKAN PERAN ---
-        if (currentUser.getRole().toUpperCase().equalsIgnoreCase("KURATOR")) {
+        String userRole = user.getRole().toUpperCase();
 
+        // --- ATUR HAK AKSES BERDASARKAN PERAN ---
+        if ("KURATOR".equals(userRole)) {
             editArtefactNameField.setEditable(true);
             editRequesterNameField.setEditable(true);
             editDescriptionArea.setEditable(true);
             editStatusComboBox.setDisable(false);
-        } else if (currentUser.getRole().toUpperCase().equalsIgnoreCase("STAFF")) {
-
+        } else if ("STAFF".equals(userRole)) {
             editArtefactNameField.setEditable(false);
             editRequesterNameField.setEditable(false);
             editDescriptionArea.setEditable(false);
             editStatusComboBox.setDisable(false);
         } else {
-
             editArtefactNameField.setEditable(false);
             editRequesterNameField.setEditable(false);
             editDescriptionArea.setEditable(false);
@@ -90,18 +73,15 @@ public class EditRequestDialogController {
     }
 
     public Maintenance getEditedRequest() {
-        String newArtefactName = editArtefactNameField.getText();
-        String newRequesterName = editRequesterNameField.getText();
-        String newDescriptionArea = editDescriptionArea.getText();
+        String userRole = currentUser.getRole().toUpperCase();
+
+        if ("KURATOR".equals(userRole)) {
+            currentEditingRequest.setArtefactName(editArtefactNameField.getText());
+            currentEditingRequest.setRequestName(editRequesterNameField.getText());
+            currentEditingRequest.setDescription(editDescriptionArea.getText());
+        }
         String newStatus = editStatusComboBox.getValue();
-        Date newRequestDate = new Date();
-
-        currentEditingRequest.setArtefactName(newArtefactName);
-        currentEditingRequest.setRequestName(newRequesterName);
-
-        currentEditingRequest.setDescription("Requester: " + newRequesterName + "\n" + newDescriptionArea);
         currentEditingRequest.setStatus(newStatus);
-        currentEditingRequest.setRequestDate(newRequestDate);
 
         if ("Done".equalsIgnoreCase(newStatus)) {
             if (currentEditingRequest.getPerformedDate() == null) {

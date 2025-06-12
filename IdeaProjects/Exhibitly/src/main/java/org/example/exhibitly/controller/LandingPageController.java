@@ -23,52 +23,65 @@ import java.util.*;
 
 public class LandingPageController extends BaseController implements Initializable {
 
-    // === FXML Components ===
-    @FXML private Button loginLogoutButton;
-    @FXML private Button maintenanceButton;
-    @FXML private Button onExhibitButtonClick;
-    @FXML private Button onArtefactButtonClick;
-    @FXML private Button onTicketButtonClick;
-    @FXML private Button onLogoButtonClick;
-    @FXML private Button logoButton;
-
-    @FXML private ImageView LandingImageView;
-    @FXML private ImageView Landing2ImageView;
-    @FXML private ImageView myImageView;
-    @FXML private ImageView logoFooter;
-
-    @FXML private Label welcomeTextLabel;
-    @FXML private Label userInfoLabel;
-
-    private List<String> welcomeMessages;
-    private int currentMessageIndex = 0;
-    private Timeline timeline;
     @FXML
-    private ImageView KaryaKoleksiImageView; // ID untuk ImageView gambar lukisan
+    private Button loginLogoutButton;
+    @FXML
+    private Button maintenanceButton;
+    @FXML
+    private Button onExhibitButtonClick;
+    @FXML
+    private Button onArtefactButtonClick;
+    @FXML
+    private Button onTicketButtonClick;
+    @FXML
+    private Button onLogoButtonClick;
+    @FXML
+    private Button logoButton;
+
+    @FXML
+    private ImageView LandingImageView;
+    @FXML
+    private ImageView Landing2ImageView;
+    @FXML
+    private ImageView myImageView;
+    @FXML
+    private ImageView logoFooter;
+
+    @FXML
+    private Label welcomeTextLabel;
+    @FXML
+    private Label userInfoLabel;
+
+    @FXML
+    private ImageView KaryaKoleksiImageView;
     @FXML
     private StackPane karyaKoleksiPane;
 
     @FXML
-    private VBox koleksiHoverArea; // NEW: VBox yang akan menjadi hotspot hover
+    private VBox koleksiHoverArea;
     @FXML
-    private VBox defaultContent;   // VBox untuk konten default
+    private VBox defaultContent;
     @FXML
-    private VBox hoverContent;     // VBox untuk konten saat di-hover
-    @FXML private Label titleLabel;
-    @FXML private Label subtitleLabel;
-    @FXML private Label paragraphLabel;
+    private VBox hoverContent;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Label subtitleLabel;
+    @FXML
+    private Label paragraphLabel;
+
+    private List<String> welcomeMessages;
+    private int currentMessageIndex = 0;
+    private Timeline timeline;
 
 
-
-    // === Initialization ===
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadImages();
         setupWelcomeMessages();
         startWelcomeTextAnimation();
         updateUserInterface();
-        // --- Logika Hover untuk Karya Koleksi Section (Dipasang pada koleksiHoverArea) ---
-// --- Logika Hover untuk Karya Koleksi Section ---
+
         koleksiHoverArea.setOnMouseEntered(e -> animateIn());
         koleksiHoverArea.setOnMouseExited(e -> animateOut());
 
@@ -77,6 +90,7 @@ public class LandingPageController extends BaseController implements Initializab
         subtitleLabel.setTranslateY(0);
 
     }
+
     private void animateIn() {
         // Geser ke atas
         TranslateTransition up = new TranslateTransition(Duration.millis(300), titleLabel);
@@ -127,7 +141,6 @@ public class LandingPageController extends BaseController implements Initializab
             }
         }
 
-        // Set logo di dalam tombol
         try {
             ImageView logoImageView = (ImageView) logoButton.getGraphic();
             logoImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
@@ -139,12 +152,11 @@ public class LandingPageController extends BaseController implements Initializab
 
     private void setupWelcomeMessages() {
         welcomeMessages = new ArrayList<>(Arrays.asList(
-                "SELAMAT DATANG",       // Bahasa Indonesia
-                "RAHAJENG RAWUH",       // Bahasa Jawa
-                "HORAS",                // Bahasa Batak
-                "WILUJENG SUMPING",     // Bahasa Sunda
-                "ASSALAMUALAIKUM"       // Umum
-        ));
+                "SELAMAT DATANG",
+                "RAHAJENG RAWUH",
+                "HORAS",
+                "WILUJENG SUMPING",
+                "ASSALAMUALAIKUM"));
     }
 
     private void startWelcomeTextAnimation() {
@@ -166,8 +178,7 @@ public class LandingPageController extends BaseController implements Initializab
                     });
                     fadeOut.play();
                 }),
-                new KeyFrame(Duration.seconds(4.0)) // Siklus tiap 4 detik
-        );
+                new KeyFrame(Duration.seconds(4.0)));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -193,6 +204,7 @@ public class LandingPageController extends BaseController implements Initializab
             }
         }
     }
+
     // === Navigation Buttons ===
     @FXML
     private void onLoginLogoutButtonClick(ActionEvent event) {
@@ -218,7 +230,7 @@ public class LandingPageController extends BaseController implements Initializab
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+    private void onArtefactButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
 
     }

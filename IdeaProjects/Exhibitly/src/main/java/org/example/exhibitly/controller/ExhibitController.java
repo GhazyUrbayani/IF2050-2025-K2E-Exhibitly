@@ -38,18 +38,30 @@ import java.sql.SQLException;
 
 public class ExhibitController extends BaseController implements Initializable {
 
-    @FXML private Label exhibitTitleLabel;
-    @FXML private Label exhibitDescriptionLabel;
-    @FXML private Label curatorNameLabel;
-    @FXML private ImageView exhibitImageView;
-    @FXML private HBox artefactsContainer;
-    @FXML private Button logoButton;
-    @FXML private Button loginLogoutButton;
-    @FXML private ImageView logoHeaderImageView;
-    @FXML private ImageView logoFooter;
-    @FXML private Button editExhibitButton;
-    @FXML private Button addArtefactToExhibitButton;
-    @FXML private Button deleteArtefactFromExhibitButton;
+    @FXML
+    private Label exhibitTitleLabel;
+    @FXML
+    private Label exhibitDescriptionLabel;
+    @FXML
+    private Label curatorNameLabel;
+    @FXML
+    private ImageView exhibitImageView;
+    @FXML
+    private HBox artefactsContainer;
+    @FXML
+    private Button logoButton;
+    @FXML
+    private Button loginLogoutButton;
+    @FXML
+    private ImageView logoHeaderImageView;
+    @FXML
+    private ImageView logoFooter;
+    @FXML
+    private Button editExhibitButton;
+    @FXML
+    private Button addArtefactToExhibitButton;
+    @FXML
+    private Button deleteArtefactFromExhibitButton;
 
     private Exhibit exhibitData;
     private Connection connection;
@@ -60,15 +72,17 @@ public class ExhibitController extends BaseController implements Initializable {
 
         try {
             logoHeaderImageView.setImage(new Image(getClass().getResourceAsStream("/images/logo.png")));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         try {
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
-        } catch (Exception e) {}
-        
+        } catch (Exception e) {
+        }
+
         updateLoginLogoutButton();
 
         loadExhibitDataFromDB(1);
-          
+
         populateExhibitDetails();
 
         setupRoleBasedAccess();
@@ -76,19 +90,18 @@ public class ExhibitController extends BaseController implements Initializable {
 
     private void loadExhibitDataFromDB(int exhibitId) {
         String exhibitSql = "SELECT e.*, a.name AS curatorName FROM Exhibit e JOIN Actor a ON e.kuratorID = a.actorID WHERE e.exhibitID = ?";
-        
+
         try (PreparedStatement exhibitStmt = connection.prepareStatement(exhibitSql)) {
             exhibitStmt.setInt(1, exhibitId);
             ResultSet rs = exhibitStmt.executeQuery();
 
             if (rs.next()) {
                 this.exhibitData = new Exhibit(
-                    rs.getInt("exhibitID"),
-                    rs.getInt("kuratorID"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getString("mediaURL")
-                );
+                        rs.getInt("exhibitID"),
+                        rs.getInt("kuratorID"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("mediaURL"));
                 this.exhibitData.setCuratorName(rs.getString("curatorName"));
 
                 loadArtefactsForExhibit(exhibitId);
@@ -101,20 +114,19 @@ public class ExhibitController extends BaseController implements Initializable {
     private void loadArtefactsForExhibit(int exhibitId) {
         String artefactSql = "SELECT a.* FROM Artefact a JOIN Artefact_Exhibit ae ON a.artefactID = ae.artefactID WHERE ae.exhibitID = ?";
         List<Artefact> artefacts = new ArrayList<>();
-        
+
         try (PreparedStatement artefactStmt = connection.prepareStatement(artefactSql)) {
             artefactStmt.setInt(1, exhibitId);
             ResultSet rs = artefactStmt.executeQuery();
-            
+
             while (rs.next()) {
                 artefacts.add(new Artefact(
-                    rs.getInt("artefactID"),
-                    rs.getString("title"),
-                    rs.getString("region"),
-                    rs.getInt("period"),
-                    rs.getString("description"),
-                    rs.getString("mediaURL")
-                ));
+                        rs.getInt("artefactID"),
+                        rs.getString("title"),
+                        rs.getString("region"),
+                        rs.getInt("period"),
+                        rs.getString("description"),
+                        rs.getString("mediaURL")));
             }
             this.exhibitData.setArtefacts(artefacts);
         } catch (SQLException e) {
@@ -131,7 +143,8 @@ public class ExhibitController extends BaseController implements Initializable {
     }
 
     private void populateExhibitDetails() {
-        if (exhibitData == null) return;
+        if (exhibitData == null)
+            return;
 
         exhibitTitleLabel.setText(exhibitData.getTitle());
         curatorNameLabel.setText("KURATOR: " + exhibitData.getCuratorName().toUpperCase());
@@ -139,41 +152,39 @@ public class ExhibitController extends BaseController implements Initializable {
 
         // --- LOGIKA PEMUATAN GAMBAR YANG DIMODIFIKASI ---
         String imageUrl = exhibitData.getMediaURL();
-        Image exhibitImage = null; // Inisialisasi dengan null
+        Image exhibitImage = null;
 
         if (imageUrl != null) {
             if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-                // Jika URL adalah link web (online)
+
                 try {
-                    // 'true' di akhir Image constructor berarti background loading
-                    // Ini bagus agar UI tidak freeze saat loading gambar besar
+
                     exhibitImage = new Image(imageUrl, true);
                     System.out.println("Mencoba memuat gambar online dari: " + imageUrl);
                 } catch (Exception e) {
                     System.err.println("Gagal memuat gambar online dari " + imageUrl + ": " + e.getMessage());
-                    // Mungkin bisa set gambar placeholder di sini
+
                 }
             } else {
-                // Jika URL adalah path resource lokal
+
                 try {
-                    // Menggunakan getResourceAsStream untuk resource di classpath
+
                     java.io.InputStream is = getClass().getResourceAsStream(imageUrl);
                     if (is != null) {
                         exhibitImage = new Image(is);
                         System.out.println("Mencoba memuat gambar lokal dari resource: " + imageUrl);
                     } else {
                         System.err.println("Resource lokal tidak ditemukan di classpath: " + imageUrl);
-                        // Tambahkan log untuk debug, memastikan path benar
+
                     }
                 } catch (Exception e) {
                     System.err.println("Gagal memuat gambar lokal dari resource " + imageUrl + ": " + e.getMessage());
-                    e.printStackTrace(); // Cetak stack trace untuk detail error yang lebih dalam
-                    // Mungkin bisa set gambar placeholder di sini
+                    e.printStackTrace();
+
                 }
             }
         }
 
-        // Set gambar ke ImageView. Jika exhibitImage masih null (gagal dimuat), ImageView akan kosong.
         exhibitImageView.setImage(exhibitImage);
         // --- AKHIR LOGIKA PEMUATAN GAMBAR ---
 
@@ -188,7 +199,8 @@ public class ExhibitController extends BaseController implements Initializable {
         VBox previewContainer = new VBox(10);
         previewContainer.setAlignment(Pos.CENTER);
         previewContainer.setPrefWidth(180);
-        previewContainer.setStyle("-fx-background-color: #fff; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-padding: 10; -fx-background-radius: 8;");
+        previewContainer.setStyle(
+                "-fx-background-color: #fff; -fx-border-color: #ddd; -fx-border-radius: 8; -fx-padding: 10; -fx-background-radius: 8;");
 
         ImageView imageView = new ImageView();
         imageView.setFitWidth(120);
@@ -212,11 +224,12 @@ public class ExhibitController extends BaseController implements Initializable {
         nameLabel.setStyle("-fx-font-family: 'Plus Jakarta Sans Bold'; -fx-font-size: 14px; -fx-text-fill: #222;");
 
         Button detailButton = new Button("Lihat Selengkapnya");
-        detailButton.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+        detailButton.setStyle(
+                "-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
         detailButton.setCursor(Cursor.HAND);
 
         detailButton.setOnAction(event -> {
-            handleArtefactDetailClick(artefact); 
+            handleArtefactDetailClick(artefact);
         });
 
         previewContainer.getChildren().addAll(imageView, nameLabel, detailButton);
@@ -242,7 +255,7 @@ public class ExhibitController extends BaseController implements Initializable {
         try {
             Image image;
             if (imageUrl != null && imageUrl.startsWith("http")) {
-                image = new Image(imageUrl, true); 
+                image = new Image(imageUrl, true);
             } else {
                 image = new Image(getClass().getResourceAsStream(imageUrl));
             }
@@ -268,7 +281,8 @@ public class ExhibitController extends BaseController implements Initializable {
         Button closeButton = new Button("Close");
         closeButton.setOnAction(e -> detailStage.close());
         closeButton.setCursor(Cursor.HAND);
-        closeButton.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px;");
+        closeButton.setStyle(
+                "-fx-background-color: #555; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 20px;");
 
         detailLayout.getChildren().addAll(detailImageView, name, region, period, description, closeButton);
 
@@ -337,11 +351,10 @@ public class ExhibitController extends BaseController implements Initializable {
         buttonBox.getChildren().addAll(saveButton, cancelButton);
 
         layout.getChildren().addAll(
-            new Label("Edit Judul:"), titleField,
-            new Label("Edit Deskripsi:"), descriptionArea,
-            new Label("Edit Media URL:"), mediaURLField,
-            buttonBox
-        );
+                new Label("Edit Judul:"), titleField,
+                new Label("Edit Deskripsi:"), descriptionArea,
+                new Label("Edit Media URL:"), mediaURLField,
+                buttonBox);
 
         saveButton.setOnAction(e -> {
             try {
@@ -472,13 +485,12 @@ public class ExhibitController extends BaseController implements Initializable {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 artefacts.add(new Artefact(
-                    rs.getInt("artefactID"),
-                    rs.getString("title"),
-                    rs.getString("region"),
-                    rs.getInt("period"),
-                    rs.getString("description"),
-                    rs.getString("mediaURL")
-                ));
+                        rs.getInt("artefactID"),
+                        rs.getString("title"),
+                        rs.getString("region"),
+                        rs.getInt("period"),
+                        rs.getString("description"),
+                        rs.getString("mediaURL")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

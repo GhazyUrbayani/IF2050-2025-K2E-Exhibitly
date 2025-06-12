@@ -1,4 +1,4 @@
-// src/main/java/org/example/exhibitly/controller/MaintenanceRequestItemController.java
+
 package org.example.exhibitly.controller;
 
 import javafx.fxml.FXML;
@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.example.exhibitly.models.Maintenance; // Import model Maintenance
-// Import Actor jika Anda ingin logika tampil/sembunyi tombol edit berdasarkan peran
+import org.example.exhibitly.models.Maintenance;
+
 import org.example.exhibitly.models.Actor;
 
 import java.io.InputStream;
@@ -16,15 +16,20 @@ import java.util.Date;
 
 public class MaintenanceRequestItemController {
 
-    @FXML private Label timeLabel;
-    @FXML private Label artefactNameLabel;
-    @FXML private Label requesterNameLabel;
-    @FXML private Label descriptionLabel;
-    @FXML private Label statusLabel;
-    @FXML private Button editButton;
-    @FXML private ImageView pensilicon; // Ini fx:id untuk ImageView Anda
-
-
+    @FXML
+    private Label timeLabel;
+    @FXML
+    private Label artefactNameLabel;
+    @FXML
+    private Label requesterNameLabel;
+    @FXML
+    private Label descriptionLabel;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Button editButton;
+    @FXML
+    private ImageView pensilicon;
 
     private Maintenance maintenanceRequest;
     private Actor currentUser;
@@ -44,7 +49,6 @@ public class MaintenanceRequestItemController {
             pensilicon.setManaged(false);
         }
 
-        // Setup aksi tombol edit (akan dipanggil dari MaintenanceController)
         editButton.setOnAction(event -> {
             if (onEditAction != null) {
                 onEditAction.run();
@@ -52,26 +56,23 @@ public class MaintenanceRequestItemController {
         });
     }
 
-    // Metode untuk mengatur data Maintenance ke dalam elemen UI
     public void setMaintenanceRequest(Maintenance request, Actor user) {
         System.out.println("Set maintenance request: " + request.getDescription() + " for " + request.getArtefactID());
         this.maintenanceRequest = request;
         this.currentUser = user;
 
-        // timeLabel.setText(TIME_FORMAT.format(request.getRequestDate()));
         SimpleDateFormat dateOnlyFormat = new SimpleDateFormat("dd MMM yyyy");
-        timeLabel.setText(dateOnlyFormat.format(request.getRequestDate())); 
+        timeLabel.setText(dateOnlyFormat.format(request.getRequestDate()));
 
         artefactNameLabel.setText(request.getArtefactID_Name());
 
-        // Parse requester name from description, if applicable
         String staffName = request.getRequestName();
 
         if (staffName == null || staffName.trim().isEmpty()) {
             if (request.getStaffID() == null) {
                 staffName = "Unassigned";
             } else {
-                staffName = "Staff ID: " + request.getStaffID(); 
+                staffName = "Staff ID: " + request.getStaffID();
             }
         }
 
@@ -85,8 +86,8 @@ public class MaintenanceRequestItemController {
             statusLabel.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
         }
 
-        // Atur visibilitas tombol edit berdasarkan peran pengguna
-        if (currentUser != null && "Kurator".equalsIgnoreCase(currentUser.getRole()) || "Staff".equalsIgnoreCase(currentUser.getRole())) {
+        if (currentUser != null && "Kurator".equalsIgnoreCase(currentUser.getRole())
+                || "Staff".equalsIgnoreCase(currentUser.getRole())) {
             editButton.setVisible(true);
             editButton.setManaged(true);
         } else {
@@ -95,7 +96,6 @@ public class MaintenanceRequestItemController {
         }
     }
 
-    // Metode untuk mengatur callback saat tombol edit diklik
     public void setOnEditAction(Runnable action) {
         System.out.println("setOnEditAction called.");
         this.onEditAction = action;

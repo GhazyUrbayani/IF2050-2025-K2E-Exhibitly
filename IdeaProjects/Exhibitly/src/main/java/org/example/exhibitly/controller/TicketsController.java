@@ -1,6 +1,5 @@
 package org.example.exhibitly.controller;
 
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -42,18 +41,24 @@ import java.util.UUID;
 
 public class TicketsController extends BaseController implements Initializable {
 
-    @FXML private ImageView logoFooter;
-    @FXML private Button logoButton;
-    @FXML private ImageView qrCodeImageView;
-    @FXML private Label ticketNumberLabel;
+    @FXML
+    private ImageView logoFooter;
+    @FXML
+    private Button logoButton;
+    @FXML
+    private ImageView qrCodeImageView;
+    @FXML
+    private Label ticketNumberLabel;
 
-    @FXML private TextField nameField;
-    @FXML private TextField emailField;
-    @FXML private TextField quantityField;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private TextField quantityField;
 
     private int ticketQuantity = 1;
 
-    // --- Inisialisasi Controller ---
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -72,14 +77,8 @@ public class TicketsController extends BaseController implements Initializable {
 
         quantityField.setText(String.valueOf(ticketQuantity));
 
-        // Inisialisasi logo (opsional, jika Anda punya gambar logo)
-        // Platform.runLater(() -> {
-        //     logoButton.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/your_logo.png")).toExternalForm()));
-        //     logoFooter.setImage(new Image(Objects.requireNonNull(getClass().getResource("/images/your_logo_footer.png")).toExternalForm()));
-        // });
     }
 
-    // --- Fungsionalitas Tombol Kuantitas Tiket ---
     @FXML
     private void onMinusButtonClick(ActionEvent event) {
         if (ticketQuantity > 1) {
@@ -94,23 +93,23 @@ public class TicketsController extends BaseController implements Initializable {
         quantityField.setText(String.valueOf(ticketQuantity));
     }
 
-    // --- Fungsionalitas Tombol Beli Tiket ---
     @FXML
     private void onBuyButtonClick(ActionEvent event) {
         String name = nameField.getText().trim();
         String email = emailField.getText().trim();
 
         if (name.isEmpty() || email.isEmpty() || ticketQuantity <= 0) {
-            showAlert(Alert.AlertType.WARNING, "Input Tidak Lengkap", "Nama, Email, dan Jumlah Tiket harus diisi dan valid.");
+            showAlert(Alert.AlertType.WARNING, "Input Tidak Lengkap",
+                    "Nama, Email, dan Jumlah Tiket harus diisi dan valid.");
             return;
         }
 
         if (!isValidEmail(email)) {
-            showAlert(Alert.AlertType.ERROR, "Email Tidak Valid", "Format email tidak valid. Email harus mengandung '@', '.', dan domain yang benar (misal: user@domain.com).");
+            showAlert(Alert.AlertType.ERROR, "Email Tidak Valid",
+                    "Format email tidak valid. Email harus mengandung '@', '.', dan domain yang benar (misal: user@domain.com).");
             return;
         }
 
-        // --- Logika untuk Generate QR Code dan ID Tiket ---
         String ticketId = UUID.randomUUID().toString().substring(0, 10).toUpperCase();
         String qrCodeData = String.format("Ticket ID: %s\nName: %s\nEmail: %s\nQuantity: %d",
                 ticketId, name, email, ticketQuantity);
@@ -137,7 +136,6 @@ public class TicketsController extends BaseController implements Initializable {
         showAlert(Alert.AlertType.INFORMATION, "Pembelian Sukses!",
                 "Tiket berhasil dibeli!\nNomor Tiket: " + ticketId + "\nQR Code Anda telah dibuat.");
 
-        // Tambahkan pemanggilan feedback dialog setelah pembelian sukses
         showFeedbackDialog(ticketId);
 
         nameField.clear();
@@ -155,7 +153,7 @@ public class TicketsController extends BaseController implements Initializable {
     private boolean saveTicketToDB(String ticketId, String name, String email, int quantity) {
         String sql = "INSERT INTO Visitor_Ticket (ticketID, name, email, ticketQuantity) VALUES (?, ?, ?, ?)";
         try (Connection conn = new DatabaseConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, ticketId);
             pstmt.setString(2, name);
@@ -170,7 +168,6 @@ public class TicketsController extends BaseController implements Initializable {
         return false;
     }
 
-    // Ubah parameter visitorID dari int ke String
     private void showFeedbackDialog(String visitorID) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/FeedbackDialog.fxml"));
@@ -203,17 +200,16 @@ public class TicketsController extends BaseController implements Initializable {
         }
     }
 
-    // Ubah parameter visitorID dari int ke String
     private void saveFeedbackToDB(String visitorID, int exhibitID, String comment) {
         String sql = "INSERT INTO Feedback (visitorID, exhibitID, comment) VALUES (?, ?, ?)";
         try (Connection conn = new DatabaseConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, visitorID);
             pstmt.setInt(2, exhibitID);
             pstmt.setString(3, comment);
             pstmt.executeUpdate();
-            
+
             System.out.println("Feedback berhasil disimpan ke database.");
 
         } catch (SQLException e) {
@@ -221,7 +217,6 @@ public class TicketsController extends BaseController implements Initializable {
         }
     }
 
-    // --- Metode Helper untuk Generate QR Code (Menggunakan ZXing) ---
     private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new HashMap<>();
@@ -233,13 +228,11 @@ public class TicketsController extends BaseController implements Initializable {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                bufferedImage.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF); // Black on white
+                bufferedImage.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
             }
         }
         return bufferedImage;
     }
-
-    // --- Metode Navigasi (Sama seperti Controller lainnya) ---
 
     @FXML
     private void onExhibitButtonClick(ActionEvent event) {
@@ -253,7 +246,7 @@ public class TicketsController extends BaseController implements Initializable {
 
     @FXML
     private void onTicketsButtonClick(ActionEvent event) {
-        // loadScene("/org/example/exhibitly/tickets-view.fxml", event);
+
     }
 
     @FXML
@@ -275,7 +268,6 @@ public class TicketsController extends BaseController implements Initializable {
         navigateToPage(event, "/org/example/exhibitly/MaintenancePage.fxml");
     }
 
-    // --- Metode Helper untuk Menampilkan Alert ---
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

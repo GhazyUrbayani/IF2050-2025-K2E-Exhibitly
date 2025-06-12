@@ -10,7 +10,7 @@ public class DatabaseConnection {
         String databaseName = "exhibitly";
         String databaseUser = "exhibitlygroup";
         String databasePassword = "RPL123__";
-        String databaseUrl = "jdbc:mysql://exhibitly.mysql.database.azure.com:3306/exhibitly?useSSL=true"; //////////not done yet
+        String databaseUrl = "jdbc:mysql://exhibitly.mysql.database.azure.com:3306/exhibitly?useSSL=true";
 
         try {
             Class.forName("com.mysql.jdbc.Driver");

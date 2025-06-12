@@ -64,15 +64,15 @@ public class ArtefactController extends BaseController implements Initializable 
     protected TextField periodToField;
 
     @FXML
-    private CheckBox  DKIJakartaCheckBox;
+    private CheckBox DKIJakartaCheckBox;
     @FXML
-    private CheckBox  JawaBaratCheckBox;
+    private CheckBox JawaBaratCheckBox;
     @FXML
-    private CheckBox  JawaTengahCheckBox;
+    private CheckBox JawaTengahCheckBox;
     @FXML
-    private CheckBox  DIYogyakartaCheckBox;
+    private CheckBox DIYogyakartaCheckBox;
     @FXML
-    private CheckBox  JawaTimurCheckBox;
+    private CheckBox JawaTimurCheckBox;
 
     private List<Artefact> allArtefacts;
     private Connection connection;
@@ -80,7 +80,7 @@ public class ArtefactController extends BaseController implements Initializable 
 
     @FXML
     private Button logoButton;
-    @FXML 
+    @FXML
     private Button addArtefactButton;
     @FXML
     private Button deleteSelectedButton;
@@ -90,7 +90,7 @@ public class ArtefactController extends BaseController implements Initializable 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.connection = new DatabaseConnection().getConnection();
-        // Inisialisasi gambar header dan footer
+
         try {
             logoFooter.setImage(new Image(getClass().getResourceAsStream("/images/logo2.png")));
         } catch (Exception e) {
@@ -108,6 +108,7 @@ public class ArtefactController extends BaseController implements Initializable 
         updateLoginLogoutButton();
         loadAllArtefactsFromDB();
         displayArtefacts(allArtefacts);
+
         setupRoleBasedAccess();
 
         /* Real Time Update for each Filter */
@@ -115,29 +116,21 @@ public class ArtefactController extends BaseController implements Initializable 
             applyAllFilter();
         });
 
-        // periodFromField.textProperty().addListener((observable, oldValue, newValue) -> {
-        //     applyAllFilter();
-        // });
-
-        // periodToField.textProperty().addListener((observable, oldValue, newValue) -> {
-        //     applyAllFilter();
-        // });
     }
 
     private void loadAllArtefactsFromDB() {
         allArtefacts = new ArrayList<>();
         String sql = "SELECT * FROM Artefact";
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 allArtefacts.add(new Artefact(
-                    rs.getInt("artefactID"),
-                    rs.getString("title"),
-                    rs.getString("region"),
-                    rs.getInt("period"),
-                    rs.getString("description"),
-                    rs.getString("mediaURL")
-                ));
+                        rs.getInt("artefactID"),
+                        rs.getString("title"),
+                        rs.getString("region"),
+                        rs.getInt("period"),
+                        rs.getString("description"),
+                        rs.getString("mediaURL")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -162,7 +155,7 @@ public class ArtefactController extends BaseController implements Initializable 
         for (Artefact artefact : artefactsToDisplay) {
             VBox artefactCard = createArtefactCard(artefact);
             artefactGrid.add(artefactCard, column, row);
-            
+
             column++;
             if (column == 3) {
                 column = 0;
@@ -176,14 +169,13 @@ public class ArtefactController extends BaseController implements Initializable 
         VBox card = new VBox(10);
         card.setAlignment(Pos.CENTER);
         card.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-border-color: #333;" +
-            "-fx-border-width: 1px;" +
-            "-fx-padding: 15px;" +
-            "-fx-border-radius: 8px;" + 
-            "-fx-background-radius: 8px;"
-        );
-    
+                "-fx-background-color: white;" +
+                        "-fx-border-color: #333;" +
+                        "-fx-border-width: 1px;" +
+                        "-fx-padding: 15px;" +
+                        "-fx-border-radius: 8px;" +
+                        "-fx-background-radius: 8px;");
+
         ImageView imageView = new ImageView();
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
@@ -200,16 +192,16 @@ public class ArtefactController extends BaseController implements Initializable 
             imageView.setImage(image);
         } catch (Exception e) {
             System.err.println("Gagal memuat gambar: " + url);
-            // imageView.setImage(new Image(getClass().getResourceAsStream("/images/placeholder.png")));
+
         }
-    
+
         Label nameLabel = new Label(artefact.getTitle());
         nameLabel.setFont(Font.font("Plus Jakarta Sans", FontWeight.BOLD, 16));
-    
+
         Label regionLabel = new Label(artefact.getRegion());
         regionLabel.setFont(Font.font("Plus Jakarta Sans", FontWeight.NORMAL, 12));
         regionLabel.setTextFill(javafx.scene.paint.Color.GRAY);
-    
+
         HBox buttonContainer = new HBox(10);
         buttonContainer.setAlignment(Pos.CENTER);
 
@@ -221,29 +213,34 @@ public class ArtefactController extends BaseController implements Initializable 
                 selectedArtefactIds.remove(artefact.getArtefactID());
             }
         });
-        
+
         Button detailButton = new Button("Detail");
-        detailButton.setStyle("-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+        detailButton.setStyle(
+                "-fx-background-color: #333; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
         detailButton.setCursor(Cursor.HAND);
         detailButton.setOnAction(e -> showArtefactDetail(artefact));
         buttonContainer.getChildren().add(detailButton);
-    
+
         if (session.isKurator()) {
             Button editButton = new Button("Edit");
-            editButton.setStyle("-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+            editButton.setStyle(
+                    "-fx-background-color: #8B0000; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
             editButton.setCursor(Cursor.HAND);
             editButton.setOnAction(e -> handleEditArtefact(artefact));
             buttonContainer.getChildren().add(editButton);
 
             Button deleteButton = new Button("Delete");
-            deleteButton.setStyle("-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
+            deleteButton.setStyle(
+                    "-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-family: 'Plus Jakarta Sans Regular';");
             deleteButton.setCursor(Cursor.HAND);
-            deleteButton.setOnAction(e -> {handleDeleteArtefact(artefact); });
+            deleteButton.setOnAction(e -> {
+                handleDeleteArtefact(artefact);
+            });
             buttonContainer.getChildren().add(deleteButton);
         }
-    
+
         card.getChildren().addAll(imageView, nameLabel, regionLabel, buttonContainer);
-    
+
         return card;
     }
 
@@ -267,22 +264,22 @@ public class ArtefactController extends BaseController implements Initializable 
         confirmAlert.setTitle("Konfirmasi Hapus Artefak");
         confirmAlert.setHeaderText("Yakin ingin menghapus artefak \"" + artefact.getTitle() + "\"?");
         confirmAlert.setContentText("Artefak akan dihapus dari database. Tindakan ini tidak dapat dibatalkan.");
-    
+
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try (Connection conn = new DatabaseConnection().getConnection()) {
-    
+
                     String deleteRelasiKurator = "DELETE FROM Kurator_Artefact WHERE artefactID = ?";
                     try (PreparedStatement pstmtKurator = conn.prepareStatement(deleteRelasiKurator)) {
                         pstmtKurator.setInt(1, artefact.getArtefactID());
                         pstmtKurator.executeUpdate();
                     }
-    
+
                     String sql = "DELETE FROM Artefact WHERE artefactID = ?";
                     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         pstmt.setInt(1, artefact.getArtefactID());
                         int affectedRows = pstmt.executeUpdate();
-    
+
                         if (affectedRows > 0) {
                             loadAllArtefactsFromDB();
                             displayArtefacts(allArtefacts);
@@ -305,11 +302,11 @@ public class ArtefactController extends BaseController implements Initializable 
         dialogStage.setTitle("Pilih Artefak yang Akan Dihapus");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(artefactGrid.getScene().getWindow());
-    
+
         VBox layout = new VBox(10);
         layout.setPadding(new javafx.geometry.Insets(20));
         layout.setAlignment(Pos.CENTER_LEFT);
-    
+
         List<CheckBox> checkBoxes = new ArrayList<>();
         for (Artefact artefact : allArtefacts) {
             CheckBox cb = new CheckBox(artefact.getTitle());
@@ -317,7 +314,7 @@ public class ArtefactController extends BaseController implements Initializable 
             checkBoxes.add(cb);
         }
         layout.getChildren().addAll(checkBoxes);
-    
+
         Button deleteButton = new Button("Hapus");
         deleteButton.setStyle("-fx-background-color: #C62828; -fx-text-fill: white;");
         deleteButton.setOnAction(e -> {
@@ -332,15 +329,16 @@ public class ArtefactController extends BaseController implements Initializable 
                 alert.showAndWait();
                 return;
             }
-        
+
             StringBuilder sb = new StringBuilder("Yakin ingin menghapus artefak berikut?\n");
             for (Artefact a : artefakTerpilih) {
                 sb.append("- ").append(a.getTitle()).append("\n");
             }
-            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, sb.toString(), ButtonType.OK, ButtonType.CANCEL);
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, sb.toString(), ButtonType.OK,
+                    ButtonType.CANCEL);
             confirmAlert.setTitle("Konfirmasi Hapus Artefak");
             confirmAlert.setHeaderText("Konfirmasi Penghapusan");
-        
+
             confirmAlert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     try (Connection conn = new DatabaseConnection().getConnection()) {
@@ -358,7 +356,8 @@ public class ArtefactController extends BaseController implements Initializable 
                             }
                         }
                     } catch (SQLException ex) {
-                        Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Gagal menghapus artefak. Pastikan tidak sedang digunakan di Exhibit!", ButtonType.OK);
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR,
+                                "Gagal menghapus artefak. Pastikan tidak sedang digunakan di Exhibit!", ButtonType.OK);
                         errorAlert.showAndWait();
                     }
                     loadAllArtefactsFromDB();
@@ -368,14 +367,15 @@ public class ArtefactController extends BaseController implements Initializable 
             });
         });
         layout.getChildren().add(deleteButton);
-    
+
         dialogStage.setScene(new Scene(layout));
         dialogStage.showAndWait();
     }
-    
+
     // --- Handler untuk Delete All ---
     private void handleDeleteAllArtefacts() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Yakin ingin menghapus SEMUA artefak?", ButtonType.YES, ButtonType.NO);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Yakin ingin menghapus SEMUA artefak?", ButtonType.YES,
+                ButtonType.NO);
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 try (Statement stmt = connection.createStatement()) {
@@ -383,7 +383,9 @@ public class ArtefactController extends BaseController implements Initializable 
                     allArtefacts.clear();
                     displayArtefacts(allArtefacts);
                 } catch (SQLException e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Gagal menghapus semua artefak. Pastikan sedang tidak digunakan di Exhibit!", ButtonType.OK);
+                    Alert alert = new Alert(Alert.AlertType.ERROR,
+                            "Gagal menghapus semua artefak. Pastikan sedang tidak digunakan di Exhibit!",
+                            ButtonType.OK);
                     alert.showAndWait();
                 }
             }
@@ -426,7 +428,6 @@ public class ArtefactController extends BaseController implements Initializable 
         closeButton.setOnAction(e -> detailStage.close());
         closeButton.setStyle("-fx-background-color: #AAAAAA; -fx-text-fill: white;");
 
-
         detailLayout.getChildren().addAll(detailImageView, name, region, period, description, closeButton);
         detailStage.setScene(new Scene(detailLayout));
         detailStage.setTitle(artefact.getTitle() + " Details");
@@ -440,7 +441,6 @@ public class ArtefactController extends BaseController implements Initializable 
         applyAllFilter();
     }
 
-
     @FXML
     private void onValidatePeriodFilter() {
         applyAllFilter();
@@ -450,7 +450,6 @@ public class ArtefactController extends BaseController implements Initializable 
     private void onValidateRegionFilter() {
         applyAllFilter();
     }
-
 
     protected List<Artefact> filterByPeriod(List<Artefact> artefactList) {
         String fromPeriod = periodFromField != null ? periodFromField.getText().trim() : "";
@@ -558,6 +557,7 @@ public class ArtefactController extends BaseController implements Initializable 
     private void handleAddArtefact() {
         showAddEditDialog(null);
     }
+
     private void handleEditArtefact(Artefact artefact) {
         showAddEditDialog(artefact);
     }
@@ -579,13 +579,13 @@ public class ArtefactController extends BaseController implements Initializable 
 
     private void showAddEditDialog(Artefact artefactToEdit) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/exhibitly/AddEditArtefactDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/org/example/exhibitly/AddEditArtefactDialog.fxml"));
             Parent page = loader.load();
 
             ComboBox<String> regionComboBox = (ComboBox<String>) page.lookup("#regionComboBox");
             regionComboBox.getItems().addAll(
-                "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "DI Yogyakarta", "Jawa Timur"
-            );
+                    "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "DI Yogyakarta", "Jawa Timur");
 
             TextField titleField = (TextField) page.lookup("#titleField");
             TextField periodField = (TextField) page.lookup("#periodField");
@@ -618,7 +618,7 @@ public class ArtefactController extends BaseController implements Initializable 
                     dialogVBox.getChildren().add(errorLabel);
                 }
             } else if (page instanceof GridPane) {
-                ((GridPane) page).add(errorLabel, 0, 6, 2, 1); // kolom 0, row 6, span 2 kolom
+                ((GridPane) page).add(errorLabel, 0, 6, 2, 1);
             }
 
             saveButton.setOnAction(e -> {
@@ -627,11 +627,11 @@ public class ArtefactController extends BaseController implements Initializable 
                 periodField.setStyle("");
                 regionComboBox.setStyle("");
                 errorLabel.setText("");
-            
+
                 String title = titleField.getText().trim();
                 String region = regionComboBox.getValue();
                 String periodText = periodField.getText().trim();
-            
+
                 if (title.isEmpty()) {
                     titleField.setStyle("-fx-border-color: red;");
                     errorLabel.setText("Judul artefak wajib diisi.");
@@ -653,13 +653,13 @@ public class ArtefactController extends BaseController implements Initializable 
                     errorLabel.setText("Gagal cek duplikasi judul.");
                     return;
                 }
-            
+
                 if (region == null || region.isEmpty()) {
                     regionComboBox.setStyle("-fx-border-color: red;");
                     errorLabel.setText("Region wajib dipilih.");
                     return;
                 }
-            
+
                 int period;
                 try {
                     period = Integer.parseInt(periodText);
@@ -673,13 +673,13 @@ public class ArtefactController extends BaseController implements Initializable 
                     errorLabel.setText("Periode harus berupa angka.");
                     return;
                 }
-            
+
                 try {
                     if (artefactToEdit == null) {
                         int nextId = 1;
                         String maxIdSql = "SELECT MAX(artefactID) FROM Artefact";
                         try (Statement stmt = connection.createStatement();
-                             ResultSet rs = stmt.executeQuery(maxIdSql)) {
+                                ResultSet rs = stmt.executeQuery(maxIdSql)) {
                             if (rs.next()) {
                                 nextId = rs.getInt(1) + 1;
                             }
@@ -809,7 +809,7 @@ public class ArtefactController extends BaseController implements Initializable 
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+    private void onArtefactButtonClick(ActionEvent event) {
         System.out.println("Sudah ada di Artefact Page");
     }
 
@@ -819,7 +819,7 @@ public class ArtefactController extends BaseController implements Initializable 
     }
 
     @FXML
-    private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+    private void onLogoButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 }

@@ -40,17 +40,17 @@ public class LoginController implements Initializable {
     private PasswordField passwordField;
 
     @FXML
-    private Label welcomeText; 
-    @FXML 
+    private Label welcomeText;
+    @FXML
     private Label loginMessageLabel;
-    
+
     @FXML
     private Button onLoginButtonClick;
     @FXML
     private Button logoButton;
     @FXML
     private Button onLogoButtonClick;
-    @FXML 
+    @FXML
     private Button loginButton;
 
     @FXML
@@ -61,11 +61,8 @@ public class LoginController implements Initializable {
     private Label loadingLabel;
     private boolean istrue;
 
-    
-
-
     /* -------------------------------------------------------------------------- */
-    /*                               Initialize Page                              */
+    /* Initialize Page */
     /* -------------------------------------------------------------------------- */
 
     @Override
@@ -83,7 +80,7 @@ public class LoginController implements Initializable {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                             Start Setup Logics                             */
+    /* Start Setup Logics */
     /* -------------------------------------------------------------------------- */
 
     private void setupLoadingOverlay() {
@@ -101,15 +98,15 @@ public class LoginController implements Initializable {
         javafx.scene.layout.VBox loadingContainer = new javafx.scene.layout.VBox(10);
         loadingContainer.setAlignment(javafx.geometry.Pos.CENTER);
         loadingContainer.getChildren().addAll(progressIndicator, loadingLabel);
-        
+
         loadingOverlay.getChildren().add(loadingContainer);
-        
+
         try {
             Platform.runLater(() -> {
                 if (usernameField.getScene() != null && usernameField.getScene().getRoot() instanceof AnchorPane) {
                     AnchorPane root = (AnchorPane) usernameField.getScene().getRoot();
                     root.getChildren().add(loadingOverlay);
-                    
+
                     AnchorPane.setTopAnchor(loadingOverlay, 0.0);
                     AnchorPane.setBottomAnchor(loadingOverlay, 0.0);
                     AnchorPane.setLeftAnchor(loadingOverlay, 0.0);
@@ -122,7 +119,7 @@ public class LoginController implements Initializable {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                               Overlay Logics                               */
+    /* Overlay Logics */
     /* -------------------------------------------------------------------------- */
 
     private void showLoadingOverlay() {
@@ -143,9 +140,9 @@ public class LoginController implements Initializable {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                             Key Handler Logics                             */
+    /* Key Handler Logics */
     /* -------------------------------------------------------------------------- */
-    
+
     private void setupEnterKeyHandlers() {
         usernameField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
@@ -158,11 +155,10 @@ public class LoginController implements Initializable {
                 handleLogin();
             }
         });
-    }   
-
+    }
 
     /* -------------------------------------------------------------------------- */
-    /*                                Login Logics                                */
+    /* Login Logics */
     /* -------------------------------------------------------------------------- */
 
     @FXML
@@ -174,7 +170,7 @@ public class LoginController implements Initializable {
             loginMessageLabel.setText("Username dan Password tidak boleh kosong.");
             return;
         }
-		
+
         if (!username.isBlank() && !password.isBlank()) {
             System.out.println("Mencoba login!");
 
@@ -195,11 +191,11 @@ public class LoginController implements Initializable {
                 protected void succeeded() {
                     Platform.runLater(() -> {
                         hideLoadingOverlay();
-                        
+
                         usernameField.setDisable(false);
                         passwordField.setDisable(false);
                         onLoginButtonClick.setDisable(false);
-                        
+
                         Actor user = getValue();
                         if (user != null) {
                             SessionMangement.getSession().login(user);
@@ -209,7 +205,7 @@ public class LoginController implements Initializable {
                             loginMessageLabel.setText("Login gagal! Silahkan coba lagi.");
                             System.out.println("Login failed! Please check credentials.");
                             // TODO: Show error message to user
-                            
+
                             passwordField.clear();
                             usernameField.requestFocus();
                         }
@@ -223,12 +219,11 @@ public class LoginController implements Initializable {
                         usernameField.setDisable(false);
                         passwordField.setDisable(false);
                         onLoginButtonClick.setDisable(false);
-                        
 
                     });
                 }
             };
-            
+
             Thread loginThread = new Thread(loginTask);
             loginThread.setDaemon(true);
             loginThread.start();
@@ -237,7 +232,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    
     private Actor validateLogin(String username, String password) {
         String sql = "SELECT actorID, username, password, name, role FROM actor WHERE username = ? AND password = ?";
         try {
@@ -261,8 +255,7 @@ public class LoginController implements Initializable {
                     PreparedStatement staffStmt = connectDB.prepareStatement(staffSql);
                     staffStmt.setInt(1, actorID);
                     ResultSet staffResult = staffStmt.executeQuery();
-                    
-                    //TODO: WTF APAAN INI BEJIR!
+
                     String jadwal = staffResult.next() ? staffResult.getString("jadwalPemeliharaan") : "Not set";
                     user = new Staff(actorID, dbUsername, dbPassword, name, jadwal);
                     staffResult.close();
@@ -283,7 +276,6 @@ public class LoginController implements Initializable {
         return null;
     }
 
-
     @FXML
     private void onLoginButtonClick(ActionEvent event) {
         System.out.println("Sudah ada di login page");
@@ -295,7 +287,7 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent event) { // <-- Metode ini harus menerima ActionEvent
+    private void onArtefactButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
 
     }
@@ -306,7 +298,7 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    private void onLogoButtonClick(ActionEvent event) { // <--- Tambahkan ActionEvent event
+    private void onLogoButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 
@@ -319,7 +311,7 @@ public class LoginController implements Initializable {
                 path = "/org/example/exhibitly/LandingPage.fxml";
                 title = "Museum Nusantara - Dashboard";
                 break;
-        
+
             default:
                 path = "/org/example/exhibitly/LandingPage.fxml";
                 title = "Museum Nusantara - Dashboard";
@@ -328,7 +320,6 @@ public class LoginController implements Initializable {
 
         navigateToPage(path, title);
     }
-    
 
     private void navigateToPage(ActionEvent event, String path) {
         String pageName = path.substring(path.lastIndexOf('/') + 1).replace(".fxml", "");
@@ -336,13 +327,11 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
 
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow(); // Casting ke Node diperlukan
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            // Buat Scene dengan ukuran tetap 1366x768
             Scene scene = new Scene(root, 1366, 768);
             stage.setScene(scene);
 
-            // Set judul Stage secara konsisten
             stage.setTitle("Museum Nusantara - " + pageName);
             stage.show();
         } catch (IOException e) {
@@ -354,10 +343,10 @@ public class LoginController implements Initializable {
     private void navigateToPage(String path, String title) {
         try {
             Stage currentStage = (Stage) usernameField.getScene().getWindow();
-            
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
-            
+
             Scene scene = new Scene(root, 1366, 768);
             currentStage.setScene(scene);
 
