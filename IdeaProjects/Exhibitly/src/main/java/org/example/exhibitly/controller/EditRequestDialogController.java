@@ -75,7 +75,7 @@ public class EditRequestDialogController {
             editArtefactNameField.setEditable(false);
             editRequesterNameField.setEditable(false);
             editDescriptionArea.setEditable(false);
-            editStatusComboBox.setDisable(false); // Staff BISA mengubah status
+            editStatusComboBox.setDisable(false);
         } else {
 
             editArtefactNameField.setEditable(false);
@@ -98,11 +98,12 @@ public class EditRequestDialogController {
 
         currentEditingRequest.setArtefactName(newArtefactName);
         currentEditingRequest.setRequestName(newRequesterName);
-        currentEditingRequest.setDescription(newDescriptionArea);
+
+        currentEditingRequest.setDescription("Requester: " + newRequesterName + "\n" + newDescriptionArea);
         currentEditingRequest.setStatus(newStatus);
         currentEditingRequest.setRequestDate(newRequestDate);
 
-        if ("Done".equalsIgnoreCase(editStatusComboBox.getValue())) {
+        if ("Done".equalsIgnoreCase(newStatus)) {
             if (currentEditingRequest.getPerformedDate() == null) {
                 currentEditingRequest.setPerformedDate(new Date());
             }
@@ -113,14 +114,13 @@ public class EditRequestDialogController {
         return currentEditingRequest;
     }
 
-
     @FXML
     private void onSave() {
         if (editStatusComboBox.getValue() == null) {
             showAlert(Alert.AlertType.WARNING, "Input Invalid", "Status harus dipilih.");
+            saveClicked = false;
             return;
         }
-
         saveClicked = true;
         dialogStage.close();
     }
