@@ -256,7 +256,7 @@ public class LoginController implements Initializable {
                 Actor user;
 
                 if (role.equalsIgnoreCase("Staff")) {
-                    String staffSql = "SELECT jadwalPemeliharaan FROM staff WHERE actorID = ?";
+                    String staffSql = "SELECT jadwalPemeliharaan FROM staffpemeliharaan WHERE actorID = ?";
                     PreparedStatement staffStmt = connectDB.prepareStatement(staffSql);
                     staffStmt.setInt(1, actorID);
                     ResultSet staffResult = staffStmt.executeQuery();
