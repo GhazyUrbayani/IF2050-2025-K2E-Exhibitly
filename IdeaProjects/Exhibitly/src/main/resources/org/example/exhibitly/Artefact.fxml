@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 
 <!-- Root container dengan background warna abu muda -->
-<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F8F8;"
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F8F7F3;"
             xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.exhibitly.controller.ArtefactController">
 
@@ -218,22 +218,22 @@
 
                                 <!-- Alamat museum -->
                                 <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0">
-                                    <Label text="Museum Nusantara" textFill="WHITE">
+                                    <Label text="Museum Nusantara" textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Jl. Ganesa No. 10" textFill="WHITE">
+                                    <Label text="Jl. Ganesa No. 10" textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Regular" size="12.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="WHITE">
+                                    <Label text="Coblong, Kota Bandung, Jawa Barat" textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Regular" size="12.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Indonesia 40132." textFill="WHITE">
+                                    <Label text="Indonesia 40132." textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Regular" size="12.0" />
                                         </font>
@@ -242,22 +242,22 @@
 
                                 <!-- Jam kunjungan -->
                                 <VBox spacing="5.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="50.0">
-                                    <Label text="Jam Berkunjung" textFill="WHITE">
+                                    <Label text="Jam Berkunjung" textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="WHITE">
+                                    <Label text="Selasa - Minggu: 10.00 - 18.00 WIB" textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Regular" size="12.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Senin Museum tutup." textFill="WHITE">
+                                    <Label text="Senin Museum tutup." textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Regular" size="12.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Akses terakhir 17.30 WIB" textFill="WHITE">
+                                    <Label text="Akses terakhir 17.30 WIB" textFill="black">
                                         <font>
                                             <Font name="Plus Jakarta Sans Regular" size="12.0" />
                                         </font>
@@ -265,7 +265,7 @@
                                 </VBox>
 
                                 <!-- Copyright footer -->
-                                <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="WHITE"
+                                <Label alignment="CENTER" text="© 2025 Museum Nusantara. All rights reserved." textFill="black"
                                        AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
 
                                 <!-- Logo footer -->
