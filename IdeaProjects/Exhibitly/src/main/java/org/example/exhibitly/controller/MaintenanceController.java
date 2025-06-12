@@ -591,32 +591,32 @@ public class MaintenanceController extends BaseController implements Initializab
     // Metode Navigasi Umum (dari header)
     // ===============================================
     @FXML
-    private void onLogoButtonClick(ActionEvent event) throws IOException {
+    private void onLogoButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 
     @FXML
-    private void onExhibitButtonClick(ActionEvent event) throws IOException {
-        navigateToPage(event, "/org/example/exibitly/Exhibit.fxml");        // loadScene(event, "/org/example/exhibitly/exhibit_page.fxml");
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent event) throws IOException {
+    private void onArtefactButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
     }
 
     @FXML
-    private void onTicketsButtonClick(ActionEvent event) throws IOException {
+    private void onTicketsButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");        // loadScene(event, "/org/example/exhibitly/tickets_page.fxml");
     }
 
     @FXML
-    private void onLogoutButtonClick(ActionEvent event) throws IOException {
+    private void onLogoutButtonClick(ActionEvent event) {
         handleLogout(event);
     }
 
     @FXML
-    private void onMaintenanceButtonClick(ActionEvent event) throws IOException {
+    private void onMaintenanceButtonClick(ActionEvent event) {
         // Sudah di halaman maintenance, tidak perlu ganti scene
         // System.out.println("Already on Maintenance Page");
     }
