@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -27,6 +28,8 @@ import org.example.exhibitly.util.StaffRepository;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -275,8 +278,15 @@ public class MaintenanceController extends BaseController implements Initializab
         List<Maintenance> openRequests = allMaintenanceRecords.stream()
                 .filter(req -> !"Done".equalsIgnoreCase(req.getStatus()))
                 .sorted(Comparator
-                        .comparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
-                        .thenComparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime()))
+                    .comparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                    .thenComparing((Maintenance req) -> {
+                        String staffName = req.getRequestName();
+                        if (staffName == null || staffName.trim().isEmpty() || "Unassigned".equals(staffName)) {
+                            return "ZZZ_Unassigned";
+                        }
+                        return staffName;
+                    })
+                    .thenComparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime()))
                 .collect(Collectors.toList());
 
         LocalDate lastRequestDate = null;
@@ -342,8 +352,15 @@ public class MaintenanceController extends BaseController implements Initializab
                 .filter(req -> "Done".equalsIgnoreCase(req.getStatus()))
                 .filter(req -> req.getPerformedDate() != null)
                 .sorted(Comparator
-                        .comparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Comparator.reverseOrder())
-                        .thenComparing((Maintenance req) -> req.getPerformedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime(), Comparator.reverseOrder()))
+                    .comparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                    .thenComparing((Maintenance req) -> {
+                        String staffName = req.getRequestName();
+                        if (staffName == null || staffName.trim().isEmpty() || "Unassigned".equals(staffName)) {
+                            return "ZZZ_Unassigned";
+                        }
+                        return staffName;
+                    })
+                    .thenComparing((Maintenance req) -> req.getRequestDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime()))
                 .collect(Collectors.toList());
 
         LocalDate lastPerformedDate = null;
@@ -408,7 +425,7 @@ public class MaintenanceController extends BaseController implements Initializab
         }
 
         // ... (logika mencari performedByActorID tetap sama) ...
-        int performedByActorID = -1;
+        Integer performedByActorID = null;
         if (!"Unassigned".equalsIgnoreCase(selectedPerformedByStaffName)) {
             Optional<Staff> chosenStaff = allStaffs.stream()
                     .filter(s -> s.getName().equalsIgnoreCase(selectedPerformedByStaffName))
@@ -419,15 +436,9 @@ public class MaintenanceController extends BaseController implements Initializab
         }
 
         // ... (logika newMaintenanceID, newRequestID, currentDateTime tetap sama) ...
-        int newMaintenanceID = allMaintenanceRecords.stream()
-                .mapToInt(Maintenance::getMaintenanceID)
-                .max()
-                .orElse(0) + 1;
+        int newMaintenanceID = getNextMaintenanceId();
         String newRequestID = UUID.randomUUID().toString().substring(0, 8);
         Date currentDateTime = new Date();
-
-        // --- Format fullDescription (SAMA) ---
-        String fullDescription = "Requester: " + requesterNameInput + "\n" + description;
 
         // --- Buat objek Maintenance (SAMA) ---
         Maintenance newMaintenanceRequest = new Maintenance(
@@ -440,23 +451,27 @@ public class MaintenanceController extends BaseController implements Initializab
                 currentDateTime,
                 null,
                 "Not Done",
-                fullDescription
+                description
         );
 
-        allMaintenanceRecords.add(newMaintenanceRequest);
-        showAlert(Alert.AlertType.INFORMATION, "Sukses", "Permintaan maintenance baru berhasil ditambahkan!");
+        if (saveMaintenanceToDatabase(newMaintenanceRequest)) {
+            allMaintenanceRecords.add(newMaintenanceRequest);
+            showAlert(Alert.AlertType.INFORMATION, "Sukses", "Permintaan maintenance baru berhasil ditambahkan!");
+            
+            // ... (kembali ke tampilan permintaan dan bersihkan form) ...
+            setAllContentInvisible();
+            requestContentDisplay.setVisible(true);
+            requestContentDisplay.setManaged(true);
+            loadRequests();
 
-        // ... (kembali ke tampilan permintaan dan bersihkan form) ...
-        setAllContentInvisible();
-        requestContentDisplay.setVisible(true);
-        requestContentDisplay.setManaged(true);
-        loadRequests();
-
-        // Bersihkan form:
-        artefactComboBox.getSelectionModel().select("Select Artefact");
-        // requesterNameField.clear(); <-- HAPUS BARIS INI
-        performedByStaffComboBox.getSelectionModel().select("Unassigned");
-        descriptionArea.clear();
+            // Bersihkan form:
+            artefactComboBox.getSelectionModel().select("Select Artefact");
+            // requesterNameField.clear(); <-- HAPUS BARIS INI
+            performedByStaffComboBox.getSelectionModel().select("Unassigned");
+            descriptionArea.clear();
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Gagal menyimpan permintaan maintenance ke database!");
+        }
     }
 
     @FXML
@@ -562,19 +577,21 @@ public class MaintenanceController extends BaseController implements Initializab
             if (requestDialogController.isSaveClicked()) {
                 Maintenance updatedMaintenanceRecords = requestDialogController.getEditedRequest();
 
-                for (int i = 0; i < allMaintenanceRecords.size(); i++) {
-                    if (allMaintenanceRecords.get(i).getArtefactID() == updatedMaintenanceRecords.getArtefactID() &&
-                        allMaintenanceRecords.get(i).getRequestName().equals(updatedMaintenanceRecords.getRequestName())) {
-                            
-                            // Set the new maintenance to the existing records.
-                            allMaintenanceRecords.set(i, updatedMaintenanceRecords);
-                            break; //Keluar loop jikalau maintenance tersebut sudah terupdate (karena hanya 1)
-                        }
-                }
+                if (updateMaintenanceInDatabase(updatedMaintenanceRecords)) {
+                    for (int i = 0; i < allMaintenanceRecords.size(); i++) {
+                        if (allMaintenanceRecords.get(i).getMaintenanceID() == updatedMaintenanceRecords.getMaintenanceID()) {           
+                                // Set the new maintenance to the existing records.
+                                allMaintenanceRecords.set(i, updatedMaintenanceRecords);
+                                break; //Keluar loop jikalau maintenance tersebut sudah terupdate (karena hanya 1)
+                            }
+                    }
 
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Permintaan berhasil diperbarui.");
-                loadRequests(); // Refresh tampilan "Request"
-                loadHistory(); // Refresh tampilan "History" (jika ada perubahan status ke Done)
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Permintaan berhasil diperbarui.");
+                    loadRequests(); // Refresh tampilan "Request"
+                    loadHistory(); // Refresh tampilan "History" (jika ada perubahan status ke Done)
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Gagal memperbarui maintenance di database");
+                }
             }
 
         } catch (IOException e) {
@@ -591,32 +608,32 @@ public class MaintenanceController extends BaseController implements Initializab
     // Metode Navigasi Umum (dari header)
     // ===============================================
     @FXML
-    private void onLogoButtonClick(ActionEvent event) throws IOException {
+    private void onLogoButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/LandingPage.fxml");
     }
 
     @FXML
-    private void onExhibitButtonClick(ActionEvent event) throws IOException {
-        navigateToPage(event, "/org/example/exibitly/Exhibit.fxml");        // loadScene(event, "/org/example/exhibitly/exhibit_page.fxml");
+    private void onExhibitButtonClick(ActionEvent event) {
+        navigateToPage(event, "/org/example/exhibitly/Exhibit.fxml");
     }
 
     @FXML
-    private void onArtefactButtonClick(ActionEvent event) throws IOException {
+    private void onArtefactButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/Artefact.fxml");
     }
 
     @FXML
-    private void onTicketsButtonClick(ActionEvent event) throws IOException {
+    private void onTicketsButtonClick(ActionEvent event) {
         navigateToPage(event, "/org/example/exhibitly/Ticket.fxml");        // loadScene(event, "/org/example/exhibitly/tickets_page.fxml");
     }
 
     @FXML
-    private void onLogoutButtonClick(ActionEvent event) throws IOException {
+    private void onLogoutButtonClick(ActionEvent event) {
         handleLogout(event);
     }
 
     @FXML
-    private void onMaintenanceButtonClick(ActionEvent event) throws IOException {
+    private void onMaintenanceButtonClick(ActionEvent event) {
         // Sudah di halaman maintenance, tidak perlu ganti scene
         // System.out.println("Already on Maintenance Page");
     }
@@ -625,4 +642,113 @@ public class MaintenanceController extends BaseController implements Initializab
         
     //     return newMaintenance;
     // }
+
+    /* -------------------------------------------------------------------------- */
+    /*                           New Maintenance Logics                           */
+    /* -------------------------------------------------------------------------- */
+
+    private int getNextMaintenanceId() {
+        try (Connection connection = new DatabaseConnection().getConnection()) {
+            int nextId = 1;
+            String maxIDSQL = "SELECT MAX(maintenanceID) FROM Maintenance";
+
+            try (Statement statement = connection.createStatement()) {
+                ResultSet resultSet = statement.executeQuery(maxIDSQL);
+                if (resultSet.next()) {
+                    nextId = resultSet.getInt(1) + 1;
+                }
+            }
+            return nextId;
+        } catch (SQLException e) {
+            System.err.println("Error getting new maintenance ID: " + e.getMessage());
+            e.printStackTrace();
+
+            return allMaintenanceRecords.stream()
+                    .mapToInt(Maintenance::getMaintenanceID)
+                    .max()
+                    .orElse(0) + 1;
+        }
+    }
+
+    private boolean saveMaintenanceToDatabase(Maintenance maintenance) {
+        try (Connection connection = new DatabaseConnection().getConnection()) {
+        String entrySQL = """
+            INSERT INTO Maintenance (maintenanceid, artefactid, kuratorID, staffID, artefactName, requestDate, performedDate, status, description) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(entrySQL)) {
+                preparedStatement.setInt(1, maintenance.getMaintenanceID());
+                preparedStatement.setInt(2, maintenance.getArtefactID());
+                preparedStatement.setInt(3, currentUser.getActorID());
+
+                if (maintenance.getStaffID() != null) {
+                    preparedStatement.setInt(4, maintenance.getStaffID());
+                } else {
+                    preparedStatement.setNull(4, java.sql.Types.INTEGER);
+                }
+                
+                preparedStatement.setString(5, maintenance.getArtefactName());
+                preparedStatement.setDate(6, new java.sql.Date(maintenance.getRequestDate().getTime()));
+               
+                if (maintenance.getPerformedDate() != null) {
+                    preparedStatement.setDate(7, new java.sql.Date(maintenance.getPerformedDate().getTime()));
+                } else {
+                    preparedStatement.setNull(7, java.sql.Types.DATE);
+                }
+
+                preparedStatement.setString(8, maintenance.getStatus());
+                preparedStatement.setString(9, maintenance.getDescription());
+
+                int affectedRows = preparedStatement.executeUpdate();
+                return affectedRows > 0;
+            } 
+        } catch (SQLException e) {
+            System.err.println("Error saving maintenance to database: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    } 
+
+    private boolean updateMaintenanceInDatabase(Maintenance maintenance) {
+        try (Connection connection = new DatabaseConnection().getConnection()) {
+        String entrySQL = """
+            UPDATE Maintenance 
+            SET artefactid = ?, kuratorID = ?, staffID = ?, artefactName = ?, requestDate = ?, performedDate = ?, status = ?, description = ? 
+            WHERE maintenanceid = ?
+            """;
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(entrySQL)) {
+                preparedStatement.setInt(1, maintenance.getArtefactID());
+                preparedStatement.setInt(2, currentUser.getActorID());
+
+                if (maintenance.getStaffID() != null) {
+                    preparedStatement.setInt(3, maintenance.getStaffID());
+                } else {
+                    preparedStatement.setNull(3, java.sql.Types.INTEGER);
+                }
+                
+                preparedStatement.setString(4, maintenance.getArtefactName());
+                preparedStatement.setDate(5, new java.sql.Date(maintenance.getRequestDate().getTime()));
+               
+                if (maintenance.getPerformedDate() != null) {
+                    preparedStatement.setDate(6, new java.sql.Date(maintenance.getPerformedDate().getTime()));
+                } else {
+                    preparedStatement.setNull(6, java.sql.Types.DATE);
+                }
+
+                preparedStatement.setString(7, maintenance.getStatus());
+                preparedStatement.setString(8, maintenance.getDescription());
+                
+                preparedStatement.setInt(9, maintenance.getMaintenanceID());
+
+                int affectedRows = preparedStatement.executeUpdate();
+                return affectedRows > 0;
+            } 
+        } catch (SQLException e) {
+            System.err.println("Error saving maintenance to database: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
