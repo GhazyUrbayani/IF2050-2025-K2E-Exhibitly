@@ -58,28 +58,25 @@ public class MaintenanceRequestItemController {
         this.maintenanceRequest = request;
         this.currentUser = user;
 
-        timeLabel.setText(TIME_FORMAT.format(request.getRequestDate()));
+        // timeLabel.setText(TIME_FORMAT.format(request.getRequestDate()));
+        SimpleDateFormat dateOnlyFormat = new SimpleDateFormat("dd MMM yyyy");
+        timeLabel.setText(dateOnlyFormat.format(request.getRequestDate())); 
+
         artefactNameLabel.setText(request.getArtefactID_Name());
 
         // Parse requester name from description, if applicable
-        String fullDescription = request.getDescription();
-        String requesterName = "Unknown";
-        String actualDescription = fullDescription;
+        String staffName = request.getRequestName();
 
-        if (fullDescription != null && fullDescription.startsWith("Requester: ")) {
-            String[] parts = fullDescription.split("\n", 2);
-            requesterName = parts[0].replace("Requester: ", "").trim();
-            if (parts.length > 1) {
-                actualDescription = parts[1].trim();
+        if (staffName == null || staffName.trim().isEmpty()) {
+            if (request.getStaffID() == null) {
+                staffName = "Unassigned";
             } else {
-                actualDescription = "";
+                staffName = "Staff ID: " + request.getStaffID(); 
             }
-        } else {
-            requesterName = "N/A";
         }
 
-        requesterNameLabel.setText(requesterName);
-        descriptionLabel.setText(actualDescription);
+        requesterNameLabel.setText(staffName);
+        descriptionLabel.setText(request.getDescription());
 
         statusLabel.setText(request.getStatus());
         if ("Done".equalsIgnoreCase(request.getStatus())) {

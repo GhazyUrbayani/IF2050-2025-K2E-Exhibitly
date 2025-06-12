@@ -14,30 +14,55 @@ public class MaintenanceRepository {
     DatabaseConnection db = new DatabaseConnection();
     public List<Maintenance> getAllMaintenances() {
         List<Maintenance> maintenances = new ArrayList<>();
-        String sql = "SELECT * FROM maintenance";
-
+        String sql = """
+            SELECT m.maintenanceid, m.kuratorid, m.staffid, m.artefactid, m.artefactName, 
+                   m.requestdate, m.performeddate, m.status, m.description,
+                   s.name as staffName
+            FROM maintenance m
+            LEFT JOIN actor s ON m.staffid = s.actorid
+            ORDER BY m.maintenanceid DESC
+            """;
         try (Connection connectDB = db.getConnection();
              PreparedStatement preparedStatement = connectDB.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
-                int id = resultSet.getInt("maintenanceID");
-                int kuratorID = resultSet.getInt("kuratorID");
-                int staffID = resultSet.getInt("staffID");
+                int id = resultSet.getInt("maintenanceid");
+                int kuratorID = resultSet.getInt("kuratorid");
+                Integer staffID = null;
+                int staffIDValue = resultSet.getInt("staffid");
+                if (!resultSet.wasNull()) {
+                    staffID = staffIDValue;
+                }
+                int artefactID = resultSet.getInt("artefactid");
                 String artefactName = resultSet.getString("artefactName");
 
-                // Format requestDate
-                Date requestDate = resultSet.getDate("requestDate");
-                Date utilRequestDate = new java.util.Date(requestDate.getTime());
+                java.sql.Date requestDate = resultSet.getDate("requestDate");
+                Date utilRequestDate = requestDate != null ? new java.util.Date(requestDate.getTime()) : new Date();
 
-                // Format performedDate
-                Date performedDate = resultSet.getDate("performedDate");
+                java.sql.Date performedDate = resultSet.getDate("performeddate");
                 Date utilPerformedDate = performedDate == null ? null : new java.util.Date(performedDate.getTime());
 
                 String status = resultSet.getString("status");
                 String description = resultSet.getString("description");
 
-                maintenances.add(new Maintenance(id, kuratorID, staffID, "Someone", 0, artefactName, utilRequestDate, utilPerformedDate, status, description));
+                String staffName = resultSet.getString("staffName");
+
+
+                System.out.println("Loading maintenance ID: " + id + 
+                             ", StaffID: " + staffID + 
+                             ", StaffName from DB: '" + staffName + "'");
+
+                String displayName;
+                if (staffName != null && !staffName.trim().isEmpty()) {
+                    displayName = staffName; 
+                } else if (staffID == null) {
+                    displayName = "Unassigned"; 
+                } else {
+                    displayName = "Staff ID: " + staffID; 
+                }
+
+                maintenances.add(new Maintenance(id, kuratorID, staffID, displayName, artefactID, artefactName, utilRequestDate, utilPerformedDate, status, description));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching maintenances: " + e.getMessage());
