@@ -154,8 +154,7 @@ public class MaintenanceController extends BaseController implements Initializab
         performedByStaffComboBox.setValue("Unassigned");
 
         // Simulate user login
-        //currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
-//        currentUser = new Actor(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Kurator");
+        // currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
         currentUser = session.getCurrentActor();
         updateUserInfo();
 
@@ -613,8 +612,7 @@ public class MaintenanceController extends BaseController implements Initializab
 
     @FXML
     private void onLogoutButtonClick(ActionEvent event) throws IOException {
-        System.out.println("User logged out.");
-        navigateToPage(event, "/org/example/exhibitly/login_page.fxml");
+        handleLogout(event);
     }
 
     @FXML
