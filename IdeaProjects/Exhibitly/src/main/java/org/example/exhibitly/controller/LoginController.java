@@ -59,6 +59,7 @@ public class LoginController implements Initializable {
     private StackPane loadingOverlay;
     private ProgressIndicator progressIndicator;
     private Label loadingLabel;
+    private boolean istrue;
 
     
 
@@ -205,6 +206,7 @@ public class LoginController implements Initializable {
                             System.out.println("Login successful! Redirecting...");
                             navigateBasedOnRole(user);
                         } else {
+                            loginMessageLabel.setText("Login gagal! Silahkan coba lagi.");
                             System.out.println("Login failed! Please check credentials.");
                             // TODO: Show error message to user
                             
@@ -222,8 +224,7 @@ public class LoginController implements Initializable {
                         passwordField.setDisable(false);
                         onLoginButtonClick.setDisable(false);
                         
-                        System.err.println("Login task failed: " + getException().getMessage());
-                        getException().printStackTrace();
+
                     });
                 }
             };
