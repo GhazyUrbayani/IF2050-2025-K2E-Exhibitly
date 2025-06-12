@@ -32,13 +32,12 @@ public class MaintenanceRepository {
 
                 // Format performedDate
                 Date performedDate = resultSet.getDate("performedDate");
-                Date utilPerformedDate = new java.util.Date(performedDate.getTime());
+                Date utilPerformedDate = performedDate == null ? null : new java.util.Date(performedDate.getTime());
 
                 String status = resultSet.getString("status");
                 String description = resultSet.getString("description");
-                String type = resultSet.getString("type");
 
-                maintenances.add(new Maintenance(id, kuratorID, staffID, "Someone", 0, artefactName, utilRequestDate, utilPerformedDate, type, status, description));
+                maintenances.add(new Maintenance(id, kuratorID, staffID, "Someone", 0, artefactName, utilRequestDate, utilPerformedDate, status, description));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching maintenances: " + e.getMessage());

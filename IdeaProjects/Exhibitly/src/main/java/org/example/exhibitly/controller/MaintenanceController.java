@@ -154,13 +154,12 @@ public class MaintenanceController extends BaseController implements Initializab
         performedByStaffComboBox.setValue("Unassigned");
 
         // Simulate user login
-        //currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
-//        currentUser = new Actor(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Kurator");
+        // currentUser = new Staff(1, "ardystaff", "password123", "Stanislaus Ardy Bramantyo", "Setiap Hari, 09.00 - 15.00");
         currentUser = session.getCurrentActor();
         updateUserInfo();
 
-        loadRequests();
-        loadHistory();
+//        loadRequests();
+//        loadHistory();
 
         todayDateLabel.setText("Today - " + LocalDate.now(ZoneId.systemDefault()).format(TODAY_DATE_FORMATTER));
 
@@ -210,8 +209,8 @@ public class MaintenanceController extends BaseController implements Initializab
 
         loadTask.setOnSucceeded(event -> {
             allMaintenanceRecords = loadTask.getValue();
-//            loadRequests();
-//            loadHistory();
+            loadRequests();
+            loadHistory();
             System.out.println("Loaded " + allMaintenanceRecords.size() + " maintenances");
         });
 
@@ -440,7 +439,6 @@ public class MaintenanceController extends BaseController implements Initializab
                 artefactNameForMaintenance,
                 currentDateTime,
                 null,
-                "User Request",
                 "Not Done",
                 fullDescription
         );
@@ -614,8 +612,7 @@ public class MaintenanceController extends BaseController implements Initializab
 
     @FXML
     private void onLogoutButtonClick(ActionEvent event) throws IOException {
-        System.out.println("User logged out.");
-        navigateToPage(event, "/org/example/exhibitly/login_page.fxml");
+        handleLogout(event);
     }
 
     @FXML
