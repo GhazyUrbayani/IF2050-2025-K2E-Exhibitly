@@ -1,4 +1,4 @@
-package org.example.exhibitly.test;
+package org.example.exhibitly.controller;
 
 import org.example.exhibitly.controller.ArtefactController;
 import org.example.exhibitly.models.Artefact;

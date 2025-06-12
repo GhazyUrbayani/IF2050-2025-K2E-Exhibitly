@@ -42,9 +42,10 @@ dependencies {
     }
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.google.zxing:javase:3.5.3")
-    
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
     
     testImplementation("org.testfx:testfx-core:4.0.17")
     testImplementation("org.testfx:testfx-junit5:4.0.17")
