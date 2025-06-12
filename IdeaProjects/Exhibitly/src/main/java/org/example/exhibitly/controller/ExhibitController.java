@@ -132,14 +132,50 @@ public class ExhibitController extends BaseController implements Initializable {
 
     private void populateExhibitDetails() {
         if (exhibitData == null) return;
+
         exhibitTitleLabel.setText(exhibitData.getTitle());
         curatorNameLabel.setText("KURATOR: " + exhibitData.getCuratorName().toUpperCase());
         exhibitDescriptionLabel.setText(exhibitData.getDescription());
-        try {
-            exhibitImageView.setImage(new Image(getClass().getResourceAsStream(exhibitData.getMediaURL())));
-        } catch (Exception e) {
-            exhibitImageView.setImage(null);
+
+        // --- LOGIKA PEMUATAN GAMBAR YANG DIMODIFIKASI ---
+        String imageUrl = exhibitData.getMediaURL();
+        Image exhibitImage = null; // Inisialisasi dengan null
+
+        if (imageUrl != null) {
+            if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+                // Jika URL adalah link web (online)
+                try {
+                    // 'true' di akhir Image constructor berarti background loading
+                    // Ini bagus agar UI tidak freeze saat loading gambar besar
+                    exhibitImage = new Image(imageUrl, true);
+                    System.out.println("Mencoba memuat gambar online dari: " + imageUrl);
+                } catch (Exception e) {
+                    System.err.println("Gagal memuat gambar online dari " + imageUrl + ": " + e.getMessage());
+                    // Mungkin bisa set gambar placeholder di sini
+                }
+            } else {
+                // Jika URL adalah path resource lokal
+                try {
+                    // Menggunakan getResourceAsStream untuk resource di classpath
+                    java.io.InputStream is = getClass().getResourceAsStream(imageUrl);
+                    if (is != null) {
+                        exhibitImage = new Image(is);
+                        System.out.println("Mencoba memuat gambar lokal dari resource: " + imageUrl);
+                    } else {
+                        System.err.println("Resource lokal tidak ditemukan di classpath: " + imageUrl);
+                        // Tambahkan log untuk debug, memastikan path benar
+                    }
+                } catch (Exception e) {
+                    System.err.println("Gagal memuat gambar lokal dari resource " + imageUrl + ": " + e.getMessage());
+                    e.printStackTrace(); // Cetak stack trace untuk detail error yang lebih dalam
+                    // Mungkin bisa set gambar placeholder di sini
+                }
+            }
         }
+
+        // Set gambar ke ImageView. Jika exhibitImage masih null (gagal dimuat), ImageView akan kosong.
+        exhibitImageView.setImage(exhibitImage);
+        // --- AKHIR LOGIKA PEMUATAN GAMBAR ---
 
         artefactsContainer.getChildren().clear();
         for (Artefact artefact : exhibitData.getArtefacts()) {
@@ -159,23 +195,18 @@ public class ExhibitController extends BaseController implements Initializable {
         imageView.setFitHeight(120);
         imageView.setPreserveRatio(true);
 
-        Image img = null;
         String url = artefact.getMediaURL();
-        if (url != null && !url.isEmpty()) {
-            try {
-                java.io.InputStream is = getClass().getResourceAsStream(url);
-                if (is != null) {
-                    img = new Image(is);
-                }
-            } catch (Exception ignored) {}
-        }
-        if (img == null || img.isError()) {
-            java.io.InputStream placeholderStream = getClass().getResourceAsStream("/org/example/exhibitly/images/placeholder.png");
-            if (placeholderStream != null) {
-                img = new Image(placeholderStream);
+        try {
+            Image image;
+            if (url != null && url.startsWith("http")) {
+                image = new Image(url, true);
+            } else {
+                image = new Image(getClass().getResourceAsStream(url));
             }
+            imageView.setImage(image);
+        } catch (Exception e) {
+            System.err.println("Gagal memuat gambar detail: " + url);
         }
-        imageView.setImage(img);
 
         Label nameLabel = new Label(artefact.getTitle());
         nameLabel.setStyle("-fx-font-family: 'Plus Jakarta Sans Bold'; -fx-font-size: 14px; -fx-text-fill: #222;");
