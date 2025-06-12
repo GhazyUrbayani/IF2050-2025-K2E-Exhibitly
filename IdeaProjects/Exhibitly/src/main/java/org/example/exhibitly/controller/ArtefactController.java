@@ -109,6 +109,19 @@ public class ArtefactController extends BaseController implements Initializable 
         loadAllArtefactsFromDB();
         displayArtefacts(allArtefacts);
         setupRoleBasedAccess();
+
+        /* Real Time Update for each Filter */
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            applyAllFilter();
+        });
+
+        // periodFromField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
+
+        // periodToField.textProperty().addListener((observable, oldValue, newValue) -> {
+        //     applyAllFilter();
+        // });
     }
 
     private void loadAllArtefactsFromDB() {
