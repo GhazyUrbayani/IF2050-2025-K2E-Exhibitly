@@ -1,6 +1,7 @@
 package org.example.exhibitly.util;
 
 import org.example.exhibitly.models.Artefact;
+import org.example.exhibitly.models.DummyStaffData;
 import org.example.exhibitly.models.Staff;
 
 import java.sql.*;
@@ -24,12 +25,9 @@ public class StaffRepository {
                 String password = resultSet.getString("password");
                 String name = resultSet.getString("name");
                 String role = resultSet.getString("role");
-                Date date = resultSet.getDate("jadwalPemeliharaan");
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                String formattedDate = dateFormat.format(date);
+                String date = resultSet.getString("jadwalPemeliharaan");
 
-
-                staffs.add(new Staff(id, username, password, name, formattedDate));
+                staffs.add(new Staff(id, username, password, name, date));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching staffs: " + e.getMessage());

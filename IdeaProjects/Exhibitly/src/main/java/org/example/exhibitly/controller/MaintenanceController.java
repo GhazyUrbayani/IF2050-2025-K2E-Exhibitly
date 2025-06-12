@@ -129,13 +129,6 @@ public class MaintenanceController extends BaseController implements Initializab
         allStaffs = new ArrayList<>();
         loadStaffs();
 
-        performedByStaffComboBox.getItems().add("Unassigned");
-
-        for (Staff staff : allStaffs) {
-            performedByStaffComboBox.getItems().add(staff.getName());
-        }
-
-        performedByStaffComboBox.setValue("Unassigned");
 
         currentUser = session.getCurrentActor();
         updateUserInfo();
@@ -167,6 +160,7 @@ public class MaintenanceController extends BaseController implements Initializab
         loadTask.setOnSucceeded(event -> {
             allStaffs = loadTask.getValue();
             performedByStaffComboBox.getItems().clear();
+            performedByStaffComboBox.getItems().add("Unassigned");
             for (Staff staff : allStaffs) {
                 performedByStaffComboBox.getItems().add(staff.getName());
             }
@@ -174,6 +168,9 @@ public class MaintenanceController extends BaseController implements Initializab
         });
 
         loadTask.setOnFailed(event -> {
+            loadTask.getException().printStackTrace();
+            performedByStaffComboBox.getItems().clear();
+            performedByStaffComboBox.getItems().add("Unassigned");
             System.err.println("Error loading staffs: " + loadTask.getException().getMessage());
         });
 
