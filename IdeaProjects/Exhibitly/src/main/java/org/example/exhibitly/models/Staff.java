@@ -11,7 +11,7 @@ public class Staff extends Actor {
     }
 
     public Staff(int actorID, String username, String password, String name, String jadwalPemeliharaan) {
-        super(actorID, username, password, name, "Staff`");
+        super(actorID, username, password, name, "Staff");
         this.jadwalPemeliharaan = jadwalPemeliharaan;
     }
 
